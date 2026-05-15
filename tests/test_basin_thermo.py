@@ -1,0 +1,216 @@
+"""Tests for dual_view.basin and dual_view.thermodynamics."""
+import unittest
+import sys
+import os
+import io
+import contextlib
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
+
+from dual_view.basin import BasinExplorer, precision_sweep, LayerGhostDiagnosticV2, GhostHunt
+from dual_view.thermodynamics import SeedThermodynamics
+from dual_view.core import DualNumber, _mask
+import numpy as np
+
+
+class TestBasinExplorer(unittest.TestCase):
+    def test_newton_step_converges_to_root(self):
+        k = 8
+        target_e = 3
+        a = pow(5, target_e, 1 << k)
+        explorer = BasinExplorer(k, 5, a)
+        fate, val, _ = explorer.classify(target_e)
+        self.assertEqual(fate, 'converged')
+
+    def test_positive_sector_all_converge(self):
+        k = 8
+        for e in range(8):
+            a = pow(5, e, 1 << k)
+            explorer = BasinExplorer(k, 5, a)
+            port = explorer.portrait()
+            self.assertGreater(len(port['converged']), 0)
+
+    def test_ghost_detection(self):
+        k = 8
+        a = pow(5, 3, 1 << k)
+        explorer = BasinExplorer(k, 5, a)
+        port = explorer.portrait()
+        self.assertIsInstance(port, dict)
+        self.assertIn('converged', port)
+        self.assertIn('cycle', port)
+        self.assertIn('diverged', port)
+
+    def test_portrait_matrix_length(self):
+        k = 6
+        a = pow(5, 3, 1 << k)
+        explorer = BasinExplorer(k, 5, a)
+        fv = explorer.fate_vector()
+        self.assertEqual(len(fv), explorer.N)
+
+    def test_full_portrait_structure(self):
+        k = 6
+        a = pow(5, 3, 1 << k)
+        explorer = BasinExplorer(k, 5, a)
+        port = explorer.full_portrait()
+        self.assertIn('converged', port)
+        self.assertIn('cycles', port)
+        self.assertIn('diverged', port)
+        self.assertIsInstance(port['cycles'], dict)
+        # All seeds accounted for
+        total = len(port['converged']) + len(port['diverged'])
+        for period, entries in port['cycles'].items():
+            total += len(entries)
+        self.assertEqual(total, explorer.N)
+
+    def test_full_portrait_cycles_have_periods(self):
+        k = 6
+        a = pow(5, 3, 1 << k)
+        explorer = BasinExplorer(k, 5, a)
+        port = explorer.full_portrait()
+        for period, entries in port['cycles'].items():
+            self.assertIsInstance(period, int)
+            self.assertGreater(period, 0)
+            for seed, cycle_path in entries:
+                self.assertEqual(len(cycle_path), period)
+
+    def test_portrait_matrix_encoding(self):
+        k = 6
+        a = pow(5, 3, 1 << k)
+        explorer = BasinExplorer(k, 5, a)
+        pm = explorer.portrait_matrix()
+        self.assertEqual(len(pm), explorer.N)
+        # 0 = converged, negative = cycle/diverged
+        for val in pm:
+            self.assertLessEqual(val, 0)
+
+    def test_invalid_g_accepts_any_odd(self):
+        k = 8
+        explorer = BasinExplorer(k, 3, 1)
+        self.assertIsInstance(explorer, BasinExplorer)
+
+    def test_invalid_k_raises(self):
+        with self.assertRaises(ValueError):
+            BasinExplorer(2, 5, 1)
+
+
+class TestPrecisionSweep(unittest.TestCase):
+    def test_sweep_returns_results(self):
+        results = precision_sweep(4, 8, 5, 3)
+        self.assertGreater(len(results), 0)
+        for k, frac in results:
+            self.assertIsInstance(k, int)
+            self.assertIsInstance(frac, float)
+
+
+class TestSeedThermodynamics(unittest.TestCase):
+    def test_analyse_returns_dict(self):
+        W = np.array([1, 3, 5, 7, 255], dtype=np.int64)
+        st = SeedThermodynamics(k=8)
+        stats = st.analyse(W)
+        self.assertIsInstance(stats, dict)
+        self.assertIn('alpha_fraction', stats)
+        self.assertIn('mean_v2_e', stats)
+        self.assertIn('cliff_risk', stats)
+
+    def test_powers_of_five_have_no_cliff(self):
+        W = np.array([pow(5, e, 256) for e in range(8)], dtype=np.int64)
+        st = SeedThermodynamics(k=8)
+        stats = st.analyse(W)
+        self.assertLess(stats['cliff_risk'], 0.5)
+
+    def test_even_weights_handled(self):
+        W = np.array([2, 4, 6, 8, 10], dtype=np.int64)
+        st = SeedThermodynamics(k=8)
+        stats = st.analyse(W)
+        self.assertIsInstance(stats, dict)
+
+    def test_summary_keys(self):
+        W = np.random.randint(0, 256, size=(10,), dtype=np.int64)
+        st = SeedThermodynamics(k=8)
+        st(W, range(4, 10))
+        st.compute()
+        s = st.summary()
+        for key in ('n_weights', 'n_stable', 'n_ghost', 'ghost_fraction'):
+            self.assertIn(key, s)
+
+    def test_report_output(self):
+        W = np.random.randint(0, 256, size=(10,), dtype=np.int64)
+        st = SeedThermodynamics(k=8)
+        st(W, range(4, 10))
+        st.compute()
+        report = st.report()
+        self.assertIsInstance(report, str)
+        self.assertIn("SeedThermodynamics Report", report)
+
+
+class TestLayerGhostDiagnosticV2(unittest.TestCase):
+    def test_diagnostic_matrix_shape(self):
+        W = np.array([[1, 3], [5, 7]], dtype=np.int64)
+        diag = LayerGhostDiagnosticV2(k=8)
+        fate, conv, ghost, mean_e, v2_e = diag.diagnostic_matrix(W)
+        self.assertEqual(fate.shape, W.shape)
+        self.assertIsInstance(conv, float)
+        self.assertIsInstance(ghost, float)
+
+    def test_all_even_returns_negative_one(self):
+        W = np.array([2, 4, 6], dtype=np.int64)
+        diag = LayerGhostDiagnosticV2(k=8)
+        fate, conv, ghost, _, _ = diag.diagnostic_matrix(W)
+        self.assertTrue(np.all(fate == -1))
+        self.assertEqual(conv, 0.0)
+        self.assertEqual(ghost, 0.0)
+
+    def test_powers_of_five_are_stable(self):
+        W = np.array([pow(5, e, 256) for e in range(4)], dtype=np.int64)
+        diag = LayerGhostDiagnosticV2(k=8)
+        fate, conv, ghost, _, _ = diag.diagnostic_matrix(W)
+        self.assertGreater(conv, 0.5)
+        self.assertLess(ghost, 0.5)
+
+
+class TestGhostHunt(unittest.TestCase):
+    def test_precision_threshold_sweep(self):
+        hunter = GhostHunt()
+        import io
+        import contextlib
+        f = io.StringIO()
+        with contextlib.redirect_stdout(f):
+            hunter.precision_threshold_sweep(4, 8, 3)
+        output = f.getvalue()
+        self.assertIn("Precision Sweep", output)
+
+    def test_quantization_cliff(self):
+        W = np.array([1, 3, 5, 7], dtype=np.int64)
+        hunter = GhostHunt()
+        results = hunter.quantization_cliff(W, k_min=4, k_max=10)
+        self.assertIsInstance(results, dict)
+        for k in range(4, 11):
+            self.assertIn(k, results)
+            self.assertGreaterEqual(results[k], 0.0)
+            self.assertLessEqual(results[k], 1.0)
+
+
+class TestSeedThermodynamicsAdvanced(unittest.TestCase):
+    def test_stable_weights_with_max_k(self):
+        W = np.random.randint(0, 256, size=(20,), dtype=np.int64)
+        st = SeedThermodynamics(k=8)
+        st(W, range(4, 10))
+        st.compute()
+        stable = st.stable_weights(max_k=6)
+        ghost = st.ghost_weights(max_k=6)
+        self.assertIsInstance(stable, list)
+        self.assertIsInstance(ghost, list)
+        self.assertEqual(len(stable) + len(ghost), len(st.cliffs))
+
+    def test_stable_weights_no_arg(self):
+        W = np.random.randint(0, 256, size=(10,), dtype=np.int64)
+        st = SeedThermodynamics(k=8)
+        st(W, range(4, 10))
+        st.compute()
+        stable = st.stable_weights()
+        ghost = st.ghost_weights()
+        self.assertEqual(len(stable) + len(ghost), len(st.cliffs))
+
+
+if __name__ == "__main__":
+    unittest.main()

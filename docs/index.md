@@ -1,0 +1,99 @@
+# Dual-View Documentation Index
+
+## Project Overview
+
+**dual-view** is a mathematical framework for analyzing quantized neural network weights using 2-adic arithmetic. The core insight is that every odd integer modulo `2^k` decomposes uniquely as:
+
+```
+n = 2^v · (-1)^α · 5^e   (mod 2^k)
+```
+
+where:
+- `v = v₂(n)` — the 2-adic valuation (power of 2 dividing n)
+- `α ∈ {0, 1}` — sign sector (0 for `n ≡ 1 mod 4`, 1 for `n ≡ 3 mod 4`)
+- `e ∈ [0, 2^(k-2))` — discrete logarithm base 5
+
+This dual-view coordinate system reveals **quantization cliffs**: specific bit-precisions where weights become numerically unstable under Newton iteration ("ghost attractors").
+
+## Module Reference
+
+| Module | Lines | Description |
+|--------|-------|-------------|
+| `core.py` | 415 | DualNumber, modular inverse, Viglietta discrete log with LUT |
+| `exponent.py` | 84 | ExponentSpace — additive coordinate chart on Z/2^(k-2) |
+| `operators.py` | 209 | OperatorContext, SpectralTriple, NewtonProjector |
+| `basin.py` | 253 | BasinExplorer, LayerGhostDiagnosticV2, GhostHunt |
+| `thermodynamics.py` | 279 | SeedThermodynamics — graded 2-adic stability diagnostics |
+| `regularization.py` | 138 | GhostMap, ghost_penalty, local_ratio_gradient |
+| `gauge.py` | 132 | Gauge invariants for weighted cyclic operators |
+| `crt.py` | 209 | CRT extension to Z/(2^k·p)Z |
+| `nonabelian.py` | 264 | GL(2) gauge theory with phase alignment |
+| `scaling.py` | 107 | Float-to-int quantization scaling |
+| `visualise.py` | 156 | Cliff matrix rendering, ASCII heatmaps |
+| `butterfly.py` | 130 | Kronecker factor cliff scoring |
+| `separation.py` | 172 | Trajectory Separation Theorem |
+| `fourier.py` | 183 | DFT of Newton step-count function |
+| `padic_roots.py` | 262 | Multi-order p-adic root finding |
+| `iwasawa.py` | 248 | GL(2) congruence filtration, LDU |
+| `mersenne.py` | 238 | Mersenne Ghost Theorem, bootstrap optimality |
+| `isometry.py` | 265 | Exponential isometry, operator algebra theorems |
+| `training.py` | 240 | PyTorch QuantizedMLP with ghost regularization |
+| `demo.py` | 172 | Runnable demonstration suite |
+
+## Theorem Reference
+
+| ID | Theorem | Module | Status |
+|----|---------|--------|--------|
+| T1 | Quadratic convergence of Newton dlog map | `core.py` | Proven |
+| T2 | Trajectory separation: `n*(s) = ceil(log₂(s)) - 1` | `separation.py` | Proven, zero variance |
+| T3 | Basin dichotomy: α=0 globally stable | `basin.py` | Proven |
+| T4 | Ghost formula: `e* = dlog(a+2, k)` for α=1 | `basin.py` | Proven |
+| T5 | Mersenne cliff: `k* = n+2` for `w = 2^n - 1` | `mersenne.py` | Verified n=3..11 |
+| T6a | Exponential map isometry: `v₂(5^e-1) = v₂(e)+2` | `isometry.py` | Proven |
+| T6b | Operator algebra: `avg² = N·avg`, `D·avg = avg·D = 0` | `isometry.py` | Proven |
+| T6c | Trace-mod-p independence (GL(2) holonomy) | `isometry.py` | Statistical |
+| — | Commutator depth: `depth([M,N]) ≥ depth(M)+depth(N)` | `iwasawa.py` | Verified |
+| — | p-adic convergence law: `v_p(x_n-x*) = m^n·v_p(x₀-x*)` | `padic_roots.py` | Proven, zero variance |
+| — | Newton correction uniformity (first step) | `padic_roots.py` | Empirical |
+
+## Fast Function Reference
+
+| Function | Location | Purpose |
+|----------|----------|---------|
+| `DualNumber(n, k)` | `core.py` | Decompose n into (v, α, e) |
+| `DualNumber.from_coords(v, α, e, k)` | `core.py` | Build from coordinates |
+| `modinv_newton(a, k)` | `core.py` | `a⁻¹ mod 2^k` via Newton |
+| `two_adic_dlog(a, k)` | `core.py` | `(α, e)` decomposition |
+| `two_adic_log5(k)` | `core.py` | 2-adic log of 5, cached |
+| `ExponentSpace(g, k)` | `exponent.py` | `e ↦ g^e` with difference calculus |
+| `OperatorContext(k, g)` | `operators.py` | I, S, diff, avg, M(h) |
+| `BasinExplorer(k, g, a)` | `basin.py` | Newton basin portrait |
+| `SeedThermodynamics(k)` | `thermodynamics.py` | Weight stability analysis |
+| `GhostMap(k)` | `regularization.py` | Precomputed convergence ratios |
+| `ghost_penalty(W, gm)` | `regularization.py` | Penalty + surrogate gradient |
+| `scale_weights(W, scale)` | `scaling.py` | Float-to-int scaling |
+| `cliff_matrix(st, shape)` | `visualise.py` | Reshape cliff scores |
+| `KroneckerCliffScorer(factors)` | `butterfly.py` | Factor cliff scoring |
+| `mersenne_cliff_table(n_max)` | `mersenne.py` | Mersenne cliff thresholds |
+| `verify_isometry(k)` | `isometry.py` | Verify T6a empirically |
+
+## Open Problems
+
+See `research_opportunities.md` for the full list. Key open questions:
+
+1. **Secondary correction**: `ε(n) = v₂(n) - 1` in Mersenne cliff formula at powers of 2
+2. **Bootstrap optimization**: `eprec₀ = k/2` not deployed in core dlog
+3. **CRT stability correlation**: Empirical correlation without theoretical prediction
+4. **Popcount compression**: Unverified correlation from parallel report
+5. **Trace-mod-p bridge**: Why does α(det H) correlate with Tr(H) mod p?
+
+## Documents
+
+| Document | Description |
+|----------|-------------|
+| `index.md` | This file — overview, file table, theorem reference |
+| `mathematics.md` | Full mathematical background |
+| `api.md` | Complete API reference |
+| `mersenne_ghost_theorem.md` | Mersenne Ghost Theorem proof |
+| `bug_history.md` | Bug fix narrative and audit history |
+| `research_opportunities.md` | Open problems, experiments, future directions |

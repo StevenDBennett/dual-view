@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dual-view"
+version = "1.0.0"
+description = "2-adic dual-view diagnostics for quantized neural network weights"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Steven D. Bennett"},
+]
+keywords = ["2-adic", "quantization", "neural-networks", "number-theory", "deep-learning"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.26",
+]
+
+[project.optional-dependencies]
+torch = ["torch>=2.0"]
+scipy = ["scipy>=1.10"]
+dev = [
+    "pytest>=7",
+    "pytest-cov>=4",
+    "flake8>=6",
+    "mypy>=1",
+]
+
+[project.scripts]
+dual-view = "dual_view.__main__:main"
+
+[project.urls]
+repository = "https://github.com/StevenDBennett/dual-view"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["dual_view*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["dual_view"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = false
+ignore_missing_imports = true
