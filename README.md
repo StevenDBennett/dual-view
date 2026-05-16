@@ -2,8 +2,7 @@
 
 **dual-view: a mathematical framework for 2-adic number systems, with diagnostics for quantized neural network weights.**
 
-This package provides a mathematical framework for analyzing quantized integer
-weight matrices using 2-adic arithmetic. The core insight is that every odd
+This package provides a mathematical framework for 2-adic number systems, with diagnostics for quantized neural network weights. The core insight is that every odd
 integer modulo `2^k` decomposes uniquely as:
 
 ```
