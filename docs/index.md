@@ -38,6 +38,7 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | `mersenne.py` | 238 | Mersenne Ghost Theorem, bootstrap optimality |
 | `isometry.py` | 265 | Exponential isometry, operator algebra theorems |
 | `butterfly_seed.py` | 499 | Dual-view Newton projector, clean-prime analysis, QASM |
+| `bridge.py` | 280 | Three-seed 2-adic weight analysis (depth histogram, map, sign) |
 | `training.py` | 240 | PyTorch QuantizedMLP with ghost regularization |
 | `newton_dynamics/` | 5 modules | p-adic Newton dynamics for N(x) = (2x³+1)/(3x²) |
 | `demo.py` | 172 | Runnable demonstration suite |
@@ -89,6 +90,9 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | `analyze_prime(p)` | `butterfly_seed.py` | Classify prime by Newton functional graph |
 | `DualViewSeed(k, a)` | `butterfly_seed.py` | Position-dependent butterfly seed builder |
 | `dual_view_qasm_emitter(k, a, p)` | `butterfly_seed.py` | OpenQASM 2.0 circuit generator |
+| `SpectralThermodynamics.analyze(S)` | `bridge.py` | Spectral classification of seed matrices |
+| `ButterflyBridge(k)` | `bridge.py` | Three-seed unified weight analysis |
+| `quantize(W, k)` | `bridge.py` | Symmetric min-max quantisation to Z/2^k |
 
 ## Open Problems
 
