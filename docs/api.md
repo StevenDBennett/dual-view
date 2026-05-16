@@ -211,6 +211,44 @@ ASCII density heatmap.
 #### `cliff_stats_by_layer(layers) -> str`
 Per-layer statistics table.
 
+## Butterfly Seed Module (`dual_view.butterfly_seed`)
+
+Bridges the 2-adic Newton dynamics with the butterfly compiler's position-dependent operad framework.
+
+#### `analyze_prime(p: int) -> CleanPrimeProfile`
+Classify prime `p` by the thermodynamics of its Newton functional graph over `F_p^*`. Returns `CleanPrimeProfile` with fields: `is_clean`, `roots` (cube roots of 1), `nilpotency_index`, `basin_ordering`, `tree_depths`, `obstruction` ("clean", "ghost_cycle", "pole_chain", "mixed").
+
+Clean primes (known: 7, 103, 181) have functional graphs that are rooted forests with exactly 3 trees.
+
+#### `CleanPrimeProfile` (dataclass)
+- `p: int` — the prime
+- `is_clean: bool` — whether the functional graph is a 3-tree forest
+- `roots: Tuple[int, ...]` — cube roots of 1 mod p
+- `nilpotency_index: int` — max basin depth (0 if not clean)
+- `basin_ordering: List[int]` — F_p^* ordered by depth (deepest first)
+- `tree_depths: dict` — x → depth until root
+- `obstruction: str` — classification string
+
+#### `DualViewSeed(k: int, target_a: int, g: int = 5)`
+2-adic Newton projector on the exponent space as a position-dependent butterfly seed.
+
+**Methods**:
+- `newton_step_e(e)` — single Newton update on exponent e (mod N)
+- `build_position_dependent_seeds()` — list-of-lists of 2×2 complex seeds for each butterfly stage
+- `thermodynamic_signature()` — dict with spectral_radius, is_unitary, etc.
+- `solvability_report()` — Lie algebra solvability analysis (metabelian, depth 2)
+
+#### `dual_view_qasm_emitter(k: int, target_a: int, p_clean: Optional[int] = None) -> str`
+Generate OpenQASM 2.0 for the full dual-view Newton pipeline:
+1. State preparation via Hensel bootstrap
+2. QFT on exponent register
+3. Newton diagonal phase accumulation
+4. Inverse QFT
+5. Valuation guard (cliff detector)
+6. Measurement
+
+If `p_clean` is provided, circuit is vacuum-optimised.
+
 ## Butterfly Module (`dual_view.butterfly`)
 
 #### `KroneckerCliffScorer(factors, k_range, scale_mode='round', ensure_odd=True)`

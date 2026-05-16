@@ -41,6 +41,8 @@ where certain weights become numerically unstable under Newton iteration
 - **Iwasawa decomposition**: GL(2) congruence filtration, LDU, commutator
   depth theorem
 - **Mersenne Ghost Theorem**: Full proof and bootstrap optimality
+- **Butterfly seed**: Dual-view Newton projector as butterfly-compilable seed,
+  clean-prime analysis, OpenQASM circuit generation
 - **PyTorch integration**: QuantizedMLP with ghost-regularized training
   (optional dependency)
 
@@ -108,6 +110,7 @@ print(stats["mean_v2_e"], stats["cliff_risk"])
 | `iwasawa` | GL(2) congruence filtration, LDU decomposition |
 | `mersenne` | Mersenne Ghost Theorem, bootstrap optimality |
 | `isometry` | Exponential isometry, operator algebra theorems |
+| `butterfly_seed` | Dual-view Newton projector, clean-prime analysis, QASM |
 | `training` | PyTorch QuantizedMLP with ghost regularisation |
 
 ```python

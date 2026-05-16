@@ -37,6 +37,7 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | `iwasawa.py` | 248 | GL(2) congruence filtration, LDU |
 | `mersenne.py` | 238 | Mersenne Ghost Theorem, bootstrap optimality |
 | `isometry.py` | 265 | Exponential isometry, operator algebra theorems |
+| `butterfly_seed.py` | 499 | Dual-view Newton projector, clean-prime analysis, QASM |
 | `training.py` | 240 | PyTorch QuantizedMLP with ghost regularization |
 | `newton_dynamics/` | 5 modules | p-adic Newton dynamics for N(x) = (2x³+1)/(3x²) |
 | `demo.py` | 172 | Runnable demonstration suite |
@@ -85,6 +86,9 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | `poly_mul(p, q)` | `newton_dynamics/` | Polynomial multiplication |
 | `tonelli_shanks(n, p)` | `newton_dynamics/` | Modular square root |
 | `is_cube(a, p)` | `newton_dynamics/` | Cube residue modulo p |
+| `analyze_prime(p)` | `butterfly_seed.py` | Classify prime by Newton functional graph |
+| `DualViewSeed(k, a)` | `butterfly_seed.py` | Position-dependent butterfly seed builder |
+| `dual_view_qasm_emitter(k, a, p)` | `butterfly_seed.py` | OpenQASM 2.0 circuit generator |
 
 ## Open Problems
 
@@ -111,3 +115,4 @@ See `research_opportunities.md` for the full list. Key open questions:
 | `newton_dynamics/computation_data.md` | Period-by-period data tables |
 | `newton_dynamics/clean_primes.md` | Clean prime analysis (7, 103, 181) |
 | `newton_dynamics/status.md` | Research status and open problems |
+| `unified_dual_view_butterfly_guidance.md` | Synthesis: dual-view × butterfly compiler research roadmap |
