@@ -302,3 +302,68 @@ MNIST data loaders.
 
 #### `train(model, train_loader, test_loader, epochs=5, lr=0.001, ghost_map=None, ghost_scale=0.01, device=None, use_thermodynamics=False, thermo_k=8) -> Dict`
 Training loop with optional ghost regularisation and thermodynamics tracking. Returns history with loss, acc, grad_norm, ghost_penalty, (optionally cliff_risk, alpha_fraction).
+
+## Newton Dynamics Module (`dual_view.newton_dynamics`)
+
+p-adic Newton dynamics for the rational map `N(x) = (2x³+1)/(3x²)`.
+
+### Polynomial Arithmetic (`poly.py`)
+
+#### `poly_mul(p: List[int], q: List[int]) -> List[int]`
+Polynomial multiplication (coefficient-list convolution).
+
+#### `poly_add(p: List[int], q: List[int]) -> List[int]`
+Polynomial addition.
+
+#### `poly_scalar_mul(p: List[int], c: int) -> List[int]`
+Polynomial scalar multiplication.
+
+#### `poly_pow(p: List[int], n: int) -> List[int]`
+Polynomial power.
+
+#### `poly_divmod(dividend: List[int], divisor: List[int]) -> Tuple[List[int], List[int]]`
+Polynomial division. Returns `(quotient, remainder)`.
+
+### Newton Iterates (`iterates.py`)
+
+#### `mobius(n: int) -> int`
+Möbius function μ(n).
+
+#### `compute_iterates(max_k: int) -> List[Tuple[List[int], List[int]]]`
+Compute (A_d, B_d) for d = 0, …, max_k for the Newton map recurrence:
+- `A_{d+1} = 2·A_d³ + B_d³`
+- `B_{d+1} = 3·A_d²·B_d`
+- `A_0 = x`, `B_0 = 1`
+
+### Dynatomic Polynomial (`dynatomic.py`)
+
+#### `dynatomic_polynomial(period: int, iterates: List[Tuple]) -> List[int]`
+Compute Φ_n^*(u) in u = x³ via Möbius inversion. Returns coefficient list from constant term to leading term.
+
+### Clean Primes (`clean_primes.py`)
+
+#### `is_cube(a: int, p: int) -> bool`
+Check whether a is a cube modulo prime p.
+
+#### `tonelli_shanks(n: int, p: int) -> Optional[int]`
+Tonelli–Shanks modular square root. Returns x with x² ≡ n (mod p), or None.
+
+#### `check_quadratic_cube_roots(a, b, c, p) -> bool`
+Check whether ax² + bx + c ≡ 0 (mod p) has a root that is a cube modulo p.
+
+### Precomputed Data (`data.py`)
+
+#### `COEFFS_PERIOD4: List[int]`
+Period-4 dynatomic coefficients (25 entries, degree 24 in u).
+
+#### `COEFFS_PERIOD5: List[int]`
+Period-5 dynatomic coefficients (81 entries, degree 80 in u).
+
+#### `MULTIPLIERS_PERIOD5: List[Tuple[float, float]]`
+16 period-5 multipliers as (real, imag) pairs.
+
+#### `load_period6_coefficients(path: str = "") -> List[int]`
+Load period-6 coefficients from file. Returns 233 entries, degree 232 in u.
+
+#### `PERIOD6_PREDICTED: Dict`
+Predicted invariants for period 6: mu3, deg_u, deg_x, phi_at_0, phi_at_1_power, prod_mu_power.

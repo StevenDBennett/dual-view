@@ -120,7 +120,18 @@ For the 2-adic dlog problem, higher-order methods (Halley, composed Newton) have
 - Order-m trajectory separation: `n*(s) = ceil(log_m(s)) - 1` (generalising T2)
 - Order-m ghost formula (generalising T4)
 
-### 4.4 Frobenius Coin Problem and Cliff Prediction
+### 4.4 Newton Dynamics Open Problems (from `newton_dynamics/`)
+
+Open problems from the p-adic Newton dynamics research:
+
+1. **Exact period-4 Galois group**: identify in `S₆ wr V₄` using GAP/Magma
+2. **Prove clean primes = {7, 103, 181}**: obstruction accumulation argument
+3. **Compute period-6 multipliers**: numerical computation from the 233 coefficients
+4. **Closed form for individual multipliers**: not just the product formula
+5. **Relate K₂ to ray class fields** of `ℚ(ζ₃)`
+6. **Generalize to degree d maps**: beyond the cubic case
+
+### 4.5 Frobenius Coin Problem and Cliff Prediction
 
 The Mersenne cliff `k* = n+2` is a diophantine solution to the equation `5^e ≡ 2^n - 1 (mod 2^k)`. Generalising to arbitrary weights gives a Frobenius coin problem: for which `(w, k)` does the Newton iteration have ghost attractors? The answer depends on the 2-adic expansion of `log₅(w)`.
 

@@ -32,6 +32,7 @@ padic_roots      — Multi-order p-adic root finding
 iwasawa          — GL(2) congruence filtration and LDU decomposition
 mersenne         — Mersenne Ghost Theorem and bootstrap optimality
 isometry         — Exponential isometry and operator algebra theorems
+newton_dynamics  — p-adic Newton dynamics for N(x) = (2x³+1)/(3x²)
 training         — PyTorch quantized MLP with ghost reg. (if torch avail)
 demo             — Runnable demonstration suite
 """
@@ -81,6 +82,17 @@ from .iwasawa import (
     matrix_coordinates, holonomy_depth_profile, filtration_portrait,
     matrix_commutator, verify_commutator_depth, MatrixCoordinates,
 )
+from .newton_dynamics import (
+    poly_mul, poly_add, poly_scalar_mul, poly_pow, poly_divmod,
+    mobius, compute_iterates,
+    dynatomic_polynomial,
+    is_cube, tonelli_shanks, check_quadratic_cube_roots,
+    COEFFS_PERIOD4, COEFFS_PERIOD5,
+    MULTIPLIERS_PERIOD5,
+    load_period6_coefficients,
+    PERIOD6_PREDICTED,
+)
+
 from .mersenne import (
     mersenne_coordinates, verify_core_identity, mersenne_cliff_table,
     bootstrap_cost, optimal_bootstrap, compare_bootstrap_strategies,
@@ -139,6 +151,15 @@ __all__ = [
     "mersenne_coordinates", "verify_core_identity", "mersenne_cliff_table",
     "bootstrap_cost", "optimal_bootstrap", "compare_bootstrap_strategies",
     "dlog_with_lut", "verify_lut_dlog",
+    # newton_dynamics
+    "poly_mul", "poly_add", "poly_scalar_mul", "poly_pow", "poly_divmod",
+    "mobius", "compute_iterates",
+    "dynatomic_polynomial",
+    "is_cube", "tonelli_shanks", "check_quadratic_cube_roots",
+    "COEFFS_PERIOD4", "COEFFS_PERIOD5",
+    "MULTIPLIERS_PERIOD5",
+    "load_period6_coefficients",
+    "PERIOD6_PREDICTED",
     # isometry
     "verify_isometry", "isometry_pair_test", "isometry_summary",
     "verify_operator_algebra", "trace_alpha_independence",

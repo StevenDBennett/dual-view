@@ -176,3 +176,27 @@ For solving `x³ ≡ a (mod p^k)` with `p ≠ 2, 3`, multiple methods converge a
 | Triple Newton | 8 | Three Newton steps |
 
 The convergence law is exact: `v_p(x_n - x*) = mⁿ · v_p(x₀ - x*)` with zero variance.
+
+## p-adic Newton Dynamics for Cube Roots
+
+For the rational map `N(x) = (2x³+1)/(3x²)` (Newton's method for cube roots), the iterates `N^d(x) = A_d(x)/B_d(x)` satisfy:
+
+```
+A_{d+1} = 2·A_d³ + B_d³
+B_{d+1} = 3·A_d²·B_d
+```
+
+**Dynatomic polynomials** count points of exact period n:
+
+```
+Φ_n^*(x) = ∏_{d|n} (N^d(x) - x)^{μ(n/d)}
+```
+
+Via the symmetry `N(ζx) = ζN(x)` for ζ³ = 1, all dynatomic polynomials are polynomials in `u = x³`. Degree: `μ₃(n) = Σ_{d|n} μ(n/d)·3^d` (see `docs/newton_dynamics/computation_data.md` for the table).
+
+**Special value formulas** (proven):
+- `Φ_n^*(0) = 2^{μ₃(n)/6}` (T7)
+- `Φ_n^*(1) = 3^{μ₃(n)/2}` (T8)
+- `∏μ = 6^{μ₃(n)/6}` (T9)
+
+See `docs/newton_dynamics/theorems.md` for full proofs.

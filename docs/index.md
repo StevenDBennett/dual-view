@@ -38,6 +38,7 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | `mersenne.py` | 238 | Mersenne Ghost Theorem, bootstrap optimality |
 | `isometry.py` | 265 | Exponential isometry, operator algebra theorems |
 | `training.py` | 240 | PyTorch QuantizedMLP with ghost regularization |
+| `newton_dynamics/` | 5 modules | p-adic Newton dynamics for N(x) = (2x³+1)/(3x²) |
 | `demo.py` | 172 | Runnable demonstration suite |
 
 ## Theorem Reference
@@ -55,6 +56,9 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | — | Commutator depth: `depth([M,N]) ≥ depth(M)+depth(N)` | `iwasawa.py` | Verified |
 | — | p-adic convergence law: `v_p(x_n-x*) = m^n·v_p(x₀-x*)` | `padic_roots.py` | Proven, zero variance |
 | — | Newton correction uniformity (first step) | `padic_roots.py` | Empirical |
+| T7 | Dynatomic special value: `Φ_n^*(0) = 2^{μ₃(n)/6}` | `newton_dynamics/` | Proven |
+| T8 | Dynatomic special value: `Φ_n^*(1) = 3^{μ₃(n)/2}` | `newton_dynamics/` | Proven |
+| T9 | Universal multiplier product: `∏μ = 6^{μ₃(n)/6}` | `newton_dynamics/` | Proven |
 
 ## Fast Function Reference
 
@@ -76,6 +80,11 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | `KroneckerCliffScorer(factors)` | `butterfly.py` | Factor cliff scoring |
 | `mersenne_cliff_table(n_max)` | `mersenne.py` | Mersenne cliff thresholds |
 | `verify_isometry(k)` | `isometry.py` | Verify T6a empirically |
+| `compute_iterates(k)` | `newton_dynamics/` | Compute Newton iterates A_d, B_d |
+| `dynatomic_polynomial(n, iters)` | `newton_dynamics/` | Dynatomic polynomial Φ_n^*(u) |
+| `poly_mul(p, q)` | `newton_dynamics/` | Polynomial multiplication |
+| `tonelli_shanks(n, p)` | `newton_dynamics/` | Modular square root |
+| `is_cube(a, p)` | `newton_dynamics/` | Cube residue modulo p |
 
 ## Open Problems
 
@@ -97,3 +106,8 @@ See `research_opportunities.md` for the full list. Key open questions:
 | `mersenne_ghost_theorem.md` | Mersenne Ghost Theorem proof |
 | `bug_history.md` | Bug fix narrative and audit history |
 | `research_opportunities.md` | Open problems, experiments, future directions |
+| `newton_dynamics/index.md` | p-adic Newton dynamics — overview, quick-start |
+| `newton_dynamics/theorems.md` | Full proofs of all 4 theorems |
+| `newton_dynamics/computation_data.md` | Period-by-period data tables |
+| `newton_dynamics/clean_primes.md` | Clean prime analysis (7, 103, 181) |
+| `newton_dynamics/status.md` | Research status and open problems |
