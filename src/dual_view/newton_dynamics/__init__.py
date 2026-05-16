@@ -25,6 +25,7 @@ from .clean_primes import is_cube, tonelli_shanks, check_quadratic_cube_roots
 from .data import (
     COEFFS_PERIOD4,
     COEFFS_PERIOD5,
+    MULTIPLIERS_PERIOD4,
     MULTIPLIERS_PERIOD5,
     load_period6_coefficients,
     PERIOD6_PREDICTED,
@@ -36,7 +37,7 @@ __all__ = [
     "dynatomic_polynomial",
     "is_cube", "tonelli_shanks", "check_quadratic_cube_roots",
     "COEFFS_PERIOD4", "COEFFS_PERIOD5",
-    "MULTIPLIERS_PERIOD5",
+    "MULTIPLIERS_PERIOD4", "MULTIPLIERS_PERIOD5",
     "load_period6_coefficients",
     "PERIOD6_PREDICTED",
 ]

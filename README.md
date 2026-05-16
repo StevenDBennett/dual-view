@@ -35,6 +35,9 @@ where certain weights become numerically unstable under Newton iteration
   zero variance)
 - **Fourier analysis**: DFT of step-count function, dyadic spectrum
 - **p-adic root finding**: Newton, Halley, composed methods (order 2/3/4/8)
+- **p-adic Newton dynamics**: Dynatomic polynomials, multiplier analysis,
+  clean primes {7, 103, 181}, 4 proven theorems (special values, product
+  formula, period-4 identity)
 - **Iwasawa decomposition**: GL(2) congruence filtration, LDU, commutator
   depth theorem
 - **Mersenne Ghost Theorem**: Full proof and bootstrap optimality
@@ -101,10 +104,23 @@ print(stats["mean_v2_e"], stats["cliff_risk"])
 | `separation` | Trajectory Separation Theorem |
 | `fourier` | DFT of Newton step-count function |
 | `padic_roots` | Multi-order p-adic root finding (Newton, Halley) |
+| `newton_dynamics` | Dynatomic polynomials, multipliers, clean primes |
 | `iwasawa` | GL(2) congruence filtration, LDU decomposition |
 | `mersenne` | Mersenne Ghost Theorem, bootstrap optimality |
 | `isometry` | Exponential isometry, operator algebra theorems |
 | `training` | PyTorch QuantizedMLP with ghost regularisation |
+
+```python
+from dual_view.newton_dynamics import dynatomic_polynomial, compute_iterates
+
+# Compute dynatomic polynomial for period-2
+iters = compute_iterates(2)
+phi2 = dynatomic_polynomial(2, iters)  # → [2, 5, 20] = 20u² + 5u + 2
+
+# Period-4: degree 24, Φ(0) = 2¹², Φ(1) = 3³⁶
+iters = compute_iterates(4)
+phi4 = dynatomic_polynomial(4, iters)  # 25 coefficients
+```
 
 ## Running Tests
 

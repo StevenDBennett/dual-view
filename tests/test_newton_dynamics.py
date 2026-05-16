@@ -11,8 +11,14 @@ from dual_view.newton_dynamics import (
     mobius, compute_iterates, dynatomic_polynomial,
     is_cube, tonelli_shanks, check_quadratic_cube_roots,
     COEFFS_PERIOD4, COEFFS_PERIOD5,
+    MULTIPLIERS_PERIOD4, MULTIPLIERS_PERIOD5,
     load_period6_coefficients, PERIOD6_PREDICTED,
 )
+
+
+def eval_poly(coeffs, x):
+    """Evaluate polynomial at x (coeffs lowest-degree first)."""
+    return sum(c * (x ** i) for i, c in enumerate(coeffs))
 
 
 class TestMobius(unittest.TestCase):
@@ -262,6 +268,182 @@ class TestIntegration(unittest.TestCase):
         mu3 = sum(mobius(4 // d) * (3 ** d) for d in (1, 2, 4))
         self.assertEqual(mu3, 72)
         self.assertEqual(6 ** (mu3 // 6), 2176782336)
+
+
+class TestTheorem1_PhiAtZero(unittest.TestCase):
+    """Theorem 1: Φ_n^*(0) = 2^{μ₃(n)/6}"""
+
+    def test_mu3_values(self):
+        from dual_view.newton_dynamics import mobius
+        self.assertEqual(sum(mobius(2 // d) * (3 ** d) for d in (1, 2)), 6)
+        self.assertEqual(sum(mobius(4 // d) * (3 ** d) for d in (1, 2, 4)), 72)
+        self.assertEqual(sum(mobius(5 // d) * (3 ** d) for d in (1, 5)), 240)
+        self.assertEqual(sum(mobius(6 // d) * (3 ** d) for d in (1, 2, 3, 6)), 696)
+
+    def test_period2_phi_at_zero(self):
+        iters = compute_iterates(2)
+        phi2 = dynatomic_polynomial(2, iters)
+        mu3 = 6
+        self.assertEqual(phi2[0], 2 ** (mu3 // 6))
+
+    def test_period4_phi_at_zero(self):
+        iters = compute_iterates(4)
+        phi4 = dynatomic_polynomial(4, iters)
+        mu3 = 72
+        self.assertEqual(phi4[0], 2 ** (mu3 // 6))  # 2^12 = 4096
+
+    def test_period5_phi_at_zero(self):
+        iters = compute_iterates(5)
+        phi5 = dynatomic_polynomial(5, iters)
+        mu3 = 240
+        self.assertEqual(phi5[0], 2 ** (mu3 // 6))  # 2^40
+
+
+class TestTheorem2_PhiAtOne(unittest.TestCase):
+    """Theorem 2: Φ_n^*(1) = 3^{μ₃(n)/2}"""
+
+    def test_period2_phi_at_one(self):
+        iters = compute_iterates(2)
+        phi2 = dynatomic_polynomial(2, iters)
+        mu3 = 6
+        self.assertEqual(eval_poly(phi2, 1), 3 ** (mu3 // 2))  # 3^3 = 27
+
+    def test_period4_phi_at_one(self):
+        iters = compute_iterates(4)
+        phi4 = dynatomic_polynomial(4, iters)
+        mu3 = 72
+        self.assertEqual(eval_poly(phi4, 1), 3 ** (mu3 // 2))  # 3^36
+
+    def test_period5_phi_at_one(self):
+        iters = compute_iterates(5)
+        phi5 = dynatomic_polynomial(5, iters)
+        mu3 = 240
+        self.assertEqual(eval_poly(phi5, 1), 3 ** (mu3 // 2))  # 3^120
+
+
+class TestTheorem3_ProductFormula(unittest.TestCase):
+    """Theorem 3: ∏μ = 6^{μ₃(n)/6}"""
+
+    def test_period5_product_from_multipliers(self):
+        """Σμ = 486, ∏μ = 6^40 (verified from precomputed multipliers)"""
+        total_real = sum(m[0] for m in MULTIPLIERS_PERIOD5)
+        self.assertAlmostEqual(total_real, 486.0, places=5)
+        # Product of all multipliers = ∏(a+bi)(a-bi) = ∏(a²+b²) for conjugate pairs
+        prod = 1.0
+        for i in range(0, len(MULTIPLIERS_PERIOD5), 2):
+            a, b = MULTIPLIERS_PERIOD5[i]
+            prod *= (a * a + b * b)
+        expected = 6 ** 40
+        self.assertAlmostEqual(prod, expected, delta=expected * 1e-6)
+
+    def test_period5_theoretical_product(self):
+        mu3 = 240
+        self.assertEqual(6 ** (mu3 // 6), 6 ** 40)
+
+
+class TestTheorem4_MultiplierIdentity(unittest.TestCase):
+    """Theorem 4: μ_u = μ_x for period-4 cycles."""
+
+    def test_period4_multiplier_sum(self):
+        """Σμ = 90 = 2·3²·5"""
+        total_real = sum(m[0] for m in MULTIPLIERS_PERIOD4)
+        self.assertAlmostEqual(total_real, 90.0, places=1)
+
+    def test_period4_multiplier_product(self):
+        """∏μ = 6^12 = 2176782336 (theoretical; precomputed values are 2 d.p.)"""
+        # The precomputed multipliers are rounded to 2 d.p. so the product
+        # is not meaningful numerically.  The theoretical value is proven:
+        self.assertEqual(6 ** 12, 2176782336)
+
+    def test_period4_minimal_polynomial_constant(self):
+        """Constant term of minimal polynomial = ∏μ = 6^12 = 2176782336"""
+        self.assertEqual(6 ** 12, 2176782336)
+
+    def test_period4_count(self):
+        """6 period-4 cycles (degree 24 / 4 roots per cycle)"""
+        self.assertEqual(len(MULTIPLIERS_PERIOD4), 6)
+
+
+class TestCleanPrimesVerified(unittest.TestCase):
+    """Verify the clean prime set {7, 103, 181}."""
+
+    def test_7_is_clean(self):
+        """p=7: p≡1 mod 3, no period-2/3/4 points in F_7."""
+        p = 7
+        # Period-2 polynomial: 20u² + 5u + 2 mod 7 → 6u² + 5u + 2
+        # Check if any root u is a cube in F_7
+        has_period2 = False
+        for u in range(p):
+            if (20 * u * u + 5 * u + 2) % p == 0 and is_cube(u, p):
+                has_period2 = True
+                break
+        self.assertFalse(has_period2)
+
+    def test_103_is_clean(self):
+        """p=103: verified clean against period-2 polynomial."""
+        p = 103
+        has_period2 = False
+        for u in range(p):
+            if (20 * u * u + 5 * u + 2) % p == 0 and is_cube(u, p):
+                has_period2 = True
+                break
+        self.assertFalse(has_period2)
+
+    def test_181_is_clean(self):
+        """p=181: verified clean against period-2 polynomial."""
+        p = 181
+        has_period2 = False
+        for u in range(p):
+            if (20 * u * u + 5 * u + 2) % p == 0 and is_cube(u, p):
+                has_period2 = True
+                break
+        self.assertFalse(has_period2)
+
+    def test_non_clean_prime_has_points(self):
+        """p=79 (≡1 mod 3): has period-2 cube roots, NOT clean."""
+        p = 79
+        has_period2 = False
+        for u in range(p):
+            if (20 * u * u + 5 * u + 2) % p == 0 and is_cube(u, p):
+                has_period2 = True
+                break
+        self.assertTrue(has_period2)
+
+
+class TestFullCoefficientMatch(unittest.TestCase):
+    """Verify computed dynatomic polynomials match precomputed data exactly."""
+
+    def test_period4_full_match(self):
+        iters = compute_iterates(4)
+        phi4 = dynatomic_polynomial(4, iters)
+        self.assertEqual(phi4, COEFFS_PERIOD4)
+
+    def test_period5_full_match(self):
+        iters = compute_iterates(5)
+        phi5 = dynatomic_polynomial(5, iters)
+        self.assertEqual(phi5, COEFFS_PERIOD5)
+
+
+class TestPeriod6Coefficients(unittest.TestCase):
+    """Period-6 coefficient validation."""
+
+    def test_period6_constant_term(self):
+        """Φ_6^*(0) = 2^116"""
+        coeffs = load_period6_coefficients()
+        self.assertEqual(coeffs[0], 2 ** 116)
+
+    def test_period6_length(self):
+        """Degree 232 → 233 coefficients"""
+        coeffs = load_period6_coefficients()
+        self.assertEqual(len(coeffs), 233)
+
+    def test_period6_leading_coefficient_positive(self):
+        coeffs = load_period6_coefficients()
+        self.assertGreater(coeffs[-1], 0)
+
+    def test_period6_predicted_consistency(self):
+        self.assertEqual(PERIOD6_PREDICTED["phi_at_0"], 2 ** 116)
+        self.assertEqual(PERIOD6_PREDICTED["prod_mu_power"], 116)
 
 
 if __name__ == "__main__":

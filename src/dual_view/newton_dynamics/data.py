@@ -18,6 +18,7 @@ from typing import List, Tuple
 __all__ = [
     "COEFFS_PERIOD4",
     "COEFFS_PERIOD5",
+    "MULTIPLIERS_PERIOD4",
     "MULTIPLIERS_PERIOD5",
     "load_period6_coefficients",
     "PERIOD6_PREDICTED",
