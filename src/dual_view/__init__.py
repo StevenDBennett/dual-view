@@ -33,6 +33,7 @@ iwasawa          — GL(2) congruence filtration and LDU decomposition
 mersenne         — Mersenne Ghost Theorem and bootstrap optimality
 isometry         — Exponential isometry and operator algebra theorems
 newton_dynamics  — p-adic Newton dynamics for N(x) = (2x³+1)/(3x²)
+butterfly_seed   — Dual-view Newton projector as butterfly-compilable seed
 training         — PyTorch quantized MLP with ghost reg. (if torch avail)
 demo             — Runnable demonstration suite
 """
@@ -103,6 +104,10 @@ from .isometry import (
     verify_operator_algebra, trace_alpha_independence,
     trace_exponent_independence, exponent_valuation_profile,
 )
+from .butterfly_seed import (
+    DualViewSeed, analyze_prime, dual_view_qasm_emitter,
+    CleanPrimeProfile,
+)
 
 __all__ = [
     # core
@@ -164,4 +169,7 @@ __all__ = [
     "verify_isometry", "isometry_pair_test", "isometry_summary",
     "verify_operator_algebra", "trace_alpha_independence",
     "trace_exponent_independence", "exponent_valuation_profile",
+    # butterfly_seed
+    "DualViewSeed", "analyze_prime", "dual_view_qasm_emitter",
+    "CleanPrimeProfile",
 ]
