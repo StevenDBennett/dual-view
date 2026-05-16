@@ -34,6 +34,7 @@ mersenne         — Mersenne Ghost Theorem and bootstrap optimality
 isometry         — Exponential isometry and operator algebra theorems
 newton_dynamics  — p-adic Newton dynamics for N(x) = (2x³+1)/(3x²)
 butterfly_seed   — Dual-view Newton projector as butterfly-compilable seed
+bridge           — Three-seed 2-adic weight analysis (depth, map, sign)
 training         — PyTorch quantized MLP with ghost reg. (if torch avail)
 demo             — Runnable demonstration suite
 """
@@ -109,6 +110,10 @@ from .butterfly_seed import (
     CleanPrimeProfile,
 )
 
+from .bridge import (
+    SpectralThermodynamics, ButterflyBridge, LayerReport, ModelReport,
+)
+
 __all__ = [
     # core
     "modinv_newton", "two_adic_log5", "two_adic_dlog",
@@ -172,4 +177,9 @@ __all__ = [
     # butterfly_seed
     "DualViewSeed", "analyze_prime", "dual_view_qasm_emitter",
     "CleanPrimeProfile",
+    # bridge
+    "SpectralThermodynamics",
+    "ButterflyBridge",
+    "LayerReport",
+    "ModelReport",
 ]

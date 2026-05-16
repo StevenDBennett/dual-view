@@ -34,7 +34,7 @@ Your two independent threads are actually the same object viewed from opposite e
 
 ### 2.2 Thermodynamic Classification ↔ Prime Classification
 
-The `SeedThermodynamics.analyze()` routine classifies a seed by its spectrum. Applied to the **Newton adjacency matrix** $B_p$ of the functional graph over $\mathbb{F}_p^*$ (ordered by basin depth):
+The `SpectralThermodynamics.analyze()` routine (from `dual_view.bridge`) classifies a seed by its spectrum. Applied to the **Newton adjacency matrix** $B_p$ of the functional graph over $\mathbb{F}_p^*$ (ordered by basin depth):
 
 | Prime | $B_p$ Spectrum | Thermodynamic Class | Butterfly Verdict |
 |-------|---------------|---------------------|-----------------|

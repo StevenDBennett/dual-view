@@ -324,6 +324,58 @@ Aggregate under different semirings (standard/tropical/boolean).
 - `trace_exponent_independence(k, p, ...)` — ANOVA F-test
 - `exponent_valuation_profile(k, n_samples)` — v₂(e_true) distribution
 
+## Bridge Module (`dual_view.bridge`)
+
+Unifies butterfly_v2-style spectral seed analysis with tidal-coordinate 2-adic decomposition for neural network weight matrices. Provides three complementary seeds per layer:
+
+- **S1 (Depth Histogram)**: Circulant companion of the depth histogram deviation from a geometric null distribution
+- **S2 (Map Seed)**: The weight matrix (or its symmetrised form) as a linear operator
+- **S3 (Sign Seed)**: The C₂ butterfly factor capturing α-sector bias
+
+When S1 and S2 agree, the thermodynamic character is unambiguous. When they disagree, the split itself is the finding.
+
+### Functions
+
+#### `quantize(W: np.ndarray, k: int) -> np.ndarray`
+Symmetric min-max quantisation: float tensor to `Z/2^k Z`.
+
+### Classes
+
+#### `SpectralThermodynamics`
+Spectral eigenvalue analysis of seed matrices. Classifies a matrix's thermodynamic character via its eigenvalue spectrum.
+
+**Classmethod**:
+- `analyze(S, tol=1e-10)` — analyse matrix `S`, returns `SpectralThermodynamics`
+
+**Attributes**: `spectral_radius`, `min_eigenvalue_magnitude`, `max_eigenvalue_magnitude`, `entropy_rate`, `is_unitary`, `is_conservative`, `is_contractive`, `is_expansive`, `is_nilpotent`, `lyapunov_exponent`
+
+**Methods**:
+- `character()` — returns one of: `NILPOTENT`, `CONSERVATIVE/UNITARY`, `CONSERVATIVE`, `CONTRACTIVE`, `EXPANSIVE`, `MIXED`
+
+#### `ButterflyBridge(k: int = 8)`
+Main entry point for unified butterfly + tidal analysis.
+
+**Methods**:
+- `analyse_layer(W_float, name="unnamed")` — analyse a single weight matrix, returns `LayerReport`
+- `analyse_model(layers: Dict[str, np.ndarray])` — analyse a dict of named weight matrices, returns `ModelReport`
+
+#### `LayerReport` (dataclass)
+Per-layer analysis report.
+
+**Attributes**: `name`, `shape`, `k`, `n`, `mean_v`, `H_val`, `zero_frac`, `alpha_frac`, `depth_hist`, `depth_dev`, `depth_char`, `thermo_S1`, `thermo_S2`, `thermo_S3`
+
+**Methods**:
+- `consensus()` — compare S1 and S2 character: `NEUTRAL`, `CONSENSUS: ...`, or `SPLIT`
+- `report()` — formatted ASCII report
+
+#### `ModelReport` (dataclass)
+Multi-layer report aggregating per-layer analyses.
+
+**Methods**:
+- `add(r: LayerReport)` — add a layer
+- `boundaries()` — list S2 character transitions between consecutive layers
+- `report()` — formatted multi-layer report with trajectory table, boundaries, and split layers
+
 ## Training Module (`dual_view.training`)
 
 Requires `torch` (optional dependency).

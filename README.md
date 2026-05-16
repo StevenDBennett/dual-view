@@ -111,6 +111,7 @@ print(stats["mean_v2_e"], stats["cliff_risk"])
 | `mersenne` | Mersenne Ghost Theorem, bootstrap optimality |
 | `isometry` | Exponential isometry, operator algebra theorems |
 | `butterfly_seed` | Dual-view Newton projector, clean-prime analysis, QASM |
+| `bridge` | Three-seed 2-adic weight analysis (depth histogram, map, sign) |
 | `training` | PyTorch QuantizedMLP with ghost regularisation |
 
 ```python
