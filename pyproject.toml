@@ -5,13 +5,13 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "dual-view"
 version = "1.0.0"
-description = "dual-view: a mathematical framework for 2-adic number systems, with diagnostics for quantized neural network weights"
+description = "dual-view: a unified framework for 2-adic number systems, p-adic Newton dynamics, spectral geometry, gauge theory, and quantum compilation"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
     {name = "Steven D. Bennett"},
 ]
-keywords = ["2-adic", "quantization", "neural-networks", "number-theory", "deep-learning"]
+keywords = ["2-adic", "p-adic", "number-theory", "newton-dynamics", "spectral-geometry", "noncommutative-geometry", "quantum-compilation", "butterfly-compiler", "quantization"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",

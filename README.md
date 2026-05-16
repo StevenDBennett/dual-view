@@ -1,8 +1,8 @@
 # dual-view
 
-**dual-view: a mathematical framework for 2-adic number systems, with diagnostics for quantized neural network weights.**
+**dual-view: a unified mathematical framework for 2-adic number systems, p-adic Newton dynamics, noncommutative spectral geometry, and quantum butterfly compilation.**
 
-This package provides a mathematical framework for 2-adic number systems, with diagnostics for quantized neural network weights. The core insight is that every odd
+This package provides a unified mathematical framework spanning 2-adic number theory, p-adic dynamics, spectral triples, gauge theory, and quantum circuit synthesis. The core insight is that every odd
 integer modulo `2^k` decomposes uniquely as:
 
 ```
