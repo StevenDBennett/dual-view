@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**dual-view** is a mathematical framework for analyzing quantized neural network weights using 2-adic arithmetic. The core insight is that every odd integer modulo `2^k` decomposes uniquely as:
+**dual-view** is a mathematical framework for 2-adic number systems, with diagnostics for quantized neural network weights. The core insight is that every odd integer modulo `2^k` decomposes uniquely as:
 
 ```
 n = 2^v · (-1)^α · 5^e   (mod 2^k)

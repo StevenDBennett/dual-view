@@ -1,6 +1,6 @@
 # dual-view
 
-**2-adic dual-view diagnostics for quantized neural network weights.**
+**dual-view: a mathematical framework for 2-adic number systems, with diagnostics for quantized neural network weights.**
 
 This package provides a mathematical framework for analyzing quantized integer
 weight matrices using 2-adic arithmetic. The core insight is that every odd

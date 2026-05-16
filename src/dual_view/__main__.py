@@ -12,7 +12,7 @@ import argparse
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="dual-view: 2-adic dual-view diagnostics")
+    parser = argparse.ArgumentParser(description="dual-view: a mathematical framework for 2-adic number systems, with diagnostics for quantized neural network weights")
     parser.add_argument("--quick", action="store_true", help="Skip slow demos")
     parser.add_argument("--test", action="store_true", help="Run test suite")
     parser.add_argument("--version", action="store_true", help="Print version")

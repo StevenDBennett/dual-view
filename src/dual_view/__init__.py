@@ -1,7 +1,7 @@
 """
 dual-view (v1.0.0)
 ===================
-2-adic dual-view diagnostics for quantized neural network weights.
+dual-view: a mathematical framework for 2-adic number systems, with diagnostics for quantized neural network weights.
 
 Every odd integer modulo 2^k decomposes uniquely as a dual-view
 coordinate triple (v, α, e) where:
