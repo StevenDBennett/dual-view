@@ -75,6 +75,7 @@ from .fourier import (
     ultrametric_uncertainty,
 )
 from .padic_roots import (
+    lift_root,
     newton_step, halley_step, newton2_step, newton3_step,
     convergence_profile, compare_methods, verify_order,
     newton_correction_uniformity, popcount_compression,
@@ -99,6 +100,9 @@ from .mersenne import (
     mersenne_coordinates, verify_core_identity, mersenne_cliff_table,
     bootstrap_cost, optimal_bootstrap, compare_bootstrap_strategies,
     dlog_with_lut, verify_lut_dlog,
+    cliff_constant, cliff_formula, mersenne_cliff_theorem,
+    prove_cliff_constant, prove_c_formula, exp2_neg4,
+    cliff_constant_unified, verify_unified_formula, proof_connection,
 )
 from .isometry import (
     verify_isometry, isometry_pair_test, isometry_summary,
@@ -150,6 +154,7 @@ __all__ = [
     "dyadic_coefficients", "analytic_coefficients", "fourier_summary",
     "ultrametric_uncertainty",
     # padic_roots
+    "lift_root",
     "newton_step", "halley_step", "newton2_step", "newton3_step",
     "convergence_profile", "compare_methods", "verify_order",
     "newton_correction_uniformity", "popcount_compression",
@@ -161,6 +166,9 @@ __all__ = [
     "mersenne_coordinates", "verify_core_identity", "mersenne_cliff_table",
     "bootstrap_cost", "optimal_bootstrap", "compare_bootstrap_strategies",
     "dlog_with_lut", "verify_lut_dlog",
+    "cliff_constant", "cliff_formula", "mersenne_cliff_theorem",
+    "prove_cliff_constant", "prove_c_formula", "exp2_neg4",
+    "cliff_constant_unified", "verify_unified_formula", "proof_connection",
     # newton_dynamics
     "poly_mul", "poly_add", "poly_scalar_mul", "poly_pow", "poly_divmod",
     "mobius", "compute_iterates",

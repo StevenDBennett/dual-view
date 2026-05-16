@@ -35,13 +35,13 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | `fourier.py` | 183 | DFT of Newton step-count function |
 | `padic_roots.py` | 262 | Multi-order p-adic root finding |
 | `iwasawa.py` | 248 | GL(2) congruence filtration, LDU |
-| `mersenne.py` | 238 | Mersenne Ghost Theorem, bootstrap optimality |
+| `mersenne.py` | 585 | Mersenne Ghost Theorem, bootstrap optimality, cliff constant proofs |
 | `isometry.py` | 265 | Exponential isometry, operator algebra theorems |
 | `butterfly_seed.py` | 499 | Dual-view Newton projector, clean-prime analysis, QASM |
 | `bridge.py` | 280 | Three-seed 2-adic weight analysis (depth histogram, map, sign) |
 | `training.py` | 240 | PyTorch QuantizedMLP with ghost regularization |
 | `newton_dynamics/` | 5 modules | p-adic Newton dynamics for N(x) = (2x³+1)/(3x²) |
-| `demo.py` | 172 | Runnable demonstration suite |
+| `demo.py` | 212 | Runnable demonstration suite |
 
 ## Theorem Reference
 
@@ -56,6 +56,7 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | T6b | Operator algebra: `avg² = N·avg`, `D·avg = avg·D = 0` | `isometry.py` | Proven |
 | T6c | Trace-mod-p independence (GL(2) holonomy) | `isometry.py` | Statistical |
 | — | Commutator depth: `depth([M,N]) ≥ depth(M)+depth(N)` | `iwasawa.py` | Verified |
+| — | Mersenne cliff constant: `c(g) = v₂(g - exp₂(-4)) - 2` | `mersenne.py` | Proven |
 | — | p-adic convergence law: `v_p(x_n-x*) = m^n·v_p(x₀-x*)` | `padic_roots.py` | Proven, zero variance |
 | — | Newton correction uniformity (first step) | `padic_roots.py` | Empirical |
 | T7 | Dynatomic special value: `Φ_n^*(0) = 2^{μ₃(n)/6}` | `newton_dynamics/` | Proven |
@@ -81,6 +82,10 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | `cliff_matrix(st, shape)` | `visualise.py` | Reshape cliff scores |
 | `KroneckerCliffScorer(factors)` | `butterfly.py` | Factor cliff scoring |
 | `mersenne_cliff_table(n_max)` | `mersenne.py` | Mersenne cliff thresholds |
+| `cliff_constant(g, k)` | `mersenne.py` | Mersenne cliff constant `c = v₂(log₂(g)/4+1)` |
+| `exp2_neg4(k)` | `mersenne.py` | 2-adic zero of `log₂(g)/4+1` |
+| `mersenne_cliff_theorem()` | `mersenne.py` | Verify the full Mersenne cliff theorem |
+| `lift_root(a, p, k)` | `padic_roots.py` | Hensel lift cube root to mod p^k |
 | `verify_isometry(k)` | `isometry.py` | Verify T6a empirically |
 | `compute_iterates(k)` | `newton_dynamics/` | Compute Newton iterates A_d, B_d |
 | `dynatomic_polynomial(n, iters)` | `newton_dynamics/` | Dynatomic polynomial Φ_n^*(u) |

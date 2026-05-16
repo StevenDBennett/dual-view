@@ -120,6 +120,67 @@ def demo_mersenne_cliff(quick: bool = False) -> None:
     print("  Done")
 
 
+def demo_mersenne_theorems(quick: bool = False) -> None:
+    """Mersenne cliff constant proofs (skipped in quick mode)."""
+    if quick:
+        print("\n=== Mersenne Cliff Theorem Proofs (skipped: --quick) ===")
+        return
+    print("\n=== Mersenne Cliff Theorem Proofs ===")
+    from .mersenne import (
+        cliff_constant, cliff_formula,
+        mersenne_cliff_theorem, prove_cliff_constant,
+        prove_c_formula, exp2_neg4,
+        cliff_constant_unified, verify_unified_formula, proof_connection,
+    )
+
+    c = cliff_constant()
+    print(f"  cliff_constant(5) = {c}  (expected 5)")
+    print(f"  {cliff_formula(5)}")
+
+    thm = mersenne_cliff_theorem()
+    print(f"  Theorem all_pass: {thm['all_pass']}")
+    print(f"  Formula: {thm['formula']}")
+
+    pk = prove_cliff_constant()
+    print(f"  prove_cliff_constant: {'PASS' if pk else 'FAIL'}")
+
+    pf = prove_c_formula()
+    print(f"  prove_c_formula: {'PASS' if pf else 'FAIL'}")
+
+    for k in (7, 8, 9, 10, 11):
+        val = exp2_neg4(k)
+        print(f"  exp2_neg4({k}) = {val}")
+
+    uf = verify_unified_formula()
+    print(f"  verify_unified_formula: {'PASS' if uf else 'FAIL'}")
+
+    pc = proof_connection()
+    print(f"  proof_connection: {'PASS' if pc else 'FAIL'}")
+    print("  Done")
+
+
+def demo_lift_root(quick: bool = False) -> None:
+    """p-adic Hensel lift demonstration."""
+    if quick:
+        print("\n=== Hensel Lift (skipped: --quick) ===")
+        return
+    print("\n=== Hensel Lift ===")
+    from .padic_roots import lift_root
+
+    for p in (5, 7, 11, 13):
+        for k in (2, 4, 8):
+            for a in (2, 3, 5, 6):
+                if a % p == 0:
+                    continue
+                root = lift_root(a, p, k)
+                if root is not None:
+                    check = pow(root, 3, p ** k)
+                    ok = check == a % (p ** k)
+                    if not ok:
+                        print(f"  FAIL: lift_root({a}, {p}, {k}) = {root} (check {check} != {a})")
+    print("  Done")
+
+
 def demo_thermodynamics(quick: bool = False) -> None:
     """SeedThermodynamics analysis."""
     print("\n=== Thermodynamics ===")
@@ -149,6 +210,8 @@ def main() -> None:
     demo_gauge(args.quick)
     demo_crt_stability(args.quick)
     demo_mersenne_cliff(args.quick)
+    demo_mersenne_theorems(args.quick)
+    demo_lift_root(args.quick)
     demo_thermodynamics(args.quick)
     demo_ramp_break(args.quick)
 

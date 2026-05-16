@@ -189,6 +189,75 @@ class TestMersenne(unittest.TestCase):
             self.assertEqual(e, e_true)
 
 
+class TestMersenneProofs(unittest.TestCase):
+    """Tests for the Mersenne cliff constant proof functions."""
+
+    def test_cliff_constant(self):
+        from dual_view.mersenne import cliff_constant
+        self.assertEqual(cliff_constant(5), 5)
+
+    def test_cliff_constant_general(self):
+        from dual_view.mersenne import cliff_constant, _valuation
+        for g in (13, 21, 29, 37, 45, 53, 61):
+            c = cliff_constant(g, k=24)
+            s = _valuation(g - 5)
+            expected = min(s - 2, 5)
+            self.assertEqual(c, expected, f"g={g}: c={c}, expected={expected}")
+
+    def test_cliff_formula(self):
+        from dual_view.mersenne import cliff_formula
+        result = cliff_formula(5)
+        self.assertIn("5", result)
+
+    def test_mersenne_cliff_theorem(self):
+        from dual_view.mersenne import mersenne_cliff_theorem
+        thm = mersenne_cliff_theorem()
+        self.assertTrue(thm["all_pass"], f"Theorem failed: {thm}")
+        self.assertEqual(thm["c"], 5)
+
+    def test_prove_cliff_constant(self):
+        from dual_view.mersenne import prove_cliff_constant
+        self.assertTrue(prove_cliff_constant())
+
+    def test_prove_c_formula(self):
+        from dual_view.mersenne import prove_c_formula
+        self.assertTrue(prove_c_formula())
+
+    def test_exp2_neg4(self):
+        from dual_view.mersenne import exp2_neg4
+        self.assertEqual(exp2_neg4(7), 5)
+        self.assertEqual(exp2_neg4(8), 133)
+        self.assertEqual(exp2_neg4(9), 389)
+        self.assertEqual(exp2_neg4(10), 901)
+        self.assertEqual(exp2_neg4(11), 1925)
+
+    def test_cliff_constant_unified(self):
+        from dual_view.mersenne import cliff_constant, cliff_constant_unified
+        for g in (5, 13, 21, 29, 37, 45, 53, 61):
+            d = cliff_constant(g, k=24)
+            u = cliff_constant_unified(g, k=32)
+            self.assertEqual(d, u, f"Mismatch for g={g}: direct={d}, unified={u}")
+
+    def test_verify_unified_formula(self):
+        from dual_view.mersenne import verify_unified_formula
+        self.assertTrue(verify_unified_formula())
+
+    def test_proof_connection(self):
+        from dual_view.mersenne import proof_connection
+        self.assertTrue(proof_connection())
+
+    def test_lift_root(self):
+        from dual_view.padic_roots import lift_root
+        for p in (5, 7, 11, 13):
+            for k in (2, 4):
+                for a in (2, 3, 5, 6):
+                    if a % p == 0:
+                        continue
+                    root = lift_root(a, p, k)
+                    if root is not None:
+                        self.assertEqual(pow(root, 3, p ** k), a % (p ** k))
+
+
 class TestIsometry(unittest.TestCase):
     def test_verify_isometry(self):
         from dual_view.isometry import verify_isometry

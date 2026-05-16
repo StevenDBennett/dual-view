@@ -284,6 +284,7 @@ Aggregate under different semirings (standard/tropical/boolean).
 - `ultrametric_uncertainty(k)` — uncertainty principle statement
 
 ### p-adic Roots (`dual_view.padic_roots`)
+- `lift_root(a, p, k)` — Hensel lift cube root from mod p to mod p^k
 - `newton_step(x, a, pk)` — order 2
 - `halley_step(x, a, pk)` — order 3
 - `newton2_step(x, a, pk)` — order 4 (composed Newton)
@@ -314,6 +315,15 @@ Aggregate under different semirings (standard/tropical/boolean).
 - `compare_bootstrap_strategies(k_values)` — sqrt vs k/2 vs LUT
 - `dlog_with_lut(a, k, b=8)` — LUT-based dlog
 - `verify_lut_dlog(k, b=8, n_trials)` — correctness check
+- `cliff_constant(g, k)` — compute `c = v₂(log₂(g)/4 + 1)`
+- `cliff_formula(g)` — human-readable c(g) formula
+- `mersenne_cliff_theorem(verbose)` — state and verify the full theorem
+- `prove_cliff_constant(verbose)` — prove `c=5` from 4 log-series terms
+- `prove_c_formula(verbose)` — prove `c(g) = v₂(g-5) - 2`
+- `exp2_neg4(k)` — compute `exp₂(-4) mod 2^k`, the zero of `log₂(g)/4+1`
+- `cliff_constant_unified(g, k)` — unified formula via Newton-Taylor lemma
+- `verify_unified_formula(g_values, k)` — verify unified matches direct
+- `proof_connection(verbose)` — show all proofs connected via `log₂(5) ≡ -4 (mod 128)`
 
 ### Isometry (`dual_view.isometry`)
 - `verify_isometry(k, n_trials)` — v₂(5^e-1) = v₂(e)+2
