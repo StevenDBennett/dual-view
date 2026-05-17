@@ -26,7 +26,7 @@ try:
 except ImportError:
     _TORCH_AVAILABLE = False
 
-from .core import _mask, modinv_newton
+from .core import _mask
 from .regularization import GhostMap, ghost_penalty
 
 
@@ -63,8 +63,10 @@ if _TORCH_AVAILABLE:
 
         def forward(self, x: torch.Tensor) -> torch.Tensor:
             x = x.view(-1, 784)
-            h = F.relu(self.fc1(x))
-            return self.fc2(h)
+            w1 = ste_quantize(self.fc1.weight, self.k)
+            w2 = ste_quantize(self.fc2.weight, self.k)
+            h = F.relu(F.linear(x, w1, self.fc1.bias))
+            return F.linear(h, w2, self.fc2.bias)
 
         def get_weights_numpy(self) -> Dict[str, np.ndarray]:
             """Extract quantized weights as numpy arrays."""
@@ -134,6 +136,9 @@ if _TORCH_AVAILABLE:
             epoch_loss = 0.0
             batch_count = 0
 
+            total_penalty_epoch = 0.0
+            penalty_count = 0
+
             for data, target in train_loader:
                 data, target = data.to(device), target.to(device)
                 optimizer.zero_grad()
@@ -141,16 +146,16 @@ if _TORCH_AVAILABLE:
                 loss = F.cross_entropy(output, target)
 
                 # Ghost penalty
-                penalty = 0.0
+                penalty_batch = 0.0
                 if ghost_map is not None:
                     for name, param in model.named_parameters():
                         if 'weight' in name:
                             w_np = param.data.detach().cpu().numpy()
                             w_int = np.round(w_np * (1 << (model.k - 1))).astype(np.int32)
                             p, _ = ghost_penalty(w_int, ghost_map)
-                            penalty += p
+                            penalty_batch += p
 
-                    total_penalty = ghost_scale * penalty
+                    total_penalty = ghost_scale * penalty_batch
                     loss = loss + total_penalty
 
                 loss.backward()
@@ -168,6 +173,8 @@ if _TORCH_AVAILABLE:
 
                 epoch_loss += loss.item()
                 batch_count += 1
+                total_penalty_epoch += penalty_batch
+                penalty_count += 1
 
             # Evaluation
             model.eval()
@@ -188,7 +195,8 @@ if _TORCH_AVAILABLE:
             history['acc'].append(acc)
             history['grad_norm'].append(grad_norm)
             history['update_norm'].append(update_norm)
-            history['ghost_penalty'].append(penalty)
+            avg_penalty = total_penalty_epoch / max(penalty_count, 1)
+            history['ghost_penalty'].append(avg_penalty)
 
             # Per-layer thermodynamics tracking
             thermo_str = ""
@@ -209,7 +217,7 @@ if _TORCH_AVAILABLE:
                 history['alpha_fraction'].append(epoch_alpha)
                 thermo_str = f", cliff={epoch_cliff:.3f}, α={epoch_alpha:.3f}"
 
-            ghost_str = f", ghost={penalty:.4f}" if ghost_map else ""
+            ghost_str = f", ghost={avg_penalty:.4f}" if ghost_map else ""
             print(
                 f"Epoch {epoch+1:2d}/{epochs}: "
                 f"loss={avg_loss:.4f}, acc={acc:.4f}{ghost_str}{thermo_str}"

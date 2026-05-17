@@ -292,15 +292,14 @@ class TestProModule(unittest.TestCase):
         t = m.truncate(8)
         self.assertEqual(t.dimension, m.dimension)
 
-    def test_valuation_with_no_filtration(self):
+    def test_valuation_all_zeros_returns_precision(self):
         m = ProModule("V", 5, 16)
         val = m.valuation([0, 0, 0, 0, 0])
-        self.assertEqual(val, 0)
+        self.assertEqual(val, 16)
 
-    def test_valuation_with_filtration_present(self):
+    def test_valuation_with_mixed_zeros(self):
         m = ProModule("V", 5, 16)
-        m.filtration = {4: [0, 0, 0, 0, 0]}
-        val = m.valuation([0, 0, 0, 0, 0])
+        val = m.valuation([16, 0, 0, 0, 0])
         self.assertEqual(val, 4)
 
     def test_graded_initialized_empty(self):

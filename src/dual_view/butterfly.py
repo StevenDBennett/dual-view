@@ -101,7 +101,7 @@ class KroneckerCliffScorer:
         lines = ["Kronecker Factor Cliff Report", ""]
         for key, res in self._results.items():
             s = res["summary"]
-            flag = " ⚠" if s.get("ghost_fraction", 0) > 0.5 else " ✓"
+            flag = " [!]" if s.get("ghost_fraction", 0) > 0.5 else " [*]"
             lines.append(
                 f"  {key}: shape={res['shape']}, "
                 f"scale={res['scale']:.1f}, "

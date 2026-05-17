@@ -18,7 +18,7 @@ from collections import Counter
 
 import numpy as np
 
-from .core import _mask, modinv_newton
+from .core import _mask
 
 
 # ── p-adic helpers (self-contained for general primes) ──────────────────────

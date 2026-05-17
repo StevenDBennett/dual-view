@@ -3,77 +3,99 @@ regularization.py
 -----------------
 Ghost-aware regularisation for quantized neural-network training.
 
-The GhostMap pre-computes the Newton convergence fate for every odd
-residue modulo 2^k and provides queries to find stable alternatives
-and compute surrogate gradients for backpropagation.
+The GhostMap pre-computes the 2-adic exponent stability score v₂(e_true)
+for every odd residue modulo 2^k and provides queries to find stable
+alternatives and compute surrogate gradients for backpropagation.
 
-k is limited to ≤ 10 because full enumeration over the 2^(k-2)
-exponent domain becomes prohibitive at larger k.
+Unlike the original convergence-ratio formulation (which collapsed to
+uniform 1.0 after the α=1 fix), v₂(e_true) is a genuinely graded
+stability measure: weights deeper in the 2-adic congruence filtration
+(higher v₂(e_true)) are more stable under quantisation.
+
+k is limited to ≤ 16 because the map enumerates all 2^{k-1} odd
+residues — acceptable up to k=16 (32768 entries).
 """
 from __future__ import annotations
 
 from typing import Dict, List, Optional, Tuple
 import numpy as np
 
-from .basin import BasinExplorer
-from .core import _mask, _valuation
+from .core import _mask, _valuation, two_adic_dlog
 
 
 class GhostMap:
     """
-    Pre-compute Newton convergence ratios for all odd residues mod 2^k.
+    Pre-compute 2-adic stability scores for all odd residues mod 2^k.
+
+    The stability score for an odd weight a is based on
+    v₂(e_true) — the valuation of the true discrete-log exponent:
+
+        score = min(v₂(e_true), k-2) / (k-2)
+
+    Higher scores mean the weight lies deeper in the 2-adic congruence
+    filtration, hence more stable under quantisation.
 
     Parameters
     ----------
     k : int
-        Bit precision (3 ≤ k ≤ 10).  Limited to k ≤ 10 because
-        full enumeration of 2^(k-2) seeds × odd values is O(2^k).
+        Bit precision (3 ≤ k ≤ 16).
     g : int
-        Generator; must satisfy g ≡ 5 (mod 8).
-    max_iter : int
-        Maximum Newton iterations per seed.  Default 64.
+        Generator; must satisfy g ≡ 5 (mod 8).  Kept for API compatibility.
     """
 
-    def __init__(self, k: int, g: int = 5, max_iter: int = 64) -> None:
+    def __init__(self, k: int, g: int = 5) -> None:
         if k < 3:
             raise ValueError("k must be ≥ 3")
-        if k > 10:
+        if k > 16:
             raise ValueError(
                 f"k={k} is too large for GhostMap.  "
-                f"Full enumeration at k={k} requires analysing "
-                f"2^{k-2} × 2^{k-2} ≈ {2**(2*k-4)} trajectories, "
-                f"which is impractical.  Limit k ≤ 10."
+                f"Enumerating all 2^{k-1} odd residues is impractical.  "
+                f"Limit k ≤ 16."
             )
         self.k = k
         self.g = g
-        self.max_iter = max_iter
         self.mask = _mask(k)
-        self._ratio: Dict[int, float] = {}
+        self._score: Dict[int, float] = {}
         self._build()
 
     def _build(self) -> None:
-        """Compute convergence ratios for all odd values mod 2^k."""
-        for a in range(1, self.mask + 1, 2):  # odd values only
+        """Compute stability scores for all odd values mod 2^k."""
+        max_score = self.k - 2
+        if max_score < 1:
+            max_score = 1
+        for a in range(1, self.mask + 1, 2):
             try:
-                explorer = BasinExplorer(self.k, self.g, a)
-                portrait = explorer.portrait()
-                n_converged = len(portrait['converged'])
-                total = n_converged + len(portrait['cycle'])
-                ratio = n_converged / total if total > 0 else 0.0
+                dlog = two_adic_dlog(a, self.k)
             except Exception:
-                ratio = 0.0
-            self._ratio[a] = ratio
+                self._score[a] = 0.0
+                continue
+            if dlog is None:
+                self._score[a] = 0.0
+                continue
+            _, e_true = dlog
+            if e_true == 0:
+                v2_e = self.k
+            else:
+                v2_e = _valuation(e_true)
+            self._score[a] = min(v2_e, max_score) / max_score
 
     def ratio(self, a: int) -> float:
-        """Return the convergence ratio for odd weight a."""
-        a_int = int(a)  # coerce numpy.int64 etc.
-        return self._ratio.get(a_int & self.mask, 0.0)
+        """Return the stability score for weight a (handles even and zero)."""
+        a_int = int(a) & self.mask
+        if a_int == 0:
+            return 1.0
+        if a_int & 1:
+            return self._score.get(a_int, 0.0)
+        # even: use the 2-adic valuation of a directly
+        v = _valuation(a_int)
+        max_score = self.k - 2 if self.k > 2 else 1
+        return min(v, max_score) / max_score
 
     def nearest_stable(self, a: int, search_radius: int = 4) -> Tuple[int, float]:
         """
-        Find the nearest odd weight with a better convergence ratio.
+        Find the nearest odd weight with a better stability score.
 
-        Returns (weight, ratio).
+        Returns (weight, score).
         """
         a_int = int(a) & self.mask
         best = (a_int, self.ratio(a_int))
@@ -87,7 +109,7 @@ class GhostMap:
         return best
 
     def __repr__(self) -> str:
-        return f"GhostMap(k={self.k}, n_odd={len(self._ratio)})"
+        return f"GhostMap(k={self.k}, n_odd={len(self._score)})"
 
 
 def local_ratio_gradient(
@@ -96,8 +118,8 @@ def local_ratio_gradient(
     """
     Compute local improvement candidates for a weight.
 
-    Returns list of (delta, ratio) for delta in {-2, -1, 1, 2}
-    that improve the convergence ratio.
+    Returns list of (delta, score) for delta in {-2, -1, 1, 2}
+    that improve the stability score.
     """
     current = ghost_map.ratio(weight_int)
     results: List[Tuple[int, float]] = []
@@ -117,16 +139,17 @@ def ghost_penalty(
     """
     Ghost regularisation penalty and surrogate gradient.
 
-    The penalty is P = mean(1 - ratio(w)) over the weight array.
+    The penalty is P = mean(1 - score(w)) over the weight array,
+    where score is the v₂(e_true)-based stability from GhostMap.
     The surrogate gradient points toward the nearest odd integer
-    with a better convergence ratio.
+    with a better stability score.
 
     Parameters
     ----------
     weights : np.ndarray
         Integer weight array.
     ghost_map : GhostMap
-        Pre-computed convergence map.
+        Pre-computed stability map.
     step_scale : float
         Scaling factor for the surrogate gradient.
 

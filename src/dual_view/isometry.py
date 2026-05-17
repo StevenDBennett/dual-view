@@ -59,11 +59,13 @@ def isometry_pair_test(k: int, n_trials: int = 200) -> Dict[str, float]:
     Verify v₂(5^{e1} - 5^{e2}) = v₂(e1 - e2) + 2 for e1 ≠ e2.
     """
     passed = 0
-    for _ in range(n_trials):
+    collected = 0
+    while collected < n_trials:
         e1 = random.randrange(0, 1 << (k - 2))
         e2 = random.randrange(0, 1 << (k - 2))
         if e1 == e2:
             continue
+        collected += 1
         g1 = pow(5, e1, 1 << k)
         g2 = pow(5, e2, 1 << k)
         diff = (g1 - g2) & _mask(k)

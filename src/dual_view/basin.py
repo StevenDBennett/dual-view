@@ -69,6 +69,45 @@ class BasinExplorer:
         delta = ((f_val >> 2) * df_inv) & Nmask
         return (e - delta) & Nmask
 
+    def _trajectory(
+        self, e0: int, max_steps: int = 64, track_period: bool = False
+    ) -> Tuple[str, int, List[int]]:
+        """
+        Core classification: run Newton iteration from seed e0.
+
+        Parameters
+        ----------
+        track_period : bool
+            If True, return cycle period instead of cycle point.
+        """
+        seen: Dict[int, int] = {}
+        e = e0
+        path = [e]
+
+        for step in range(max_steps):
+            if track_period:
+                if e in seen:
+                    period = step - seen[e]
+                    return ('cycle', period, path)
+            else:
+                if e in seen:
+                    return ('cycle', e, path)
+            seen[e] = step
+
+            e_next = self.newton_step(e)
+            path.append(e_next)
+
+            if e_next == e:
+                if pow(5, e, 1 << self.k) == self.a:
+                    return ('converged', step + 1 if track_period else e, path)
+                else:
+                    period_or_point = 1 if track_period else e
+                    return ('cycle', period_or_point, path)
+
+            e = e_next
+
+        return ('diverged', max_steps if track_period else e, path)
+
     def classify(self, e0: int, max_steps: int = 64) -> Tuple[str, int, List[int]]:
         """
         Classify seed e0 by Newton convergence fate.
@@ -80,28 +119,7 @@ class BasinExplorer:
             'cycle'     — caught in a ghost cycle (fixed point ≠ true root)
             'diverged'  — escaped the exponent domain
         """
-        seen: Dict[int, int] = {}
-        e = e0
-        path = [e]
-
-        for step in range(max_steps):
-            if e in seen:
-                return ('cycle', e, path)
-            seen[e] = step
-
-            e_next = self.newton_step(e)
-            path.append(e_next)
-
-            if e_next == e:
-                # Check if this is the true root
-                if pow(5, e, 1 << self.k) == self.a:
-                    return ('converged', e, path)
-                else:
-                    return ('cycle', e, path)
-
-            e = e_next
-
-        return ('diverged', e, path)
+        return self._trajectory(e0, max_steps, track_period=False)
 
     def portrait(self) -> Dict[str, List[int]]:
         """Full basin portrait over all seeds in the exponent domain."""
@@ -173,29 +191,11 @@ class BasinExplorer:
     def _classify_with_period(
         self, e0: int, max_steps: int = 64
     ) -> Tuple[str, int, List[int]]:
-        """Classify seed and return cycle period (not cycle point)."""
-        seen: Dict[int, int] = {}
-        e = e0
-        path = [e]
-
-        for step in range(max_steps):
-            if e in seen:
-                period = step - seen[e]
-                return ('cycle', period, path)
-            seen[e] = step
-
-            e_next = self.newton_step(e)
-            path.append(e_next)
-
-            if e_next == e:
-                if pow(5, e, 1 << self.k) == self.a:
-                    return ('converged', step + 1, path)
-                else:
-                    return ('cycle', 1, path)
-
-            e = e_next
-
-        return ('diverged', max_steps, path)
+        """Classify seed and return cycle period (not cycle point).
+        
+        Delegates to the shared _trajectory method.
+        """
+        return self._trajectory(e0, max_steps, track_period=True)
 
 
 def precision_sweep(

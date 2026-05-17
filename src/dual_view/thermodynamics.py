@@ -18,6 +18,7 @@ from typing import Dict, List, Optional, Tuple
 import numpy as np
 
 from .core import _mask, _valuation, modinv_newton, two_adic_log5, two_adic_dlog, DualNumber
+from .basin import BasinExplorer
 
 
 class SeedThermodynamics:
@@ -180,10 +181,8 @@ class SeedThermodynamics:
                 if w & 1 == 0:
                     profile[k] = 0.0
                     continue
-                explorer = __import__("dual_view.basin", fromlist=["BasinExplorer"])
-                BasinE = getattr(explorer, "BasinExplorer")
                 try:
-                    be = BasinE(k, self.g, w)
+                    be = BasinExplorer(k, self.g, w)
                 except Exception:
                     profile[k] = 0.0
                     continue

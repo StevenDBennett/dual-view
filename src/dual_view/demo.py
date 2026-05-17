@@ -195,6 +195,97 @@ def demo_thermodynamics(quick: bool = False) -> None:
     print("  Done")
 
 
+def demo_isometry(quick: bool = False) -> None:
+    """Exponential map isometry T6-a."""
+    print("\n=== Exponential Isometry (T6-a) ===")
+    from .isometry import verify_isometry
+    result = verify_isometry(k=8, n_trials=50)
+    print(f"  v₂(5^e - 1) = v₂(e) + 2: pass_rate={result['pass_rate']:.2f}")
+    print("  PASS" if result['pass_rate'] > 0.9 else "  FAIL")
+
+
+def demo_separation(quick: bool = False) -> None:
+    """Trajectory Separation Theorem T2."""
+    print("\n=== Trajectory Separation (T2) ===")
+    from .separation import verify_separation
+    results = verify_separation(k=8, s_values=[1, 2, 3, 4])
+    for s, obs in results.items():
+        pred = 0 if s <= 0 else (s.bit_length() - 1)
+        print(f"  s={s}: observed={obs}, predicted={pred}")
+    print("  Done")
+
+
+def demo_fourier(quick: bool = False) -> None:
+    """DFT of step-count function."""
+    print("\n=== Fourier Analysis ===")
+    from .fourier import fourier_summary
+    print(fourier_summary(k=6, e_true=3))
+    print("  Done")
+
+
+def demo_newton_dynamics(quick: bool = False) -> None:
+    """Dynatomic polynomials and clean primes."""
+    if quick:
+        print("\n=== Newton Dynamics (skipped: --quick) ===")
+        return
+    print("\n=== Newton Dynamics ===")
+    from .newton_dynamics import compute_iterates, dynatomic_polynomial, COEFFS_PERIOD4
+    iters = compute_iterates(4)
+    phi4 = dynatomic_polynomial(4, iters)
+    print(f"  Φ₄ degree: {len(phi4) - 1}  (expected 24)")
+    print(f"  Φ₄(0) = {phi4[0]}  (expected {COEFFS_PERIOD4[0]})")
+    print("  PASS" if phi4[0] == COEFFS_PERIOD4[0] else "  FAIL")
+
+
+def demo_iwasawa(quick: bool = False) -> None:
+    """GL(2) congruence filtration and LDU."""
+    if quick:
+        print("\n=== Iwasawa Theory (skipped: --quick) ===")
+        return
+    print("\n=== Iwasawa Theory ===")
+    from .iwasawa import ldu_decompose, matrix_coordinates, congruence_depth
+    M = [[3, 1], [2, 5]]  # det = 13, odd
+    k = 8
+    depth = congruence_depth(M, k)
+    print(f"  congruence_depth(M, {k}) = {depth}")
+    ldu = ldu_decompose(M, k)
+    if ldu:
+        print(f"  LDU: L={ldu['L']}, D={ldu['D']}, U={ldu['U']}")
+    coords = matrix_coordinates(M, k)
+    print(f"  Matrix coordinates: det=({coords.det_v}, {coords.det_alpha}, {coords.det_e})")
+    print("  Done")
+
+
+def demo_iwasawa_algebra(quick: bool = False) -> None:
+    """Iwasawa algebra element arithmetic."""
+    print("\n=== Iwasawa Algebra ===")
+    from .iwasawa_algebra import IwasawaElement
+    gen = IwasawaElement.from_generator(precision=8)
+    unit = IwasawaElement.unit(8)
+    product = gen * unit
+    print(f"  Generator: {gen}")
+    print(f"  Unit * Generator: {product}")
+    print(f"  Generator is aug ideal generator: {gen.is_generator_of_aug_ideal()}")
+    print("  PASS" if gen.is_generator_of_aug_ideal() else "  FAIL")
+
+
+def demo_butterfly_seed(quick: bool = False) -> None:
+    """Dual-view Newton projector as butterfly seed."""
+    if quick:
+        print("\n=== Butterfly Seed (skipped: --quick) ===")
+        return
+    print("\n=== Butterfly Seed ===")
+    from .butterfly_seed import DualViewSeed, analyze_prime, dual_view_qasm_emitter
+    prof = analyze_prime(7)
+    print(f"  p=7: clean={prof.is_clean}, roots={prof.roots}")
+    dvs = DualViewSeed(k=8, target_a=17)
+    sig = dvs.thermodynamic_signature()
+    print(f"  DualViewSeed(k=8, a=17): unitary={sig['is_unitary']}")
+    qasm = dual_view_qasm_emitter(8, 17)
+    print(f"  QASM lines generated: {len(qasm.splitlines())}")
+    print("  Done")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="dual-view demo suite")
     parser.add_argument("--quick", action="store_true", help="Skip slow tests")
@@ -214,6 +305,13 @@ def main() -> None:
     demo_lift_root(args.quick)
     demo_thermodynamics(args.quick)
     demo_ramp_break(args.quick)
+    demo_isometry(args.quick)
+    demo_separation(args.quick)
+    demo_fourier(args.quick)
+    demo_newton_dynamics(args.quick)
+    demo_iwasawa(args.quick)
+    demo_iwasawa_algebra(args.quick)
+    demo_butterfly_seed(args.quick)
 
     elapsed = time.time() - start
     print(f"\nTotal time: {elapsed:.2f}s")

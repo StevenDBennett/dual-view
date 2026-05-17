@@ -195,7 +195,7 @@ class TestButterflyBridge(unittest.TestCase):
         W = self.rng.normal(0, 0.02, (4, 4))
         r = self.bridge.analyse_layer(W, name="layer1")
         self.assertIsInstance(r.mean_v, float)
-        self.assertIsInstance(r.H_val, float)
+        self.assertIsInstance(r.depth_entropy, float)
         self.assertIsInstance(r.zero_frac, float)
         self.assertIsInstance(r.alpha_frac, float)
         self.assertIsInstance(r.thermo_S1, SpectralThermodynamics)

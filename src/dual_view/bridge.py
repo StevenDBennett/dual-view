@@ -180,7 +180,7 @@ class LayerReport:
     k:          int
     n:          int
     mean_v:     float
-    H_val:      float
+    depth_entropy: float
     zero_frac:  float
     alpha_frac: float
     depth_hist: np.ndarray
@@ -203,7 +203,7 @@ class LayerReport:
         lines = [
             f"  {self.name}",
             f"    shape={self.shape}  n={self.n:,}  k={self.k}",
-            f"    S0  TIDAL: mean_v={self.mean_v:.3f}  H_val={self.H_val:.3f}  "
+            f"    S0  TIDAL: mean_v={self.mean_v:.3f}  depth_entropy={self.depth_entropy:.3f}  "
             f"zero_frac={self.zero_frac:.3f}  alpha_frac={self.alpha_frac:.3f}",
             f"    S1  DEPTH HISTOGRAM: {self.thermo_S1}",
             f"      char = {self.depth_char}",
@@ -301,7 +301,7 @@ class ButterflyBridge:
         mean_v = float(d.mean())
         h_ent = np.bincount(d, minlength=k).astype(float)
         h_ent /= h_ent.sum() + 1e-12
-        H_val = float(-np.sum(h_ent * np.log2(h_ent + 1e-12)))
+        depth_entropy = float(-np.sum(h_ent * np.log2(h_ent + 1e-12)))
         zero_frac = float(np.sum(flat == 0)) / len(flat)
         nz = [int(w) for w in flat if w != 0]
         alpha_frac = (sum(1 for w in nz if (w >> 1) & 1) / (len(nz) + 1e-12))
@@ -313,7 +313,7 @@ class ButterflyBridge:
 
         return LayerReport(
             name=name, shape=W_float.shape, k=k,
-            n=W_float.size, mean_v=mean_v, H_val=H_val,
+            n=W_float.size, mean_v=mean_v, depth_entropy=depth_entropy,
             zero_frac=zero_frac, alpha_frac=alpha_frac,
             depth_hist=h, depth_dev=dev, depth_char=dc,
             thermo_S1=t1, thermo_S2=t2, thermo_S3=t3,

@@ -20,14 +20,15 @@ import numpy as np
 from .core import _mask, _valuation, modinv_newton, two_adic_log5
 
 
-def step_count_fn(k: int, e_true: int) -> np.ndarray:
+def step_count_fn(k: int, e_true: int, max_steps: int = 10) -> np.ndarray:
     """
     Numerically compute the step-count function h(e).
 
     h(e) is the number of Newton iterations required for seed e
     to converge to e_true.  Returns an integer array of length N.
 
-    The function only takes values in {0, 1, 2, 3}.
+    The function only takes values in {0, 1, 2, 3} for valid inputs;
+    h = max_steps + 1 indicates failure to converge within budget.
     """
     N = 1 << (k - 2)
     a = pow(5, e_true, 1 << k)
@@ -38,18 +39,19 @@ def step_count_fn(k: int, e_true: int) -> np.ndarray:
 
     for e_seed in range(N):
         e = e_seed
-        for step in range(4):  # max 3 steps needed
-            if e == e_true:
-                h[e_seed] = step
-                break
+        step = 0
+        while e != e_true and step < max_steps:
             g5 = pow(5, e, 1 << k)
             f_val = (g5 - a) & mask
             df_unit = (g5 * L) & Nmask
             df_inv = modinv_newton(df_unit, k - 2)
             delta = ((f_val >> 2) * df_inv) & Nmask
             e = (e - delta) & Nmask
+            step += 1
+        if e == e_true:
+            h[e_seed] = step
         else:
-            h[e_seed] = 4  # did not converge
+            h[e_seed] = max_steps + 1  # did not converge
     return h
 
 

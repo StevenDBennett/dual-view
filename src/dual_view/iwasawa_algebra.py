@@ -173,9 +173,11 @@ class ProModule:
         return ProModule(f"{self.name}^({k})", self.dimension, k)
 
     def valuation(self, v: List[int]) -> int | float:
-        """Compute the valuation of an element."""
-        for n in range(self.precision, -1, -1):
-            if n in self.filtration:
-                if all(c % (1 << n) == 0 for c in v):
-                    return n
-        return 0
+        """Compute the valuation of an element (largest n where all
+        coefficients are divisible by 2^n, bounded by precision)."""
+        if not v:
+            return float('inf')
+        n = 0
+        while n < self.precision and all(c % (1 << (n + 1)) == 0 for c in v):
+            n += 1
+        return n
