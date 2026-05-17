@@ -45,6 +45,7 @@ from .core import (
     modinv_newton,
     two_adic_log5,
     two_adic_dlog,
+    dlog_residual_tracking,
     DualNumber,
     TwoAdicProcessor,
     run_all_tests,
@@ -66,7 +67,7 @@ from .nonabelian import NonAbelianCRTDual, ramp_break_strength, phase_alignment_
 from .scaling import scale_weights, auto_scale, common_scales
 from .visualise import (
     cliff_matrix, sector_matrix, valuation_matrix,
-    print_cliff_ascii, cliff_stats_by_layer,
+    print_cliff_ascii, cliff_stats_by_layer, show_dual_bits,
 )
 from .butterfly import KroneckerCliffScorer, semiring_cliff_score
 from .separation import (
@@ -125,6 +126,7 @@ from .bridge import (
 __all__ = [
     # core
     "modinv_newton", "two_adic_log5", "two_adic_dlog",
+    "dlog_residual_tracking",
     "DualNumber", "TwoAdicProcessor", "run_all_tests",
     "padic_exp", "padic_log", "g0",
     # exponent
@@ -150,7 +152,7 @@ __all__ = [
     "scale_weights", "auto_scale", "common_scales",
     # visualise
     "cliff_matrix", "sector_matrix", "valuation_matrix",
-    "print_cliff_ascii", "cliff_stats_by_layer",
+    "print_cliff_ascii", "cliff_stats_by_layer", "show_dual_bits",
     # butterfly
     "KroneckerCliffScorer", "semiring_cliff_score",
     # separation

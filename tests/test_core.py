@@ -7,7 +7,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
 
 from dual_view.core import (
     _mask, _valuation, modinv_newton, two_adic_log5,
-    two_adic_dlog, DualNumber, TwoAdicProcessor, run_all_tests,
+    two_adic_dlog, dlog_residual_tracking,
+    DualNumber, TwoAdicProcessor, run_all_tests,
 )
 
 
@@ -240,6 +241,54 @@ class TestSynthesisFindings(unittest.TestCase):
                 alpha, e = result
                 if a & 3 == 1:
                     self.assertEqual(e, e_true)
+
+
+class TestDlogResidualTracking(unittest.TestCase):
+    """Tests for dlog_residual_tracking — Newton residual history."""
+
+    def test_known_exponent(self):
+        k = 10
+        for e_true in [0, 1, 2, 3, 7, 15]:
+            a = pow(5, e_true, 1 << k)
+            if a & 3 == 1:
+                e, history = dlog_residual_tracking(a, k)
+                self.assertEqual(e, e_true)
+
+    def test_history_nonempty(self):
+        k = 10
+        a = pow(5, 7, 1 << k)
+        _, history = dlog_residual_tracking(a, k)
+        self.assertGreater(len(history), 0)
+
+    def test_history_keys(self):
+        k = 10
+        a = pow(5, 3, 1 << k)
+        _, history = dlog_residual_tracking(a, k)
+        required = {"bits", "eprec_before", "eprec_after",
+                     "tau_before", "v2_before",
+                     "tau_after", "v2_after", "delta"}
+        for entry in history:
+            self.assertTrue(required.issubset(entry.keys()))
+
+    def test_v2_doubles(self):
+        """v₂(tau) should at least double each Newton step."""
+        k = 12
+        a = pow(5, 5, 1 << k)
+        _, history = dlog_residual_tracking(a, k)
+        for entry in history:
+            if entry["v2_before"] != float("inf"):
+                self.assertGreaterEqual(entry["v2_after"],
+                                        2 * entry["v2_before"],
+                                        msg=f"v2 {entry}")
+
+    def test_small_k_returns_empty(self):
+        e, history = dlog_residual_tracking(1, 2)
+        self.assertEqual(e, 0)
+        self.assertEqual(history, [])
+
+    def test_invalid_a_raises(self):
+        with self.assertRaises(ValueError):
+            dlog_residual_tracking(3, 8)
 
 
 if __name__ == "__main__":

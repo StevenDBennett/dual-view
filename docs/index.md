@@ -78,6 +78,7 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | `modinv_newton(a, k)` | `core.py` | `a⁻¹ mod 2^k` via Newton |
 | `two_adic_dlog(a, k)` | `core.py` | `(α, e)` decomposition |
 | `two_adic_log5(k)` | `core.py` | 2-adic log of 5, cached |
+| `dlog_residual_tracking(a, k)` | `core.py` | Newton residual history with v₂ tracking |
 | `ExponentSpace(g, k)` | `exponent.py` | `e ↦ g^e` with difference calculus |
 | `OperatorContext(k, g)` | `operators.py` | I, S, diff, avg, M(h) |
 | `BasinExplorer(k, g, a)` | `basin.py` | Newton basin portrait |
@@ -86,6 +87,7 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | `ghost_penalty(W, gm)` | `regularization.py` | Penalty + surrogate gradient |
 | `scale_weights(W, scale)` | `scaling.py` | Float-to-int scaling |
 | `cliff_matrix(st, shape)` | `visualise.py` | Reshape cliff scores |
+| `show_dual_bits(n, k, label)` | `visualise.py` | Bit pattern annotated with (v, α, e) roles |
 | `KroneckerCliffScorer(factors)` | `butterfly.py` | Factor cliff scoring |
 | `mersenne_cliff_table(n_max)` | `mersenne.py` | Mersenne cliff thresholds |
 | `cliff_constant(g, k)` | `mersenne.py` | Mersenne cliff constant `c = v₂(log₂(g)/4+1)` |

@@ -106,6 +106,61 @@ def print_cliff_ascii(
     print("└" + "─" * C_2d.shape[1] + "┘")
 
 
+def show_dual_bits(n: int, k: int = 16, label: str = "") -> str:
+    """
+    2-adic bit structure with dual-view annotation.
+
+    Displays the bit pattern of n modulo 2^k annotated with the dual-view
+    coordinate roles: v (valuation bits), 1 (fixed leading-1 bit),
+    a (α sign bit), e (discrete-log exponent bits).  For odd n the
+    full dual decomposition (v, α, e) is shown together with a
+    reconstruction check.
+    """
+    if k < 3:
+        raise ValueError("k must be >= 3")
+    mask = _mask(k)
+    n &= mask
+    lines: List[str] = []
+    if label:
+        lines.append(f" {label}")
+    lines.append(f" n = {n} (hex: 0x{n:0{(k + 3) // 4}x})")
+    bits = [(n >> i) & 1 for i in range(k)]
+    nibbles = [" ".join(str(b) for b in bits[i:i + 4]) for i in range(0, k, 4)]
+    lines.append(f" bits [0..{k-1}]: {' '.join(nibbles)}")
+    v = _valuation(n)
+    if v == float("inf"):
+        lines.append(" n = 0")
+        return "\n".join(lines)
+    lines.append(f" 2-adic valuation v = {v}")
+    ann: List[str] = []
+    for i in range(k):
+        if i < v:
+            ann.append("v")
+        elif i == v:
+            ann.append("1")
+        elif i == v + 1:
+            ann.append("a")
+        else:
+            ann.append("e")
+    ann_nibbles = [" ".join(ann[i:i + 4]) for i in range(0, k, 4)]
+    lines.append(f" annotation: {' '.join(ann_nibbles)}")
+    lines.append(" key: v=valuation 1=fixed a=alpha(sign) e=dlog bits")
+
+    if n & 1:
+        result = two_adic_dlog(n, k)
+        if result is not None:
+            alpha, e = result
+            lines.append("")
+            lines.append(" Dual decomposition:")
+            lines.append(f" n = 2^{v} * (-1)^{alpha} * 5^{e} (mod 2^{k})")
+            rec = pow(5, e, 1 << k)
+            if alpha:
+                rec = (-rec) & mask
+            rec = (rec << v) & mask
+            lines.append(f" reconstruction: {'PASS' if rec == n else 'FAIL'}")
+    return "\n".join(lines)
+
+
 def cliff_stats_by_layer(layers: Dict[str, np.ndarray]) -> str:
     """
     Per-layer summary table of cliff statistics.

@@ -8,9 +8,7 @@ version = "1.0.0"
 description = "dual-view: a unified framework for 2-adic number systems, p-adic Newton dynamics, spectral geometry, gauge theory, and quantum compilation"
 readme = "README.md"
 license = {text = "MIT"}
-authors = [
-    {name = "Steven D. Bennett"},
-]
+authors = []
 keywords = ["2-adic", "p-adic", "number-theory", "newton-dynamics", "spectral-geometry", "noncommutative-geometry", "quantum-compilation", "butterfly-compiler", "quantization"]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -39,7 +37,7 @@ dev = [
 dual-view = "dual_view.__main__:main"
 
 [project.urls]
-repository = "https://github.com/StevenDBennett/dual-view"
+repository = "https://github.com/dual-view/dual-view"
 
 [tool.setuptools.packages.find]
 where = ["src"]

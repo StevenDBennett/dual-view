@@ -34,6 +34,9 @@ General 2-adic logarithm `log(g) mod 2^k`. Requires `g ≡ 1 mod 4` (i.e. `v₂(
 #### `g0(k: int) -> int`
 The cliff centre `g₀ = exp₂(−4) mod 2^k`. The unique 2-adic unit with `log(g₀) = −4`. The hardware approximation `−123` agrees with `g₀` to 13 bits.
 
+#### `dlog_residual_tracking(a: int, k: int, L: Optional[int] = None) -> Tuple[int, List[Dict]]`
+Viglietta discrete log with normalised residual tracking at each Newton step. Returns `(e, history)` where each entry in history contains `tau_before`/`tau_after` (the residual `(5^e · a⁻¹ − 1) / 4`) and its 2-adic valuation, confirming the quadratic convergence gain law. Requires `a ≡ 1 (mod 4)`.
+
 ### Classes
 
 #### `DualNumber(n: int, k: int = 64)`
@@ -238,6 +241,9 @@ ASCII density heatmap.
 
 #### `cliff_stats_by_layer(layers) -> str`
 Per-layer statistics table.
+
+#### `show_dual_bits(n, k=16, label="") -> str`
+2-adic bit structure with dual-view annotation. Displays the bit pattern of `n` modulo `2^k` annotated with valuation (`v`), the fixed leading-1 bit (`1`), the α sign bit (`a`), and the discrete-log exponent bits (`e`). For odd `n` the full `(v, α, e)` decomposition and a reconstruction check are included.
 
 ## Butterfly Seed Module (`dual_view.butterfly_seed`)
 

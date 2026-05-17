@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
 from dual_view.scaling import scale_weights, auto_scale, common_scales
 from dual_view.visualise import (
     cliff_matrix, sector_matrix, valuation_matrix,
-    print_cliff_ascii, cliff_stats_by_layer,
+    print_cliff_ascii, cliff_stats_by_layer, show_dual_bits,
 )
 from dual_view.thermodynamics import SeedThermodynamics
 from dual_view.core import _valuation
@@ -142,6 +142,46 @@ class TestVisualise(unittest.TestCase):
         stats = cliff_stats_by_layer(layers)
         self.assertIn("layer1", stats)
         self.assertIn("Mean Cliff", stats)
+
+
+class TestShowDualBits(unittest.TestCase):
+    """Tests for show_dual_bits — 2-adic bit annotation."""
+
+    def test_contains_correct_n(self):
+        s = show_dual_bits(42, k=16)
+        self.assertIn("n = 42", s)
+
+    def test_contains_annotation_key(self):
+        s = show_dual_bits(7, k=8)
+        self.assertIn("annotation", s)
+
+    def test_contains_valuation(self):
+        s = show_dual_bits(8, k=8)
+        self.assertIn("v = 3", s)
+
+    def test_zero_output(self):
+        s = show_dual_bits(0, k=8)
+        self.assertIn("n = 0", s)
+
+    def test_odd_includes_decomposition(self):
+        s = show_dual_bits(7, k=8)
+        self.assertIn("Dual decomposition", s)
+
+    def test_even_no_decomposition(self):
+        s = show_dual_bits(8, k=8)
+        self.assertNotIn("Dual decomposition", s)
+
+    def test_label_appears(self):
+        s = show_dual_bits(5, k=8, label="TEST")
+        self.assertIn("TEST", s)
+
+    def test_reconstruction_pass(self):
+        s = show_dual_bits(5, k=8)
+        self.assertIn("PASS", s)
+
+    def test_k_too_small_raises(self):
+        with self.assertRaises(ValueError):
+            show_dual_bits(1, k=2)
 
 
 if __name__ == "__main__":

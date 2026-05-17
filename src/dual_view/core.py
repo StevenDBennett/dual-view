@@ -15,7 +15,7 @@ Public names
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 import math
 
 
@@ -170,6 +170,75 @@ def _dlog_newton(a: int, k: int, L: Optional[int] = None) -> int:
         eprec = new_eprec
 
     return e
+
+
+# ── residual tracking (diagnostic) ─────────────────────────────────────────────
+
+def dlog_residual_tracking(
+    a: int, k: int, L: Optional[int] = None
+) -> Tuple[int, List[Dict]]:
+    """
+    Viglietta discrete log with residual tracking at each Newton step.
+
+    Returns (e, history) where history contains the normalised residual
+    (tau = (5^e * a^{-1} - 1) / 4) and its 2-adic valuation before and
+    after each Newton correction.  The doubling of v₂(tau) confirms the
+    quadratic convergence law.
+
+    Requires a ≡ 1 (mod 4).
+    """
+    if k <= 2:
+        return 0, []
+    if a & 3 != 1:
+        raise ValueError("dlog_residual_tracking requires a ≡ 1 (mod 4)")
+    mask_full = _mask(k)
+    a &= mask_full
+    if L is None:
+        L = two_adic_log5(k)
+    L_unit = L >> 2
+    a_inv_full = modinv_newton(a, k)
+
+    bootstrap_k = max(4, math.isqrt(k) + 2)
+    eprec = min(bootstrap_k - 2, k - 2)
+    e = _dlog_bootstrap(a, bootstrap_k) & _mask(eprec)
+    history: List[Dict] = []
+
+    while eprec < k - 2:
+        new_eprec = min(2 * eprec, k - 2)
+        bits = new_eprec + 2
+        mask = _mask(bits)
+        emask = _mask(new_eprec)
+
+        pow5e = pow(5, e, 1 << bits)
+        a_inv = a_inv_full & mask
+        rho_before = (pow5e * a_inv) & mask
+        tau_before = ((rho_before - 1) & mask) >> 2
+        v2_before = _valuation(tau_before) if tau_before != 0 else float("inf")
+
+        f = (pow5e - a) & mask
+        df_unit = (pow5e * L_unit) & emask
+        df_inv = modinv_newton(df_unit, new_eprec)
+        delta = ((f >> 2) * df_inv) & emask
+        e = (e - delta) & emask
+
+        pow5e = pow(5, e, 1 << bits)
+        rho_after = (pow5e * a_inv) & mask
+        tau_after = ((rho_after - 1) & mask) >> 2
+        v2_after = _valuation(tau_after) if tau_after != 0 else float("inf")
+
+        history.append({
+            "bits": bits,
+            "eprec_before": eprec,
+            "eprec_after": new_eprec,
+            "tau_before": int(tau_before),
+            "v2_before": v2_before,
+            "tau_after": int(tau_after),
+            "v2_after": v2_after,
+            "delta": int(delta),
+        })
+        eprec = new_eprec
+
+    return e, history
 
 
 # ── public discrete-log API ────────────────────────────────────────────────────
