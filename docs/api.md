@@ -206,9 +206,6 @@ GL(2) gauge theory on a cycle.
 - `invariants(mats)` — dict with det_mod2k, alpha_det, trace_modp, crt views
 - `convergence_ratio_full(mats)` — ghost ratio of determinant
 
-#### `ramp_break_strength(...) -> Dict`
-**Deprecated**: Use `phase_alignment_experiment()` instead.
-
 #### `phase_alignment_experiment(k, p, N_cycle=4, n_cycles=30) -> Dict`
 Test α-sector flip under perturbation.
 

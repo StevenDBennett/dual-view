@@ -13,6 +13,7 @@ Contains:
 from __future__ import annotations
 
 import os
+from importlib import resources
 from typing import List, Tuple
 
 __all__ = [
@@ -202,15 +203,14 @@ def load_period6_coefficients(
         Coefficients from constant term to leading term (233 entries).
     """
     if not path:
-        path = os.path.join(os.path.dirname(__file__), "data",
-                            "period6_coefficients_full.txt")
+        ref = resources.files(__package__) / "data" / "period6_coefficients_full.txt"
+        path = str(ref)
     coeffs: List[int] = []
     with open(path) as f:
         for line in f:
             line = line.strip()
             if not line or not line.startswith("u^"):
                 continue
-            # Parse "u^<n>: <value>"
             _, val_str = line.split(":", 1)
             coeffs.append(int(val_str.strip()))
     return coeffs

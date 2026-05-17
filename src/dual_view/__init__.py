@@ -46,13 +46,10 @@ from .core import (
     modinv_newton,
     two_adic_log5,
     two_adic_dlog,
-    dlog_residual_tracking,
     DualNumber,
     TwoAdicProcessor,
-    run_all_tests,
     padic_exp,
     padic_log,
-    g0,
 )
 
 from .exponent import ExponentSpace
@@ -64,143 +61,63 @@ from .thermodynamics import SeedThermodynamics
 from .regularization import GhostMap, local_ratio_gradient, ghost_penalty
 
 from .crt import CRTDualNumber, CRTDualProcessor, combined_stability
-from .nonabelian import NonAbelianCRTDual, ramp_break_strength, phase_alignment_experiment
+from .nonabelian import NonAbelianCRTDual, phase_alignment_experiment
 from .scaling import scale_weights, auto_scale, common_scales
 from .visualise import (
     cliff_matrix, sector_matrix, valuation_matrix,
     print_cliff_ascii, cliff_stats_by_layer, show_dual_bits,
 )
 from .butterfly import KroneckerCliffScorer, semiring_cliff_score
-from .separation import (
-    newton_trajectory, separation_step, predicted_separation,
-    verify_separation, ultrametric_ball_tree, step_count_profile,
-)
-from .fourier import (
-    step_count_fn, analytic_step_count, dft, power_spectrum,
-    dyadic_coefficients, analytic_coefficients, fourier_summary,
-    ultrametric_uncertainty,
-)
-from .padic_roots import (
-    lift_root,
-    newton_step, halley_step, newton2_step, newton3_step,
-    convergence_profile, compare_methods, verify_order,
-    newton_correction_uniformity, popcount_compression,
-)
-from .iwasawa import (
-    congruence_depth, filtration_residue, ldu_decompose,
-    matrix_coordinates, holonomy_depth_profile, filtration_portrait,
-    matrix_commutator, verify_commutator_depth, MatrixCoordinates,
-)
-from .iwasawa_algebra import IwasawaElement, IwasawaAlgebra, ProModule
+from .separation import newton_trajectory, separation_step, predicted_separation, step_count_profile
+from .fourier import step_count_fn, analytic_step_count, dft, power_spectrum, dyadic_coefficients, fourier_summary
+from .padic_roots import lift_root, newton_step, halley_step, newton2_step, newton3_step, convergence_profile
+from .iwasawa import congruence_depth, filtration_residue, ldu_decompose, matrix_coordinates, matrix_commutator, MatrixCoordinates
+
 from .newton_dynamics import (
     poly_mul, poly_add, poly_scalar_mul, poly_pow, poly_divmod,
-    mobius, compute_iterates,
-    dynatomic_polynomial,
+    mobius, compute_iterates, dynatomic_polynomial,
     is_cube, tonelli_shanks, check_quadratic_cube_roots,
     COEFFS_PERIOD4, COEFFS_PERIOD5,
     MULTIPLIERS_PERIOD4, MULTIPLIERS_PERIOD5,
-    load_period6_coefficients,
-    PERIOD6_PREDICTED,
+    load_period6_coefficients, PERIOD6_PREDICTED,
 )
 
 from .mersenne import (
-    mersenne_coordinates, verify_core_identity, mersenne_cliff_table,
-    bootstrap_cost, optimal_bootstrap, compare_bootstrap_strategies,
-    dlog_with_lut, verify_lut_dlog,
+    mersenne_coordinates, mersenne_cliff_table,
     cliff_constant, cliff_formula, mersenne_cliff_theorem,
-    prove_cliff_constant, prove_c_formula, exp2_neg4,
-    cliff_constant_unified, verify_unified_formula, proof_connection,
-)
-from .isometry import (
-    verify_isometry, isometry_pair_test, isometry_summary,
-    verify_operator_algebra, trace_alpha_independence,
-    trace_exponent_independence, exponent_valuation_profile,
-)
-from .butterfly_seed import (
-    DualViewSeed, analyze_prime, dual_view_qasm_emitter,
-    CleanPrimeProfile,
+    cliff_constant_unified, dlog_with_lut,
 )
 
-from .bridge import (
-    SpectralThermodynamics, ButterflyBridge, LayerReport, ModelReport,
-)
+from .isometry import verify_isometry, isometry_pair_test, isometry_summary, verify_operator_algebra
+from .butterfly_seed import DualViewSeed, analyze_prime, CleanPrimeProfile
 
 __all__ = [
-    # core
     "modinv_newton", "two_adic_log5", "two_adic_dlog",
-    "dlog_residual_tracking",
-    "DualNumber", "TwoAdicProcessor", "run_all_tests",
-    "padic_exp", "padic_log", "g0",
-    # exponent
-    "ExponentSpace",
-    # mahler
-    "MahlerCalculus",
-    # operators
+    "DualNumber", "TwoAdicProcessor", "padic_exp", "padic_log",
+    "ExponentSpace", "MahlerCalculus",
     "OperatorContext", "SpectralTriple", "NewtonProjector",
-    # gauge
-    "cycle_product", "spectral_det", "det_coordinates", "tidal_scalar",
-    "GaugeLayer",
-    # basin
+    "cycle_product", "spectral_det", "det_coordinates", "tidal_scalar", "GaugeLayer",
     "BasinExplorer", "precision_sweep",
-    # thermodynamics
     "SeedThermodynamics",
-    # regularization
     "GhostMap", "local_ratio_gradient", "ghost_penalty",
-    # crt
     "CRTDualNumber", "CRTDualProcessor", "combined_stability",
-    # nonabelian
-    "NonAbelianCRTDual", "ramp_break_strength", "phase_alignment_experiment",
-    # scaling
+    "NonAbelianCRTDual", "phase_alignment_experiment",
     "scale_weights", "auto_scale", "common_scales",
-    # visualise
     "cliff_matrix", "sector_matrix", "valuation_matrix",
     "print_cliff_ascii", "cliff_stats_by_layer", "show_dual_bits",
-    # butterfly
     "KroneckerCliffScorer", "semiring_cliff_score",
-    # separation
-    "newton_trajectory", "separation_step", "predicted_separation",
-    "verify_separation", "ultrametric_ball_tree", "step_count_profile",
-    # fourier
-    "step_count_fn", "analytic_step_count", "dft", "power_spectrum",
-    "dyadic_coefficients", "analytic_coefficients", "fourier_summary",
-    "ultrametric_uncertainty",
-    # padic_roots
-    "lift_root",
-    "newton_step", "halley_step", "newton2_step", "newton3_step",
-    "convergence_profile", "compare_methods", "verify_order",
-    "newton_correction_uniformity", "popcount_compression",
-    # iwasawa
-    "congruence_depth", "filtration_residue", "ldu_decompose",
-    "matrix_coordinates", "holonomy_depth_profile", "filtration_portrait",
-    "matrix_commutator", "verify_commutator_depth", "MatrixCoordinates",
-    # iwasawa_algebra
-    "IwasawaElement", "IwasawaAlgebra", "ProModule",
-    # mersenne
-    "mersenne_coordinates", "verify_core_identity", "mersenne_cliff_table",
-    "bootstrap_cost", "optimal_bootstrap", "compare_bootstrap_strategies",
-    "dlog_with_lut", "verify_lut_dlog",
-    "cliff_constant", "cliff_formula", "mersenne_cliff_theorem",
-    "prove_cliff_constant", "prove_c_formula", "exp2_neg4",
-    "cliff_constant_unified", "verify_unified_formula", "proof_connection",
-    # newton_dynamics
+    "newton_trajectory", "separation_step", "predicted_separation", "step_count_profile",
+    "step_count_fn", "analytic_step_count", "dft", "power_spectrum", "dyadic_coefficients", "fourier_summary",
+    "lift_root", "newton_step", "halley_step", "newton2_step", "newton3_step", "convergence_profile",
+    "congruence_depth", "filtration_residue", "ldu_decompose", "matrix_coordinates", "matrix_commutator", "MatrixCoordinates",
+    "mersenne_coordinates", "mersenne_cliff_table", "cliff_constant", "cliff_formula",
+    "mersenne_cliff_theorem", "cliff_constant_unified", "dlog_with_lut",
     "poly_mul", "poly_add", "poly_scalar_mul", "poly_pow", "poly_divmod",
-    "mobius", "compute_iterates",
-    "dynatomic_polynomial",
+    "mobius", "compute_iterates", "dynatomic_polynomial",
     "is_cube", "tonelli_shanks", "check_quadratic_cube_roots",
     "COEFFS_PERIOD4", "COEFFS_PERIOD5",
     "MULTIPLIERS_PERIOD4", "MULTIPLIERS_PERIOD5",
-    "load_period6_coefficients",
-    "PERIOD6_PREDICTED",
-    # isometry
-    "verify_isometry", "isometry_pair_test", "isometry_summary",
-    "verify_operator_algebra", "trace_alpha_independence",
-    "trace_exponent_independence", "exponent_valuation_profile",
-    # butterfly_seed
-    "DualViewSeed", "analyze_prime", "dual_view_qasm_emitter",
-    "CleanPrimeProfile",
-    # bridge
-    "SpectralThermodynamics",
-    "ButterflyBridge",
-    "LayerReport",
-    "ModelReport",
+    "load_period6_coefficients", "PERIOD6_PREDICTED",
+    "verify_isometry", "isometry_pair_test", "isometry_summary", "verify_operator_algebra",
+    "DualViewSeed", "analyze_prime", "CleanPrimeProfile",
 ]

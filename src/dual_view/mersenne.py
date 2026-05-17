@@ -35,7 +35,7 @@ import math
 
 from .core import (
     _mask, _valuation, modinv_newton,
-    two_adic_log5, two_adic_dlog, DualNumber,
+    two_adic_log5, two_adic_dlog, _dlog_bootstrap, DualNumber,
 )
 
 
@@ -211,7 +211,7 @@ def dlog_with_lut(a: int, k: int, b: int = 8) -> int:
     6 bits of precision at b=8, and each Newton step doubles.
     """
     if k <= b - 2:
-        return _dlog_bit_by_bit(a, k)
+        return _dlog_bootstrap(a, k)
     if a & 3 != 1:
         raise ValueError("dlog_with_lut requires a ≡ 1 (mod 4)")
 
@@ -240,22 +240,6 @@ def dlog_with_lut(a: int, k: int, b: int = 8) -> int:
     return e
 
 
-def _dlog_bit_by_bit(a: int, k: int) -> int:
-    """Simple O(k) bit-by-bit discrete log (fallback)."""
-    if k <= 2:
-        return 0
-    mask = _mask(k)
-    a &= mask
-    e, pow5 = (0, 1) if (a & 7) == 1 else (1, 5)
-    mult = 25 & mask
-    for n in range(3, k):
-        if ((a >> n) & 1) != ((pow5 >> n) & 1):
-            e |= (1 << (n - 2))
-            pow5 = (pow5 * mult) & mask
-        mult = (mult * mult) & mask
-    return e
-
-
 def verify_lut_dlog(k: int, b: int = 8, n_trials: int = 100) -> bool:
     """
     Verify that LUT-based dlog matches the standard dlog.
@@ -267,7 +251,7 @@ def verify_lut_dlog(k: int, b: int = 8, n_trials: int = 100) -> bool:
             continue
         a_mod = (a if (a & 3) == 1 else (-a) & _mask(k))
         e1 = dlog_with_lut(a_mod, k, b)
-        e2 = _dlog_bit_by_bit(a_mod, k)
+        e2 = _dlog_bootstrap(a_mod, k)
         if e1 != e2:
             return False
     return True

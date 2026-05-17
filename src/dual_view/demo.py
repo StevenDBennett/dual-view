@@ -90,23 +90,6 @@ def demo_crt_stability(quick: bool = False) -> None:
     print("  Done")
 
 
-def demo_ramp_break(quick: bool = False) -> None:
-    """Non-Abelian ramp-break strength."""
-    if quick:
-        print("\n=== Non-Abelian Ramp Break (skipped: --quick) ===")
-        return
-    print("\n=== Non-Abelian Ramp Break ===")
-    import warnings
-    from .nonabelian import ramp_break_strength
-
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore", DeprecationWarning)
-        result = ramp_break_strength(k=6, p=7, num_cycles=10)
-    print(f"  Phase alignment: {result['phase_alignment']:.1%}")
-    print(f"  Mean conv ratio: {result['mean_conv']:.3f}")
-    print("  Done")
-
-
 def demo_mersenne_cliff(quick: bool = False) -> None:
     """Mersenne cliff table."""
     print("\n=== Mersenne Cliff Table ===")
@@ -305,7 +288,6 @@ def main() -> None:
     demo_mersenne_theorems(args.quick)
     demo_lift_root(args.quick)
     demo_thermodynamics(args.quick)
-    demo_ramp_break(args.quick)
     demo_isometry(args.quick)
     demo_separation(args.quick)
     demo_fourier(args.quick)

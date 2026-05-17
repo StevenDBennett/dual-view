@@ -43,6 +43,9 @@ repository = "https://github.com/dual-view/dual-view"
 where = ["src"]
 include = ["dual_view*"]
 
+[tool.setuptools.package-data]
+dual_view = ["newton_dynamics/data/period6_coefficients_full.txt"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 

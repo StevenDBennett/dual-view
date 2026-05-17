@@ -29,22 +29,8 @@ from .core import (
     modinv_newton,
     two_adic_log5,
     two_adic_dlog,
-    _dlog_bootstrap,
     _dlog_newton,
 )
-
-# ---------------------------------------------------------------------------
-# 0. 2-adic arithmetic primitives (minimal, self-contained for prime analysis)
-# ---------------------------------------------------------------------------
-
-
-def _modinv(a: int, m: int) -> int:
-    """Modular inverse via extended Euclid."""
-    a %= m
-    if a == 0:
-        raise ValueError("inverse of 0")
-    return pow(a, -1, m)
-
 
 # ---------------------------------------------------------------------------
 # 1. Clean-prime functional-graph analyser
@@ -72,7 +58,7 @@ def _newton_fp(x: int, p: int) -> Optional[int]:
     if den == 0:
         return None
     num = (2 * pow(x, 3, p) + 1) % p
-    return (num * _modinv(den, p)) % p
+    return (num * pow(den, -1, p)) % p
 
 
 def analyze_prime(p: int) -> CleanPrimeProfile:

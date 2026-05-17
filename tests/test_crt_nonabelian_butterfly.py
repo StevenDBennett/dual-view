@@ -10,7 +10,7 @@ from dual_view.crt import (
     _primitive_root, _prime_dlog,
 )
 from dual_view.nonabelian import (
-    NonAbelianCRTDual, ramp_break_strength, phase_alignment_experiment,
+    NonAbelianCRTDual, phase_alignment_experiment,
     _mat_mul, _mat_det,
 )
 from dual_view.butterfly import KroneckerCliffScorer, semiring_cliff_score
@@ -123,15 +123,7 @@ class TestNonAbelianCRTDual(unittest.TestCase):
         self.assertGreaterEqual(r, 0.0)
 
 
-class TestRampBreakStrength(unittest.TestCase):
-    def test_returns_dict(self):
-        import warnings
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", DeprecationWarning)
-            result = ramp_break_strength(k=5, p=7, num_cycles=5)
-        self.assertIn("phase_alignment", result)
-        self.assertIn("n_trials", result)
-
+class TestPhaseAlignmentExperiment(unittest.TestCase):
     def test_phase_alignment_experiment(self):
         result = phase_alignment_experiment(k=5, p=7, n_cycles=10)
         self.assertIn("alignment", result)

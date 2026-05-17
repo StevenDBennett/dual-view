@@ -11,22 +11,9 @@ from dual_view.butterfly_seed import (
     dual_view_qasm_emitter,
     CleanPrimeProfile,
     _hensel_bootstrap_exponent,
-    _modinv,
     _newton_fp,
 )
 from dual_view.core import _valuation, two_adic_log5, two_adic_dlog
-
-
-class TestModinv(unittest.TestCase):
-    def test_modinv_basic(self):
-        self.assertEqual((_modinv(3, 7) * 3) % 7, 1)
-
-    def test_modinv_self_inverse(self):
-        self.assertEqual(_modinv(1, 5), 1)
-
-    def test_modinv_zero_raises(self):
-        with self.assertRaises(ValueError):
-            _modinv(0, 5)
 
 
 class TestValuation(unittest.TestCase):

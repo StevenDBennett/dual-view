@@ -7,6 +7,7 @@ Usage:
     python -m dual_view --test    # run test suite
     python -m dual_view --version
 """
+import os
 import sys
 import argparse
 
@@ -24,15 +25,13 @@ def main() -> None:
         return
 
     if args.test:
-        import unittest
-        import os
-        test_dir = os.path.join(os.path.dirname(__file__), "../../tests")
-        sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
-        loader = unittest.TestLoader()
-        suite = loader.discover(test_dir, pattern="test_*.py")
-        runner = unittest.TextTestRunner(verbosity=2)
-        result = runner.run(suite)
-        sys.exit(0 if result.wasSuccessful() else 1)
+        import subprocess
+        import sys
+        result = subprocess.run(
+            [sys.executable, "-m", "pytest", "tests/", "-v"],
+            cwd=os.path.join(os.path.dirname(__file__), "../.."),
+        )
+        sys.exit(result.returncode)
         return
 
     from .demo import main as demo_main
