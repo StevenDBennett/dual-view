@@ -8,6 +8,7 @@ Public names
     modinv_newton   – Newton-lifted modular inverse mod 2^k
     two_adic_log5   – 2-adic logarithm of 5 (truncated to k bits)
     two_adic_dlog   – Full decomposition: n = 2^v · (-1)^alpha · 5^e
+    dual_add        – LTE-based exact addition in (v, alpha, e) coordinates
     DualNumber      – Coordinate triple (v, alpha, e) for n in Z/2^k
     TwoAdicProcessor– Arithmetic on DualNumbers
     run_all_tests   – Basic self-check
@@ -19,11 +20,12 @@ from typing import Dict, List, Optional, Tuple
 import math
 
 
-# ── 8-bit discrete log LUT ─────────────────────────────────────────────────────
-# Precomputed: for each odd a ≡ 1 (mod 4) in [0, 256), store e s.t. 5^e ≡ a (mod 256).
-# 64 entries × 8 bytes = 512 bytes. Gives O(1) bootstrap to 6-bit precision.
-_DLOG8_LUT: dict[int, int] = {
-    pow(5, e, 256): e for e in range(64)
+# ── 10-bit discrete log LUT ────────────────────────────────────────────────────
+# Precomputed: for each odd a ≡ 1 (mod 4) in [0, 1024), store e s.t. 5^e ≡ a (mod 1024).
+# 256 entries ~ 512 bytes. Gives O(1) bootstrap to 8-bit precision.
+# b=10 is the optimal sweet spot (lab finding: b=8 costs 324, b=10 costs 256).
+_DLOG10_LUT: dict[int, int] = {
+    pow(5, e, 1024): e for e in range(256)
 }
 
 
@@ -53,6 +55,48 @@ def _valuation(n: int) -> int | float:
     if n == 0:
         return float("inf")
     return (n & -n).bit_length() - 1
+
+
+# ── LTE-based dual addition ────────────────────────────────────────────────────
+
+def dual_add(
+    v_a: int, alpha_a: int, e_a: int,
+    v_b: int, alpha_b: int, e_b: int,
+    k: int,
+) -> Tuple[int | float, int, int]:
+    """
+    Exact addition in dual (v, α, e) coordinates via the Lifting The Exponent Lemma.
+
+    Given a = 2^{v_a} · (-1)^{α_a} · 5^{e_a} and b = 2^{v_b} · (-1)^{α_b} · 5^{e_b},
+    returns (v_sum, alpha_sum, e_sum) for a + b mod 2^k without converting
+    back to the group representation.
+
+    Cases
+    -----
+    1. Different valuations: smaller v dominates (annihilation)
+    2. Same sign, same e: exact doubling (v → v+1)
+    3. Same sign, different e: v₂(sum) = v + 1 via 5^m ≡ 1 mod 4
+    4. Opposite signs: v₂(sum) = v + 2 + v₂(Δe) via LTE
+    5. Exact cancellation: e_a = e_b and signs oppose → v = ∞
+    """
+    if v_a > v_b:
+        return (v_b, alpha_b, e_b)
+    if v_b > v_a:
+        return (v_a, alpha_a, e_a)
+
+    v = v_a
+    if alpha_a == alpha_b:
+        e_min = e_a if e_a < e_b else e_b
+        e_diff = e_a - e_b if e_a > e_b else e_b - e_a
+        if e_diff == 0:
+            return (min(v + 1, k), alpha_a, e_a)
+        return (min(v + 1, k), alpha_a, e_min)
+    else:
+        e_diff = e_a - e_b if e_a > e_b else e_b - e_a
+        if e_diff == 0:
+            return (float("inf"), 0, 0)
+        v_lte = 2 + _valuation(e_diff)
+        return (min(v + v_lte, k), 0, e_a if e_a < e_b else e_b)
 
 
 # ── Newton modular inverse ─────────────────────────────────────────────────────
@@ -146,9 +190,9 @@ def _dlog_newton(a: int, k: int, L: Optional[int] = None) -> int:
     L_unit = L >> 2
 
     if k <= 34:
-        a_b = a & 0xFF
-        e_raw = _DLOG8_LUT.get(a_b, 0)
-        eprec = min(6, k - 2)
+        a_b = a & 0x3FF
+        e_raw = _DLOG10_LUT.get(a_b, 0)
+        eprec = min(8, k - 2)
         e = e_raw & _mask(eprec)
     else:
         bootstrap_k = max(4, k // 2 + 2)

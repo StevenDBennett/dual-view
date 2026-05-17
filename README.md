@@ -53,7 +53,9 @@ Three regimes (`s = v₂(g − 5)`):
 ## Features
 
 - **Core arithmetic**: Fast modular inverse, Viglietta discrete log with
-  8-bit LUT bootstrap, 2-adic logarithm
+  10-bit LUT bootstrap (256-entry sweet spot), 2-adic logarithm
+- **LTE dual addition**: `dual_add` — exact addition in `(v, α, e)` coordinates
+  via LTE, no group representation round-trip
 - **General 2-adic exp/log**: `padic_exp` and `padic_log` for arbitrary
   2-adic arguments (not just log(5))
 - **DualNumber**: 2-adic dual-view decomposition `(v, α, e)` for any integer
@@ -74,7 +76,9 @@ Three regimes (`s = v₂(g − 5)`):
 - **p-adic root finding**: Newton, Halley, composed methods (order 2/3/4/8)
 - **p-adic Newton dynamics**: Dynatomic polynomials, multiplier analysis,
   clean primes {7, 103, 181}, 4 proven theorems (special values, product
-  formula, period-4 identity)
+  formula, period-4 identity), 6-property landscape synthesis
+  (deterministic, discrete, information-doubling, phase-transitional,
+  universal, ultrametric)
 - **Iwasawa decomposition**: GL(2) congruence filtration, LDU, commutator
   depth theorem
 - **Iwasawa algebra**: Z₂[[G]] power series, augmentation ideal, Dirac

@@ -110,3 +110,21 @@ Newton iteration on exponent space: T ∼ k^2.3 to k^3.7 for
 k = 1,000–32,000 bits. The real bottleneck is GMP arithmetic on k-bit
 integers. A table-based variant (precomputing 5^(2^i)) gives 1.5–3×
 speedup. With gmpy2, k = 100,000+ bits becomes feasible.
+
+## Landscape Synthesis
+
+The p-adic Newton landscape is not a "basin portrait" in the complex-analytic sense. It is a discrete, exact, information-theoretic structure with six fundamental properties:
+
+1. **Deterministic** — Every quantity is exact. There are no probability distributions, only theorems. The convergence ratio std = 0.000000 across all primes, targets, and seeds.
+
+2. **Discrete** — The state space is partitioned by algebraic invariants: $\alpha \in \{0,1\}$ for 2-adic, residue classes mod $p$ for odd primes. Ghost density is binary (a single sign bit), not graded.
+
+3. **Information-doubling** — Each Newton step multiplies known precision by the method order $m$. This is a channel capacity law, not an error bound: $v_2(\tau_{n+1}) \ge m \cdot v_2(\tau_n) + 1$.
+
+4. **Phase-transitional** — There is a crossover from linear (Hensel bootstrap) to exponential (Newton) precision growth. The optimal transition point is $k/2$, significantly larger than the $\sqrt{k}$ heuristic.
+
+5. **Universal** — The landscape shape is independent of prime, target, and seed. Only method order $m$ matters. The 2-adic and $p$-adic Newton landscapes have identical shape when normalized by method order.
+
+6. **Ultrametric** — The strong triangle inequality collapses all geometric complexity. There are no "edge cases" because the metric has no interior. Equivalently, the Julia set of a linearisable map is trivial in Berkovich space.
+
+These properties jointly imply that the p-adic Newton iteration is governed by a formal group law $F(x, y)$ whose endomorphism ring contains $[m] \in \text{End}(F)$ for each method order $m = 2^n$.

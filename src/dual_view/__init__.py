@@ -46,6 +46,7 @@ from .core import (
     modinv_newton,
     two_adic_log5,
     two_adic_dlog,
+    dual_add,
     DualNumber,
     TwoAdicProcessor,
     padic_exp,
@@ -92,7 +93,7 @@ from .isometry import verify_isometry, isometry_pair_test, isometry_summary, ver
 from .butterfly_seed import DualViewSeed, analyze_prime, CleanPrimeProfile
 
 __all__ = [
-    "modinv_newton", "two_adic_log5", "two_adic_dlog",
+    "modinv_newton", "two_adic_log5", "two_adic_dlog", "dual_add",
     "DualNumber", "TwoAdicProcessor", "padic_exp", "padic_log",
     "ExponentSpace", "MahlerCalculus",
     "OperatorContext", "SpectralTriple", "NewtonProjector",

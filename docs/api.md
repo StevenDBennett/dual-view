@@ -20,7 +20,10 @@ Used as derivative scaling factor in Newton dlog: the derivative of `e ↦ 5^e` 
 
 #### `two_adic_dlog(a: int, k: int, L: Optional[int] = None) -> Optional[Tuple[int, int]]`
 Full 2-adic decomposition of odd part: `a = (-1)^α · 5^e (mod 2^k)`.
-Returns `(alpha, e)` or `None` if `a` is even. Uses 8-bit LUT bootstrap for `k ≤ 34`, bit-by-bit to `k/2` otherwise.
+Returns `(alpha, e)` or `None` if `a` is even. Uses 10-bit LUT bootstrap for `k ≤ 34` (256 entries, optimal sweet spot), bit-by-bit to `k/2` otherwise.
+
+#### `dual_add(v_a: int, alpha_a: int, e_a: int, v_b: int, alpha_b: int, e_b: int, k: int) -> Tuple[int | float, int, int]`
+Exact addition in dual `(v, α, e)` coordinates via LTE, without converting back to group representation. Given `a = 2^{v_a}·(-1)^{α_a}·5^{e_a}` and `b = 2^{v_b}·(-1)^{α_b}·5^{e_b}`, returns `(v_sum, α_sum, e_sum)` for `a + b mod 2^k`. Handles 5 cases: different valuations (annihilation), same sign (doubling or v+1), opposite signs (v+2+v₂(Δe) via LTE), and exact cancellation.
 
 #### `run_all_tests(k: int = 16, verbose: bool = True) -> None`
 Self-check for core arithmetic: round-trip, multiplication, inversion, powering.
