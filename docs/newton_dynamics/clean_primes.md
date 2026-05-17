@@ -40,3 +40,11 @@ If $K_2$, $K_3$, $K_4$ were linearly disjoint over $\mathbb{Q}$:
 Observed density: $3 / 2,\!556 \approx 0.1174\%$
 
 Since observed $>$ bound, the fields are **not** linearly disjoint, which is consistent with finiteness (the compositum is smaller than the product of degrees).
+
+### False-positive caveat: fast-check limitations
+
+The fast check (periods 2–5) is **not sufficient** for full verification. Known false positive:
+
+- **$p = 313$** passes all period-2–5 checks but has a **period-27 ghost cycle**. Full verification requires checking **all** cycles and multipliers, not just whether polynomial roots exist modulo $p$.
+
+The $p = 181$ anomaly also illustrates this: the period-4 polynomial has 4 linear factors modulo 181 ($u = 45, 47, 123, 179$), but **none are cubes** in $\mathbb{F}_{181}$, so $x^3 = u$ has no solutions — hence no period-4 points exist. Without the cube-root check, $p = 181$ would be a false *negative* (appearing to have period-4 points when it does not).

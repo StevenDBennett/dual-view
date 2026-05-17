@@ -47,6 +47,11 @@
 2. **Prove clean primes = {7, 103, 181}** — use obstruction accumulation
 3. **Prove $Φ_n^*(1) = 3^{\mu_3(n)/2}$** — full theoretical proof (currently has complete proof — see `theorems.md`)
 
+### Known Caveats
+1. **Fast-check false positives**: $p = 313$ passes periods 2–5 but has a period-27 ghost cycle. Full clean-prime verification requires checking **all** cycles and multipliers, not just root existence modulo $p$.
+2. **$p = 181$ cube-resolution**: The period-4 polynomial has 4 linear factors mod 181, but none are cubes in $\mathbb{F}_{181}$ — without the cube-root check, this would appear to have period-4 points. The cube-root test is essential.
+3. **3-adic quadratic convergence**: $N(1+\varepsilon) \approx 1 + \varepsilon^2$ implies $v_3(N(1+\varepsilon)-1) = 2 \cdot v_3(\varepsilon)$ — the Newton map is quadratically convergent in the 3-adic metric, consistent with its superattracting fixed points at cube roots of unity.
+
 ### High
 4. **Compute period-6 multipliers** — numerical computation from coefficients
 5. **Find closed form for individual multipliers** — not just product

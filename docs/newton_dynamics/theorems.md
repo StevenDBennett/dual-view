@@ -97,3 +97,17 @@ For a 4-cycle $\{u_i\}$ under $M(u) = \frac{(2u+1)^3}{27u^2}$, the cycle equatio
 $$\prod_{i=0}^3 (2u_i + 1) = 81 \prod_{i=0}^3 u_i$$
 
 The multiplier in $u$-dynamics is $\mu_u = \frac{16}{81} \prod (u_i - 1)/u_i$. The multiplier in $x$-dynamics is $\mu_x = \left(\frac{2}{3}\right)^4 \prod (u_i - 1)/u_i = \frac{16}{81} \prod (u_i - 1)/u_i$. Therefore $\mu_u = \mu_x$. ∎
+
+---
+
+## Bonus: 3-Adic Quadratic Convergence
+
+The Newton map $N(x) = (2x^3+1)/(3x^2)$ has superattracting fixed points at the cube roots of unity ($N'(\zeta) = 0$ for $\zeta^3 = 1$). Near $x = 1$:
+
+$$N(1+\varepsilon) = \frac{2(1+\varepsilon)^3+1}{3(1+\varepsilon)^2} \approx 1 + \varepsilon^2$$
+
+so $v_3(N(1+\varepsilon)-1) = 2 \cdot v_3(\varepsilon)$ — the map is **quadratically convergent** in the 3-adic metric. This is consistent with LTE:
+
+$$v_3(4^n - 1) = 1 + v_3(n) \quad (n \text{ divisible by } 3)$$
+
+and the general theory of superattracting fixed points.
