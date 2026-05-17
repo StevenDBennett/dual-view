@@ -86,6 +86,7 @@ def demo_crt_stability(quick: bool = False) -> None:
 
     result = combined_stability(k=6, p=7, num_cycles=20)
     print(f"  Pearson r = {result['pearson_r']:.3f}  (n={result['n_samples']})")
+    print(f"  Mean v₂   = {result['mean_v2']:.2f}")
     print("  Done")
 
 
@@ -112,11 +113,11 @@ def demo_mersenne_cliff(quick: bool = False) -> None:
     from .mersenne import mersenne_cliff_table
 
     rows = mersenne_cliff_table(n_max=10)
-    print(f"  {'n':>3} {'k*':>4} {'k_pred':>6} {'match':>6}")
-    print("  " + "-" * 22)
+    print(f"  {'n':>3} {'k*':>4}  {'c':>2}  {'k_pred':>6} {'match':>6}")
+    print("  " + "-" * 28)
     for r in rows:
         match = "✓" if r['k*'] == r['k_pred'] else "✗"
-        print(f"  {r['n']:>3} {r['k*']:>4} {r['k_pred']:>6} {match:>6}")
+        print(f"  {r['n']:>3} {r['k*']:>4}  {r['c']:>2}  {r['k_pred']:>6} {match:>6}")
     print("  Done")
 
 

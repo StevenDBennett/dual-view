@@ -73,13 +73,30 @@ def verify_core_identity(n_max: int = 12) -> Dict[int, bool]:
     return results
 
 
+def _cliff_prediction(n: int, c: int) -> int:
+    """Mersenne cliff formula: the last stable precision k* for Mersenne number 2^n - 1.
+
+    Three regimes (Mersenne Ghost Theorem, g=5, c=5):
+        n <= c:      k* = 2n - 1          (quadratic dominates)
+        n = c + 1:   k* = n + c + 1        (boundary)
+        n >= c + 2:  k* = n + c            (linear determines)
+    """
+    if n <= c:
+        return 2 * n - 1
+    elif n == c + 1:
+        return n + c + 1
+    else:
+        return n + c
+
+
 def mersenne_cliff_table(n_max: int = 12) -> List[Dict]:
     """
     Find the cliff precision k* for each Mersenne weight 2^n - 1.
 
     Returns list of dicts with n, k*, α, e_true, v₂(e_true), and
-    the formula prediction k_pred = n + 2.
+    the formula prediction k_pred using the full 3-regime formula.
     """
+    c = cliff_constant(g=5)
     rows = []
     for n in range(3, n_max + 1):
         stable_k = None
@@ -96,7 +113,8 @@ def mersenne_cliff_table(n_max: int = 12) -> List[Dict]:
             rows.append({
                 "n": n,
                 "k*": stable_k,
-                "k_pred": n + 2,
+                "c": c,
+                "k_pred": _cliff_prediction(n, c),
                 "alpha": 1,
                 "e_true": 1 << (n - 2),
                 "v2_e": v2_e,

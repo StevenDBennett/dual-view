@@ -85,7 +85,7 @@ class TestCombinedStability(unittest.TestCase):
         result = combined_stability(k=6, p=7, num_cycles=10)
         self.assertIn("pearson_r", result)
         self.assertIn("n_samples", result)
-        self.assertIn("mean_ratio", result)
+        self.assertIn("mean_v2", result)
 
 
 class TestNonAbelianMatrixOps(unittest.TestCase):

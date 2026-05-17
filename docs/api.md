@@ -194,7 +194,7 @@ CRT arithmetic.
 - `convergence_ratio_2adic(P)` — 2-adic convergence ratio
 
 #### `combined_stability(k, p, num_cycles=50, cycle_length=4) -> Dict`
-Randomised correlation test.
+Randomised correlation test: correlates `v₂(prod)` with the change in `v₂` under 2-adic multiplicative perturbation `w → w·(1+2^t)`.
 
 ## Nonabelian Module (`dual_view.nonabelian`)
 

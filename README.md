@@ -137,7 +137,7 @@ print(stats["mean_v2_e"], stats["cliff_risk"])
 | `core` | DualNumber, modular inverse, 2-adic exp/log, cliff centre g₀ |
 | `exponent` | Additive coordinate chart on Z/2^(k-2) |
 | `mahler` | Mahler basis, Dirac/Volterra operators, boundary asymmetry |
-| `operators` | Symbolic operator algebra (shift, difference, average) |
+| `operators` | Symbolic operator algebra (shift, difference, average) — O(N) per application, decorative for k ≥ 9 |
 | `basin` | Newton basin analysis, ghost detection |
 | `thermodynamics` | Graded `v₂(e_true)` weight stability diagnostic |
 | `regularization` | Ghost-aware regularisation for NN training |

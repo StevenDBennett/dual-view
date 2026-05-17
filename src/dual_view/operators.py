@@ -13,6 +13,13 @@ Closed-form identities verified in isometry.py:
     D·avg = 0
     avg·D = 0
 
+PERFORMANCE NOTE: The operator algebra is implemented via Python
+closures and is O(N) per application (N = 2^{k-2}).  For k ≥ 9
+(N ≥ 128) this becomes a pedagogical / decorative interface rather
+than a practical computational tool.  The underlying theory is
+independent of the implementation — for production use at large k,
+the discrete-log Newton projector in core.py is the efficient path.
+
 Bug fixes applied (from the original 2-Adic-Newton-Dynamics codebase):
     1. OperatorContext.g attribute was missing — added as a property.
     2. NewtonProjector._step: was inverting an even number (4*f*Lg).
@@ -21,7 +28,9 @@ Bug fixes applied (from the original 2-Adic-Newton-Dynamics codebase):
        for all e).  The factor of 4 -> f>>2 shift is moved to the
        numerator.
     3. R operator (now called avg): was O(N^2) due to nested
-       summation closures.  Fixed to O(N) direct-sum lambda.
+       summation closures.  Fixed to O(N) direct-sum lambda, BUT
+       still O(N) per application, so the operator algebra as a
+       whole is impractical for k ≥ 10.
     4. Closures in __add__/__sub__: used late-binding — fixed with
        default-argument capture (s=self, o=other).
 """
@@ -105,9 +114,14 @@ class OperatorContext:
         I      – identity
         S      – shift
         diff   – forward difference I - S
-        avg    – direct-sum average (O(N))
+        avg    – direct-sum average (O(N) per application)
         M(h)   – multiplication by h
         g      – the generator (fix for missing attribute)
+
+    NOTE: All operators are implemented via Python closures and run in
+    O(N) time per application (N = 2^{k-2}).  For k ≥ 9 (N ≥ 128) this
+    module becomes a pedagogical / decorative interface.  For efficient
+    computation at large k use the discrete-log tools in core.py.
     """
 
     def __init__(self, k: int, g: int) -> None:

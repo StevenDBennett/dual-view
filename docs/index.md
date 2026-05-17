@@ -22,7 +22,7 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | `core.py` | 523 | DualNumber, modular inverse, 2-adic exp/log, cliff centre g₀ |
 | `exponent.py` | 81 | ExponentSpace — additive coordinate chart on Z/2^(k-2) |
 | `mahler.py` | 123 | Mahler basis, Dirac/Volterra operators, boundary asymmetry |
-| `operators.py` | 215 | OperatorContext, SpectralTriple, NewtonProjector |
+| `operators.py` | 215 | OperatorContext, SpectralTriple, NewtonProjector (O(N) per call — pedagogical for k ≥ 9) |
 | `basin.py` | 346 | BasinExplorer, LayerGhostDiagnosticV2, GhostHunt |
 | `thermodynamics.py` | 285 | SeedThermodynamics — graded 2-adic stability diagnostics |
 | `regularization.py` | 150 | GhostMap, ghost_penalty, local_ratio_gradient |

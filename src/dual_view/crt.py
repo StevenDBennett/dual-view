@@ -159,47 +159,56 @@ def combined_stability(
     k: int, p: int, num_cycles: int = 50, cycle_length: int = 4
 ) -> Dict[str, float]:
     """
-    Randomised test: correlation between 2-adic convergence ratio
-    and v_2 of change under single-bit weight-flip perturbation.
+    Randomised test: correlation between 2-adic depth of a CRT cycle product
+    and the 2-adic valuation of the change under an additive 2ᵗ perturbation.
 
-    Returns dict with pearson_r, n_samples, and mean_ratio.
+    Unlike the original bit-flip approach (which always gave v₂(Δ)=0 because
+    XOR by a power of 2 always produces an odd difference), this uses an
+    additive perturbation w → w + 2ᵗ, producing a graded v₂(Δ) that varies
+    meaningfully.  The stability measure is the v₂ of the original product's
+    2-adic component — deeper in the filtration → more stable.
+
+    Returns dict with pearson_r, n_samples, and mean_v2.
     """
     proc = CRTDualProcessor(k, p)
-    ratios_orig: List[float] = []
+    v2_orig_vals: List[float] = []
     delta_v2s: List[float] = []
 
     for _ in range(num_cycles):
         weights = [np.random.randint(0, proc.mod_full) for _ in range(cycle_length)]
         P = proc.cycle_product([CRTDualNumber(w, k, p, proc.g_p) for w in weights])
-        r_orig = proc.convergence_ratio_2adic(P)
+        v2_orig = _valuation(P.component_2.value)
+        if v2_orig == float("inf"):
+            v2_orig = 0.0
 
-        flip_idx = np.random.randint(0, cycle_length)
-        w_flipped = weights[flip_idx] ^ (1 << np.random.randint(0, min(k, 16)))
+        # Additive 2-adic perturbation: add 2^t to one weight
+        idx = np.random.randint(0, cycle_length)
+        t = np.random.randint(0, k)
+        perturbed = (weights[idx] + (1 << t)) % proc.mod_full
         weights_pert = weights[:]
-        weights_pert[flip_idx] = w_flipped
+        weights_pert[idx] = perturbed
         P_pert = proc.cycle_product(
             [CRTDualNumber(w, k, p, proc.g_p) for w in weights_pert]
         )
-        r_pert = proc.convergence_ratio_2adic(P_pert)
 
         delta = abs(P.component_2.value - P_pert.component_2.value)
         v2_delta = _valuation(delta) if delta > 0 else 0
 
-        ratios_orig.append(r_orig)
+        v2_orig_vals.append(float(v2_orig))
         delta_v2s.append(float(v2_delta))
 
-    ratios_arr = np.array(ratios_orig)
+    v2_arr = np.array(v2_orig_vals)
     deltas_arr = np.array(delta_v2s)
-    std_r = ratios_arr.std()
+    std_v2 = v2_arr.std()
     std_d = deltas_arr.std()
 
-    if std_r > 0 and std_d > 0:
-        pearson_r = float(np.corrcoef(ratios_arr, deltas_arr)[0, 1])
+    if std_v2 > 0 and std_d > 0:
+        pearson_r = float(np.corrcoef(v2_arr, deltas_arr)[0, 1])
     else:
         pearson_r = 0.0
 
     return {
         "pearson_r": pearson_r,
         "n_samples": num_cycles,
-        "mean_ratio": float(ratios_arr.mean()),
+        "mean_v2": float(v2_arr.mean()),
     }
