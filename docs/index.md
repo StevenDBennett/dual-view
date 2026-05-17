@@ -19,8 +19,9 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 
 | Module | Lines | Description |
 |--------|-------|-------------|
-| `core.py` | 415 | DualNumber, modular inverse, Viglietta discrete log with LUT |
+| `core.py` | 510 | DualNumber, modular inverse, 2-adic exp/log, cliff centre g₀ |
 | `exponent.py` | 84 | ExponentSpace — additive coordinate chart on Z/2^(k-2) |
+| `mahler.py` | 115 | Mahler basis, Dirac/Volterra operators, boundary asymmetry |
 | `operators.py` | 209 | OperatorContext, SpectralTriple, NewtonProjector |
 | `basin.py` | 253 | BasinExplorer, LayerGhostDiagnosticV2, GhostHunt |
 | `thermodynamics.py` | 279 | SeedThermodynamics — graded 2-adic stability diagnostics |
@@ -47,13 +48,18 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 
 | ID | Theorem | Module | Status |
 |----|---------|--------|--------|
-| T1 | Quadratic convergence of Newton dlog map | `core.py` | Proven |
+| T1 | Gain law: `v(e_new - e_true) = 2j+1` (quadratic + LTE bonus) | `core.py` | Proven |
+| T1b | General 2-adic exp/log: `exp(x)`, `log(g)` via exact arithmetic | `core.py` | Verified |
+| T1c | Cliff density: `Pr[c=0]=7/8`, `E[c]=1/4` | `core.py` | Proven |
+| T1d | Real vs 2-adic reconciliation: 10–12× speedup over squaring loop | — | Verified |
+| — | Divisor optimality: `d=2` unique optimal Newton divisor | `core.py` | Proven |
 | T2 | Trajectory separation: `n*(s) = ceil(log₂(s)) - 1` | `separation.py` | Proven, zero variance |
 | T3 | Basin dichotomy: α=0 globally stable | `basin.py` | Proven |
 | T4 | Ghost formula: `e* = dlog(a+2, k)` for α=1 | `basin.py` | Proven |
 | T5 | Mersenne cliff: `k* = n+2` for `w = 2^n - 1` | `mersenne.py` | Verified n=3..11 |
 | T6a | Exponential map isometry: `v₂(5^e-1) = v₂(e)+2` | `isometry.py` | Proven |
 | T6b | Operator algebra: `avg² = N·avg`, `D·avg = avg·D = 0` | `isometry.py` | Proven |
+| T6d | Mahler basis: `D∘T = id` on `ker(ε)`, `T∘D = id` on `n≥2` | `mahler.py` | Proven |
 | T6c | Trace-mod-p independence (GL(2) holonomy) | `isometry.py` | Statistical |
 | — | Commutator depth: `depth([M,N]) ≥ depth(M)+depth(N)` | `iwasawa.py` | Verified |
 | — | Mersenne cliff constant: `c(g) = v₂(g - exp₂(-4)) - 2` | `mersenne.py` | Proven |

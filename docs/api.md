@@ -25,6 +25,15 @@ Returns `(alpha, e)` or `None` if `a` is even. Uses 8-bit LUT bootstrap for `k �
 #### `run_all_tests(k: int = 16, verbose: bool = True) -> None`
 Self-check for core arithmetic: round-trip, multiplication, inversion, powering.
 
+#### `padic_exp(x: int, k: int) -> int`
+General 2-adic exponential `exp(x) mod 2^k`. Requires `v₂(x) ≥ 2`. Uses exact integer arithmetic with analytic valuation tracking for termination.
+
+#### `padic_log(g: int, k: int) -> int`
+General 2-adic logarithm `log(g) mod 2^k`. Requires `g ≡ 1 mod 4` (i.e. `v₂(g−1) ≥ 2`). Uses exact integer arithmetic.
+
+#### `g0(k: int) -> int`
+The cliff centre `g₀ = exp₂(−4) mod 2^k`. The unique 2-adic unit with `log(g₀) = −4`. The hardware approximation `−123` agrees with `g₀` to 13 bits.
+
 ### Classes
 
 #### `DualNumber(n: int, k: int = 64)`
@@ -56,6 +65,25 @@ Model the multiplicative group `⟨g⟩ ≅ Z/N` where `N = 2^(k-2)`.
 - `difference(f, e)` — forward difference `(Df)(e) = f(e+1) - f(e)`
 - `integrate(f)` — discrete integral `Σ f(e) mod 2^k`
 - `is_eigenfunction(f, e)` — check `D(g^e) = (g-1)·g^e`
+
+## Mahler Module (`dual_view.mahler`)
+
+#### `MahlerCalculus`
+Operations on the Mahler (binomial) basis for integer-valued functions.
+
+**Static methods**:
+- `mahler_polynomial(n, x)` — binomial coefficient `C(x, n)`
+- `to_mahler(f, max_degree)` — convert function values to Mahler coefficients via finite-difference table
+- `from_mahler(coeffs, x)` — evaluate function from Mahler coefficients at point `x`
+- `dirac_operator(coeffs)` — forward difference on coefficients: `D(a₀, a₁, …) = (−a₁, −a₂, …)`
+- `volterra_operator(coeffs)` — right inverse of Dirac: `T(0, a₁, …) = (0, 0, −a₁, …)`; requires `a₀ = 0`
+- `truncate(coeffs, k)` — reduce coefficients modulo `2^k`
+
+**Boundary behaviour**:
+```
+D∘T = id  on  ker(ε) = span{e_n : n ≥ 1}
+T∘D = id  on  span{e_n : n ≥ 2}   (NOT on all of ker(ε))
+```
 
 ## Operators Module (`dual_view.operators`)
 

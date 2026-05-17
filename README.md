@@ -54,7 +54,11 @@ Three regimes (`s = v₂(g − 5)`):
 
 - **Core arithmetic**: Fast modular inverse, Viglietta discrete log with
   8-bit LUT bootstrap, 2-adic logarithm
+- **General 2-adic exp/log**: `padic_exp` and `padic_log` for arbitrary
+  2-adic arguments (not just log(5))
 - **DualNumber**: 2-adic dual-view decomposition `(v, α, e)` for any integer
+- **Mahler calculus**: Binomial basis with Dirac/Volterra operators,
+  proven boundary asymmetry `D∘T ≠ T∘D` at `e₁`
 - **Operator calculus**: Shift/difference/average operators, Connes-style
   spectral triple, Newton projector
 - **Newton basin analysis**: Full ghost detection, precision sweep
@@ -73,7 +77,8 @@ Three regimes (`s = v₂(g − 5)`):
   formula, period-4 identity)
 - **Iwasawa decomposition**: GL(2) congruence filtration, LDU, commutator
   depth theorem
-- **Mersenne Ghost Theorem**: Full proof and bootstrap optimality
+- **Mersenne Ghost Theorem**: Full proof, bootstrap optimality, cliff
+  density theory (`Pr[c=0]=7/8`, `E[c]=1/4`)
 - **Butterfly seed**: Dual-view Newton projector as butterfly-compilable seed,
   clean-prime analysis, OpenQASM circuit generation
 - **PyTorch integration**: QuantizedMLP with ghost-regularized training
@@ -127,8 +132,9 @@ print(stats["mean_v2_e"], stats["cliff_risk"])
 
 | Module | Description |
 |--------|-------------|
-| `core` | DualNumber, modular inverse, Viglietta discrete log |
+| `core` | DualNumber, modular inverse, 2-adic exp/log, cliff centre g₀ |
 | `exponent` | Additive coordinate chart on Z/2^(k-2) |
+| `mahler` | Mahler basis, Dirac/Volterra operators, boundary asymmetry |
 | `operators` | Symbolic operator algebra (shift, difference, average) |
 | `basin` | Newton basin analysis, ghost detection |
 | `thermodynamics` | Graded `v₂(e_true)` weight stability diagnostic |

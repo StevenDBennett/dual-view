@@ -112,3 +112,34 @@ eprecᵢ = min(2ⁱ · eprec₀, k-2)
 Total bits processed = `eprec₀ + Σ 2ⁱ · eprec₀` for `i` such that `eprecᵢ < k-2`.
 
 Minimizing this cost gives `eprec₀ = k/2` (verified by exhaustive search for all `k ≤ 128`).
+
+## Cliff Density Theory
+
+The cliff constant `c(g) = v₂(g - g₀) - 2` (where `g₀ = exp₂(-4)`) measures the precision lost by catastrophic cancellation when computing `log(g)/4 + 1` near the cliff centre. For a uniformly random log-target `L mod 2^k`, the distribution of `c(exp(L))` is:
+
+```
+Pr[c = 0]  =  7/8          (no cliff, 87.5% of targets)
+Pr[c = j]  =  2^{-(j+3)}   for j ≥ 1
+
+E[c]       =  1/4          (expected cliff cost: 0.25 extra bits)
+Pr[c ≥ 4]  ≈  1.56%        (high cliffs are extremely rare)
+```
+
+### Proof Sketch
+
+For random `L mod 2^(k-2)`, the quantity `L + 4` is uniformly distributed. The cliff constant is `c = max(0, v₂(L+4) - 2)`. Since `v₂(X) = j` occurs with probability `2^{-(j+1)}` for a uniform random integer `X`:
+
+```
+Pr[c = 0] = Pr[v₂(L+4) ≤ 2] = 1/2 + 1/4 + 1/8 = 7/8
+Pr[c = j] = Pr[v₂(L+4) = j+2] = 2^{-(j+3)}   for j ≥ 1
+```
+
+The expected value:
+
+```
+E[c] = Σ_{j=1}^∞ j · 2^{-(j+3)} = 2^{-3} · Σ j·2^{-j} = 1/8 · 2 = 1/4
+```
+
+### Implications
+
+This makes cliff detection worthwhile for correctness but negligible for average-case performance — the expected overhead is only 0.25 bits. The hardware formula `tzcnt(g + 123) - 2` is accurate for `c ≤ 11`, which covers 99.95% of cases.

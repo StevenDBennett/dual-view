@@ -36,7 +36,53 @@ The Newton iteration for solving `5^e ≡ a (mod 2^k)` is:
 e_{n+1} = e_n - (5^{e_n} - a) / (5^{e_n} · log₂(5))
 ```
 
-where the derivative `log₂(5) = L` is the 2-adic logarithm of 5. This iteration converges quadratically: each step doubles the number of correct bits.
+where the derivative `log₂(5) = L` is the 2-adic logarithm of 5. This iteration converges with **gain law**:
+
+```
+v₂(e_{n+1} - e_true) = 2 · v₂(e_n - e_true) + 1
+```
+
+The `+1` bonus comes from dividing the residual by 4 in the correction step. This is strictly better than pure quadratic convergence (which would give `2j`). The proof uses the Lifting the Exponent Lemma together with the Taylor expansion of `(e^x - 1) - x·e^x`, showing that the leading term `-x²/2` has valuation `2j+3`, and dividing by the denominator `4·5^e·L` (valuation 2) yields `2j+1`.
+
+#### Divisor Optimality
+
+The Newton correction divides by `2^d · 5^e · L`. The choice `d = 2` (i.e. `>> 2`) is the unique optimal divisor:
+
+| d | Gain | Behaviour |
+|---|------|-----------|
+| d < 2 | `v_new = j` | Linear, no gain |
+| **d = 2** | **`v_new = 2j+1`** | **Optimal: quadratic + LTE bonus** |
+| d > 2 | `v_new = j - (d-2)` | Sublinear; diverges for `d ≥ j+2` |
+
+This is machine-verified for all `d ∈ [0, 5]`, `j ∈ [2, 6]` at `k = 24`. Two half-steps with `d=1` cannot recover the gain of a single step with `d=2`.
+
+### T1b: General 2-Adic Exponential and Logarithm
+
+The 2-adic exponential and logarithm converge on the domains `v₂(x) ≥ 2` and `v₂(g-1) ≥ 2` respectively:
+
+```
+exp(x) = Σ xⁿ/n!    (converges for v₂(x) ≥ 2)
+log(g) = Σ (-1)^{n+1} (g-1)ⁿ/n    (converges for v₂(g-1) ≥ 2)
+```
+
+These are implemented as `padic_exp` and `padic_log` using exact integer arithmetic (tracking `v₂(xⁿ/n!)` analytically to determine termination). The cliff centre `g₀ = exp₂(-4)` is the unique 2-adic unit with `log(g₀) = -4`, and satisfies `v₂(g₀ - (-123)) = 13` — the hardware approximation `-123` agrees with `g₀` to 13 bits.
+
+### T1c: Cliff Density Theory
+
+For a uniformly random log-target `L mod 2^k`, the cliff constant `c(g) = v₂(g - g₀) - 2` follows a geometric distribution:
+
+```
+Pr[c = 0]  =  7/8          (no cliff, 87.5% of targets)
+Pr[c = j]  =  2^{-(j+3)}   for j ≥ 1
+E[c]       =  1/4          (expected cliff cost: 0.25 extra bits)
+Pr[c ≥ 4]  ≈  1.56%        (high cliffs are extremely rare)
+```
+
+This makes cliff detection worthwhile for correctness but negligible for average-case performance — the expected overhead is only 0.25 bits.
+
+### T1d: Real vs 2-Adic Reconciliation
+
+The 2-adic gain laws correctly predict real Newton convergence rates. For `k`-bit fixed-point arithmetic, `j` bits of 2-adic precision equals `2^{-j}` absolute error in the real sense. The LTE `+1` bonus saves ~17% of iterations at `k=64` (5 steps vs 6 for multiplicative inverse). The 2-adic Newton approach is 10–12× faster than the squaring-loop alternative for `k=64`.
 
 ### T2: Trajectory Separation Theorem
 
@@ -111,6 +157,30 @@ avg · D = 0
 ```
 
 These identities are verified empirically and follow from the telescoping property of finite differences.
+
+### T6d: Mahler Basis and Dirac/Volterra Operators
+
+Every integer-valued function `f: Z → Z` has a unique Mahler (binomial) basis expansion:
+
+```
+f(x) = Σ a_n · C(x, n)    where C(x, n) = x(x−1)…(x−n+1)/n!
+```
+
+The **Dirac operator** `D` (forward difference) and **Volterra operator** `T` (right inverse) act on Mahler coefficients as:
+
+```
+D(a₀, a₁, a₂, …) = (−a₁, −a₂, −a₃, …)     [lowers degree]
+T(0, a₁, a₂, …)  = (0, 0, −a₁, −a₂, …)    [raises degree]
+```
+
+There is an exact asymmetry at the boundary:
+
+```
+D∘T = id  on  ker(ε) = span{e_n : n ≥ 1}
+T∘D = id  on  span{e_n : n ≥ 2}   (NOT on all of ker(ε))
+```
+
+The asymmetry arises because `D(e₁) = −e₀` exits `ker(ε)`, so `T∘D` is undefined at `e₁`. But `T(e₁) = −e₂` stays in `ker(ε)`, so `D∘T` is well-defined at `e₁`.
 
 ### T6c: Trace-mod-p Independence
 

@@ -48,9 +48,13 @@ from .core import (
     DualNumber,
     TwoAdicProcessor,
     run_all_tests,
+    padic_exp,
+    padic_log,
+    g0,
 )
 
 from .exponent import ExponentSpace
+from .mahler import MahlerCalculus
 from .operators import OperatorContext, SpectralTriple, NewtonProjector
 from .gauge import cycle_product, spectral_det, det_coordinates, tidal_scalar, GaugeLayer
 from .basin import BasinExplorer, precision_sweep
@@ -122,8 +126,11 @@ __all__ = [
     # core
     "modinv_newton", "two_adic_log5", "two_adic_dlog",
     "DualNumber", "TwoAdicProcessor", "run_all_tests",
+    "padic_exp", "padic_log", "g0",
     # exponent
     "ExponentSpace",
+    # mahler
+    "MahlerCalculus",
     # operators
     "OperatorContext", "SpectralTriple", "NewtonProjector",
     # gauge

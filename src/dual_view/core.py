@@ -370,6 +370,99 @@ class TwoAdicProcessor:
         return a.coords()
 
 
+# ── general 2-adic exp / log ──────────────────────────────────────────────────
+
+def padic_exp(x: int, k: int) -> int:
+    """
+    Compute exp(x) mod 2^k via exact integer arithmetic.
+
+    Requires v₂(x) ≥ 2 (the 2-adic exponential converges on 4Z₂).
+    Terminates when v₂(xⁿ/n!) ≥ k.
+
+    This is the general 2-adic exponential — unlike `two_adic_log5` which
+    computes only log(5), this works for any valid 2-adic argument.
+    """
+    mod = 1 << k
+    if x == 0:
+        return 1
+    vx = _valuation(abs(x))
+    if vx < 2:
+        raise ValueError(f"exp requires v₂(x) ≥ 2, got v₂={vx}")
+    result = 1
+    power_exact = x
+    factorial_exact = 1
+    v2_fact = 0
+    for n in range(1, k * 2):
+        factorial_exact *= n
+        v2_fact += _valuation(n)
+        v_term = n * vx - v2_fact
+        if v_term >= k:
+            break
+        den_odd = factorial_exact >> v2_fact
+        num_stripped = (power_exact >> (n * vx) if power_exact >= 0
+                        else -((-power_exact) >> (n * vx)))
+        term = pow(int(den_odd), -1, mod) * int(abs(num_stripped)) % mod
+        if num_stripped < 0:
+            term = (-term) % mod
+        term = term * pow(2, v_term, mod) % mod
+        result = (result + term) % mod
+        power_exact *= x
+    return result
+
+
+def padic_log(g: int, k: int) -> int:
+    """
+    Compute log(g) mod 2^k via exact integer arithmetic.
+
+    Requires g ≡ 1 mod 4 (i.e. v₂(g−1) ≥ 2, so g is in the domain of
+    the 2-adic logarithm). Uses the series:
+        log(g) = (g−1) − (g−1)²/2 + (g−1)³/3 − …
+
+    This is the general 2-adic logarithm — unlike `two_adic_log5` which
+    computes only log(5), this works for any g ≡ 1 mod 4.
+    """
+    mod = 1 << k
+    g_mod = g % mod
+    x_exact = g_mod - 1
+    if x_exact > (mod >> 1):
+        x_exact -= mod
+    if x_exact == 0:
+        return 0
+    vx = _valuation(abs(x_exact))
+    if vx < 2:
+        raise ValueError(f"log requires v₂(g−1) ≥ 2 (g ≡ 1 mod 4), got v₂={vx}")
+    result = 0
+    power_exact = x_exact
+    for n in range(1, k * 2):
+        vn = _valuation(n)
+        v_term = n * vx - vn
+        if v_term >= k:
+            break
+        den_odd = n >> vn
+        num_stripped = (power_exact >> (n * vx) if power_exact >= 0
+                        else -((-power_exact) >> (n * vx)))
+        term = pow(int(den_odd), -1, mod) * int(abs(num_stripped)) % mod
+        if num_stripped < 0:
+            term = (-term) % mod
+        if n % 2 == 0:
+            term = (-term) % mod
+        term = term * pow(2, v_term, mod) % mod
+        result = (result + term) % mod
+        power_exact *= x_exact
+    return result
+
+
+def g0(k: int) -> int:
+    """
+    The cliff centre: g₀ = exp₂(−4) mod 2^k.
+
+    This is the unique 2-adic unit where log(g₀) = −4.
+    The hardware approximation −123 agrees with g₀ to 13 bits:
+    v₂(g₀ − (−123)) = 13.
+    """
+    return padic_exp(-4, k)
+
+
 # ── self-test ─────────────────────────────────────────────────────────────────
 
 def run_all_tests(k: int = 16, verbose: bool = True) -> None:
