@@ -11,11 +11,10 @@ from dual_view.butterfly_seed import (
     dual_view_qasm_emitter,
     CleanPrimeProfile,
     _hensel_bootstrap_exponent,
-    _v2,
     _modinv,
     _newton_fp,
 )
-from dual_view.core import two_adic_log5, two_adic_dlog
+from dual_view.core import _valuation, two_adic_log5, two_adic_dlog
 
 
 class TestModinv(unittest.TestCase):
@@ -30,16 +29,16 @@ class TestModinv(unittest.TestCase):
             _modinv(0, 5)
 
 
-class TestV2(unittest.TestCase):
-    def test_v2_even(self):
-        self.assertEqual(_v2(8), 3)
-        self.assertEqual(_v2(12), 2)
+class TestValuation(unittest.TestCase):
+    def test_valuation_even(self):
+        self.assertEqual(_valuation(8), 3)
+        self.assertEqual(_valuation(12), 2)
 
-    def test_v2_odd(self):
-        self.assertEqual(_v2(7), 0)
+    def test_valuation_odd(self):
+        self.assertEqual(_valuation(7), 0)
 
-    def test_v2_zero(self):
-        self.assertEqual(_v2(0), 2**31)
+    def test_valuation_zero(self):
+        self.assertTrue(_valuation(0) == float("inf"))
 
 
 class TestNewtonFp(unittest.TestCase):

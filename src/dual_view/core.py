@@ -15,7 +15,7 @@ Public names
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
 import math
 
 
@@ -33,8 +33,23 @@ def _mask(k: int) -> int:
     return (1 << k) - 1
 
 
-def _valuation(n: int) -> int:
-    """2-adic valuation v_2(n)."""
+def _mat_mul(A: List[List[int]], B: List[List[int]], mod: int) -> List[List[int]]:
+    """2×2 matrix multiplication modulo mod."""
+    return [
+        [(A[0][0] * B[0][0] + A[0][1] * B[1][0]) % mod,
+         (A[0][0] * B[0][1] + A[0][1] * B[1][1]) % mod],
+        [(A[1][0] * B[0][0] + A[1][1] * B[1][0]) % mod,
+         (A[1][0] * B[0][1] + A[1][1] * B[1][1]) % mod],
+    ]
+
+
+def _mat_det(M: List[List[int]], mod: int) -> int:
+    """Determinant of a 2×2 matrix modulo mod."""
+    return (M[0][0] * M[1][1] - M[0][1] * M[1][0]) % mod
+
+
+def _valuation(n: int) -> int | float:
+    """2-adic valuation v_2(n). Returns float('inf') for zero."""
     if n == 0:
         return float("inf")
     return (n & -n).bit_length() - 1

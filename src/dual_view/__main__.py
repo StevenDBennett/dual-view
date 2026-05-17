@@ -36,7 +36,7 @@ def main() -> None:
         return
 
     from .demo import main as demo_main
-    demo_main()
+    demo_main(quick=args.quick)
 
 
 if __name__ == "__main__":

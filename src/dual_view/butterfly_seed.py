@@ -46,13 +46,6 @@ def _modinv(a: int, m: int) -> int:
     return pow(a, -1, m)
 
 
-def _v2(n: int) -> int:
-    """2-adic valuation (tzcnt)."""
-    if n == 0:
-        return 2**31  # sentinel "infinity"
-    return (n & -n).bit_length() - 1
-
-
 # ---------------------------------------------------------------------------
 # 1. Clean-prime functional-graph analyser
 # ---------------------------------------------------------------------------

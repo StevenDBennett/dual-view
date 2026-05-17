@@ -19,30 +19,30 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 
 | Module | Lines | Description |
 |--------|-------|-------------|
-| `core.py` | 510 | DualNumber, modular inverse, 2-adic exp/log, cliff centre g₀ |
-| `exponent.py` | 84 | ExponentSpace — additive coordinate chart on Z/2^(k-2) |
-| `mahler.py` | 115 | Mahler basis, Dirac/Volterra operators, boundary asymmetry |
-| `operators.py` | 209 | OperatorContext, SpectralTriple, NewtonProjector |
-| `basin.py` | 253 | BasinExplorer, LayerGhostDiagnosticV2, GhostHunt |
-| `thermodynamics.py` | 279 | SeedThermodynamics — graded 2-adic stability diagnostics |
-| `regularization.py` | 138 | GhostMap, ghost_penalty, local_ratio_gradient |
-| `gauge.py` | 132 | Gauge invariants for weighted cyclic operators |
-| `crt.py` | 209 | CRT extension to Z/(2^k·p)Z |
-| `nonabelian.py` | 264 | GL(2) gauge theory with phase alignment |
-| `scaling.py` | 107 | Float-to-int quantization scaling |
-| `visualise.py` | 156 | Cliff matrix rendering, ASCII heatmaps |
-| `butterfly.py` | 130 | Kronecker factor cliff scoring |
-| `separation.py` | 172 | Trajectory Separation Theorem |
-| `fourier.py` | 183 | DFT of Newton step-count function |
-| `padic_roots.py` | 262 | Multi-order p-adic root finding |
-| `iwasawa.py` | 248 | GL(2) congruence filtration, LDU |
+| `core.py` | 523 | DualNumber, modular inverse, 2-adic exp/log, cliff centre g₀ |
+| `exponent.py` | 81 | ExponentSpace — additive coordinate chart on Z/2^(k-2) |
+| `mahler.py` | 123 | Mahler basis, Dirac/Volterra operators, boundary asymmetry |
+| `operators.py` | 215 | OperatorContext, SpectralTriple, NewtonProjector |
+| `basin.py` | 346 | BasinExplorer, LayerGhostDiagnosticV2, GhostHunt |
+| `thermodynamics.py` | 285 | SeedThermodynamics — graded 2-adic stability diagnostics |
+| `regularization.py` | 150 | GhostMap, ghost_penalty, local_ratio_gradient |
+| `gauge.py` | 120 | Gauge invariants for weighted cyclic operators |
+| `crt.py` | 205 | CRT extension to Z/(2^k·p)Z |
+| `nonabelian.py` | 214 | GL(2) gauge theory with phase alignment |
+| `scaling.py` | 106 | Float-to-int quantization scaling |
+| `visualise.py` | 135 | Cliff matrix rendering, ASCII heatmaps |
+| `butterfly.py` | 145 | Kronecker factor cliff scoring |
+| `separation.py` | 185 | Trajectory Separation Theorem |
+| `fourier.py` | 185 | DFT of Newton step-count function |
+| `padic_roots.py` | 311 | Multi-order p-adic root finding |
+| `iwasawa.py` | 235 | GL(2) congruence filtration, LDU |
 | `mersenne.py` | 585 | Mersenne Ghost Theorem, bootstrap optimality, cliff constant proofs |
-| `isometry.py` | 265 | Exponential isometry, operator algebra theorems |
-| `butterfly_seed.py` | 499 | Dual-view Newton projector, clean-prime analysis, QASM |
-| `bridge.py` | 280 | Three-seed 2-adic weight analysis (depth histogram, map, sign) |
-| `training.py` | 240 | PyTorch QuantizedMLP with ghost regularization |
+| `isometry.py` | 257 | Exponential isometry, operator algebra theorems |
+| `butterfly_seed.py` | 502 | Dual-view Newton projector, clean-prime analysis, QASM |
+| `bridge.py` | 326 | Three-seed 2-adic weight analysis (depth histogram, map, sign) |
+| `training.py` | 230 | PyTorch QuantizedMLP with ghost regularization |
 | `newton_dynamics/` | 5 modules | p-adic Newton dynamics for N(x) = (2x³+1)/(3x²) |
-| `demo.py` | 212 | Runnable demonstration suite |
+| `demo.py` | 223 | Runnable demonstration suite |
 
 ## Theorem Reference
 

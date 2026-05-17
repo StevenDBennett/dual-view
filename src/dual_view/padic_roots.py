@@ -18,15 +18,15 @@ from collections import Counter
 
 import numpy as np
 
-from .core import _mask, modinv_newton, two_adic_log5
+from .core import _mask, modinv_newton
 
 
 # ── p-adic helpers (self-contained for general primes) ──────────────────────
 
-def _vp(n: int, p: int) -> int:
-    """p-adic valuation for prime p."""
+def _vp(n: int, p: int) -> int | float:
+    """p-adic valuation for prime p. Returns float('inf') for zero."""
     if n == 0:
-        return float("inf")  # type: ignore
+        return float("inf")
     v = 0
     while n % p == 0:
         n //= p

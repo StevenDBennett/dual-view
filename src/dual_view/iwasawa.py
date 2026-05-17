@@ -19,22 +19,7 @@ import random
 from dataclasses import dataclass
 import numpy as np
 
-from .core import DualNumber, modinv_newton, two_adic_dlog, _valuation, _mask
-
-
-# ── Matrix utilities ────────────────────────────────────────────────────────
-
-def _mat_mul(A: List[List[int]], B: List[List[int]], mod: int) -> List[List[int]]:
-    return [
-        [(A[0][0] * B[0][0] + A[0][1] * B[1][0]) % mod,
-         (A[0][0] * B[0][1] + A[0][1] * B[1][1]) % mod],
-        [(A[1][0] * B[0][0] + A[1][1] * B[1][0]) % mod,
-         (A[1][0] * B[0][1] + A[1][1] * B[1][1]) % mod],
-    ]
-
-
-def _mat_det(M: List[List[int]], mod: int) -> int:
-    return (M[0][0] * M[1][1] - M[0][1] * M[1][0]) % mod
+from .core import DualNumber, modinv_newton, two_adic_dlog, _valuation, _mask, _mat_mul, _mat_det
 
 
 # ── Congruence filtration ───────────────────────────────────────────────────
@@ -142,7 +127,7 @@ def holonomy_depth_profile(
     """
     How holonomy congruence depth changes under single-bit perturbation.
     """
-    from .nonabelian import NonAbelianCRTDual, _mat_mul
+    from .nonabelian import NonAbelianCRTDual
 
     nc = NonAbelianCRTDual(k, p)
     depths_orig: List[int] = []
