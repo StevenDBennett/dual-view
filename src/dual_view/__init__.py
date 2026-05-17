@@ -30,6 +30,7 @@ separation       — Trajectory Separation Theorem
 fourier          — Discrete Fourier analysis on exponent domain
 padic_roots      — Multi-order p-adic root finding
 iwasawa          — GL(2) congruence filtration and LDU decomposition
+iwasawa_algebra  — Iwasawa algebra Z_2[[G]] and profinite filtered modules
 mersenne         — Mersenne Ghost Theorem and bootstrap optimality
 isometry         — Exponential isometry and operator algebra theorems
 newton_dynamics  — p-adic Newton dynamics for N(x) = (2x³+1)/(3x²)
@@ -90,6 +91,7 @@ from .iwasawa import (
     matrix_coordinates, holonomy_depth_profile, filtration_portrait,
     matrix_commutator, verify_commutator_depth, MatrixCoordinates,
 )
+from .iwasawa_algebra import IwasawaElement, IwasawaAlgebra, ProModule
 from .newton_dynamics import (
     poly_mul, poly_add, poly_scalar_mul, poly_pow, poly_divmod,
     mobius, compute_iterates,
@@ -171,6 +173,8 @@ __all__ = [
     "congruence_depth", "filtration_residue", "ldu_decompose",
     "matrix_coordinates", "holonomy_depth_profile", "filtration_portrait",
     "matrix_commutator", "verify_commutator_depth", "MatrixCoordinates",
+    # iwasawa_algebra
+    "IwasawaElement", "IwasawaAlgebra", "ProModule",
     # mersenne
     "mersenne_coordinates", "verify_core_identity", "mersenne_cliff_table",
     "bootstrap_cost", "optimal_bootstrap", "compare_bootstrap_strategies",

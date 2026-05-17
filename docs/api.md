@@ -340,6 +340,44 @@ Aggregate under different semirings (standard/tropical/boolean).
 - `verify_commutator_depth(k, ...)` — depth theorem verification
 - `MatrixCoordinates` — dataclass
 
+## Iwasawa Algebra Module (`dual_view.iwasawa_algebra`)
+
+The Iwasawa algebra `Z₂[[G]]` represented as power series in the topological generator `(1-γ)`. Provides classification of shift-covariant differential operators via the augmentation ideal.
+
+### Classes
+
+#### `IwasawaElement(coeffs: List[int], precision: int)`
+An element of the Iwasawa algebra `Z₂[[G]]` as a power series `μ = Σ cₙ (1-γ)ⁿ`.
+
+**Classmethods**:
+- `from_generator(precision=32)` — canonical `1-γ` generator of the augmentation ideal
+- `unit(precision=32)` — multiplicative identity
+- `zero(precision=32)` — zero element
+
+**Properties / methods**:
+- `valuation()` — 2-adic valuation: smallest `n` with `cₙ` odd; returns `inf` if all even
+- `is_unit()` — constant term is odd
+- `is_generator_of_aug_ideal()` — checks `valuation()≥1` and `c₁` odd
+- `truncation_status()` — metadata: `original_degree`, `truncation_degree`, `precision`
+
+**Arithmetic**:
+- `__add__` — coefficient-wise addition mod `2^precision`
+- `__mul__` — Cauchy product (power series multiplication in `Z₂[[G]]`)
+
+#### `IwasawaAlgebra`
+Factory and classification operations.
+
+**Static methods**:
+- `aug_ideal_generator(precision=32)` — returns `IwasawaElement.from_generator(precision)`
+- `classify_dirac_operator(mu)` — classify `μ` as a shift-covariant differential operator. Returns `{'is_valid', 'is_unit_multiple', 'generator_form'}`. Valid iff `μ` is a unit multiple of `(1-γ)`.
+
+#### `ProModule(name: str, dimension: int, precision: int)`
+A profinite `Z₂`-module with valuation filtration.
+
+**Methods**:
+- `truncate(k)` — apply truncation functor `Tₖ`, returns new `ProModule`
+- `valuation(v)` — compute filtration level of element `v`
+
 ### Mersenne (`dual_view.mersenne`)
 - `mersenne_coordinates(n, k)` — `(α, e_true, v₂(e_true))`
 - `verify_core_identity(n_max)` — 5^(2^(n-2)) ≡ 1 - 2^n

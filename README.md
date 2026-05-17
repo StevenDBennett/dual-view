@@ -77,6 +77,8 @@ Three regimes (`s = v₂(g − 5)`):
   formula, period-4 identity)
 - **Iwasawa decomposition**: GL(2) congruence filtration, LDU, commutator
   depth theorem
+- **Iwasawa algebra**: Z₂[[G]] power series, augmentation ideal, Dirac
+  operator classification
 - **Mersenne Ghost Theorem**: Full proof, bootstrap optimality, cliff
   density theory (`Pr[c=0]=7/8`, `E[c]=1/4`)
 - **Butterfly seed**: Dual-view Newton projector as butterfly-compilable seed,
@@ -150,6 +152,7 @@ print(stats["mean_v2_e"], stats["cliff_risk"])
 | `padic_roots` | Multi-order p-adic root finding (Newton, Halley) |
 | `newton_dynamics` | Dynatomic polynomials, multipliers, clean primes |
 | `iwasawa` | GL(2) congruence filtration, LDU decomposition |
+| `iwasawa_algebra` | Iwasawa algebra Z₂[[G]], profinite filtered modules |
 | `mersenne` | Mersenne Ghost Theorem, cliff constant proofs, bootstrap optimality |
 | `isometry` | Exponential isometry, operator algebra theorems |
 | `butterfly_seed` | Dual-view Newton projector, clean-prime analysis, QASM |
