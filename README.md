@@ -17,6 +17,39 @@ where certain weights become numerically unstable under Newton iteration
 ("ghost attractors"). The Mersenne Ghost Theorem shows that Mersenne numbers
 `2^n - 1` are maximally fragile, with cliff at `k* = n + 2`.
 
+## Mathematical Foundation
+
+Everything follows from a single identity — Lifting the Exponent Lemma (LTE):
+
+```
+v₂(5^e₁ − 5^e₂) = v₂(e₁ − e₂) + 2
+```
+
+The exponential map `e ↦ 5^e` is a **scaled 2-adic isometry** with scale factor 4.
+All core theorems are corollaries:
+
+| # | Theorem | Proof |
+|---|---------|-------|
+| T1 | Quadratic convergence of Newton dlog map | LTE + linearisation |
+| T2 | Trajectory separation: `n*(s) = ⌈log₂(s)⌉ − 1` | LTE + additive dynamics |
+| T3 | Basin dichotomy: α=0 globally stable, no ghosts | Coset argument |
+| T4 | Ghost formula: `e* = dlog(a+2, k)` for α=1 targets | T3 + LTE |
+| T5 | Mersenne cliff: `k* = n+2`, `v₂(e_true) = n−2` | LTE at `e = 2^(n-2)` |
+| T6 | Trivial Julia set — linearisable maps have no fractal structure | LTE + Berkovich |
+
+### The Unified Cliff Constant
+
+For generator `g ≡ 5 (mod 8)`:
+
+```
+c(g) = v₂(g − g₀) − 2     where g₀ = exp₂(−4) ≡ −123 (mod 2¹³)
+```
+
+Three regimes (`s = v₂(g − 5)`):
+- `s < 7`:  `c(g) = s − 2`        (linear)
+- `s > 7`:  `c(g) = 5`            (capped)
+- `s = 7`:  `c(g) = 5 + v₂(m+1)` (boundary — the ε(n) correction)
+
 ## Features
 
 - **Core arithmetic**: Fast modular inverse, Viglietta discrete log with
@@ -55,7 +88,10 @@ pip install dual-view
 # With PyTorch support
 pip install dual-view[torch]
 
-# Development
+# With scipy support (bridge module — depth histogram seed S1)
+pip install dual-view[scipy]
+
+# Development (testing, linting, type-checking)
 pip install dual-view[dev]
 ```
 

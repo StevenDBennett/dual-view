@@ -125,3 +125,5 @@ See `research_opportunities.md` for the full list. Key open questions:
 | `newton_dynamics/clean_primes.md` | Clean prime analysis (7, 103, 181) |
 | `newton_dynamics/status.md` | Research status and open problems |
 | `unified_dual_view_butterfly_guidance.md` | Synthesis: dual-view × butterfly compiler research roadmap |
+| `audit.md` | Package audit: bug register, scaling laws, boundary test theorems |
+| `padic_newton_dynamics.md` | p-Adic Newton dynamics: higher-order methods, convergence law verification |
