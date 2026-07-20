@@ -13,7 +13,13 @@ from dual_view.butterfly_seed import (
     _hensel_bootstrap_exponent,
     _newton_fp,
 )
+from dual_view.butterfly_emitter import (
+    basin_qasm_emitter,
+    _basin_depth_d,
+    dual_view_qasm_emitter_clean,
+)
 from dual_view.core import _valuation, two_adic_log5, two_adic_dlog
+from dual_view.newton_dynamics import KNOWN_CLEAN_PRIMES
 
 
 class TestValuation(unittest.TestCase):
@@ -62,11 +68,16 @@ class TestAnalyzePrime(unittest.TestCase):
         self.assertEqual(prof.obstruction, "clean")
         self.assertEqual(len(prof.roots), 3)
 
-    def test_p3_special_case(self):
+    def test_p3_is_clean(self):
         prof = analyze_prime(3)
-        self.assertFalse(prof.is_clean)
-        self.assertEqual(prof.obstruction, "p=3")
-        self.assertEqual(prof.roots, ())
+        self.assertTrue(prof.is_clean)
+        self.assertIn(prof.obstruction, ("pole_chain", "clean"))
+        self.assertEqual(prof.roots, (1,))
+
+    def test_p5_is_clean(self):
+        prof = analyze_prime(5)
+        self.assertTrue(prof.is_clean)
+        self.assertEqual(prof.roots, (1,))
 
     def test_p13_has_ghost_cycle(self):
         prof = analyze_prime(13)
@@ -74,18 +85,26 @@ class TestAnalyzePrime(unittest.TestCase):
         self.assertFalse(prof.is_clean)
         self.assertIn(prof.obstruction, ("ghost_cycle", "pole_chain", "mixed"))
 
-    def test_clean_prime_has_3_roots(self):
-        for p in (7, 103, 181):
+    def test_clean_prime_has_correct_roots(self):
+        for p in KNOWN_CLEAN_PRIMES:
             prof = analyze_prime(p)
-            self.assertEqual(len(prof.roots), 3)
+            self.assertIn(len(prof.roots), (1, 3),
+                          f"p={p}: expected 1 or 3 roots, got {len(prof.roots)}")
+            # p ≡ 1 mod 3 should have 3 roots, p ≡ 2 mod 3 should have 1 root
+            if p % 3 == 1:
+                self.assertEqual(len(prof.roots), 3,
+                                 f"p={p}: p≡1 mod 3 should have 3 roots")
+            elif p % 3 == 2:
+                self.assertEqual(len(prof.roots), 1,
+                                 f"p={p}: p≡2 mod 3 should have 1 root")
 
     def test_nilpotency_index_positive_for_clean(self):
-        for p in (7, 103, 181):
+        for p in KNOWN_CLEAN_PRIMES:
             prof = analyze_prime(p)
             self.assertGreater(prof.nilpotency_index, 0)
 
     def test_nilpotency_index_zero_for_non_clean(self):
-        prof = analyze_prime(3)
+        prof = analyze_prime(13)
         self.assertEqual(prof.nilpotency_index, 0)
 
     def test_basin_ordering_contains_all_non_pole(self):
@@ -236,14 +255,22 @@ class TestQasmEmitter(unittest.TestCase):
         self.assertIn(f"qreg q[{n_total}];", qasm)
         self.assertIn(f"creg c[{n_total}];", qasm)
 
-    def test_qasm_clean_prime_comment(self):
+    def test_qasm_clean_prime_optimised(self):
+        """p_clean=7 should use the basin-optimised circuit (D=1)."""
         qasm = dual_view_qasm_emitter(k=8, target_a=5, p_clean=7)
-        self.assertIn("CLEAN PRIME VACUUM", qasm)
+        self.assertIn("Basin-optimised Dual-View", qasm)
         self.assertIn("p=7", qasm)
+        # p=7 has M=2, D=1 — only 1 exponent qubit instead of 6
+        self.assertIn("Exponent qubits: 1", qasm)
+
+    def test_qasm_clean_prime_reduced_register(self):
+        """p=103 should use D=4 exponent qubits instead of k-2=6."""
+        qasm = dual_view_qasm_emitter(k=8, target_a=5, p_clean=103)
+        self.assertIn("Exponent qubits: 4", qasm)
 
     def test_qasm_no_clean_prime(self):
         qasm = dual_view_qasm_emitter(k=8, target_a=5, p_clean=None)
-        self.assertNotIn("CLEAN PRIME VACUUM", qasm)
+        self.assertNotIn("Basin-optimised", qasm)
 
     def test_qasm_has_qft_section(self):
         qasm = dual_view_qasm_emitter(k=8, target_a=5)
@@ -312,10 +339,10 @@ class TestIntegration(unittest.TestCase):
 
     def test_multiple_clean_primes_consistent(self):
         """All known clean primes should produce consistent profiles."""
-        for p in (7, 103, 181):
+        for p in KNOWN_CLEAN_PRIMES:
             prof = analyze_prime(p)
             self.assertTrue(prof.is_clean, f"p={p} should be clean")
-            self.assertEqual(len(prof.roots), 3, f"p={p} should have 3 roots")
+            self.assertIn(len(prof.roots), (1, 3), f"p={p} should have 1 or 3 roots")
             self.assertGreater(prof.nilpotency_index, 0)
 
     def test_seed_with_different_generators(self):
@@ -350,6 +377,78 @@ class TestEdgeCases(unittest.TestCase):
         a = pow(5, 123, 2**k)
         qasm = dual_view_qasm_emitter(k, a)
         self.assertIn("OPENQASM 2.0;", qasm)
+
+
+class TestBasinEmitter(unittest.TestCase):
+    """Tests for the basin-optimised QASM emitter."""
+
+    def test_basin_depth_d(self):
+        """_basin_depth_d computes ceil(log2(M)) for clean primes."""
+        # p=7:  M=2  -> D=1
+        self.assertEqual(_basin_depth_d(7), 1)
+        # p=103: M=15 -> D=4
+        self.assertEqual(_basin_depth_d(103), 4)
+        # p=403549: M=1223 -> D=11
+        self.assertEqual(_basin_depth_d(403549), 11)
+
+    def test_basin_qasm_header(self):
+        qasm = basin_qasm_emitter(7, 8, 5)
+        self.assertIn("OPENQASM 2.0;", qasm)
+        self.assertIn("Basin-optimised Dual-View", qasm)
+        self.assertIn("p=7", qasm)
+
+    def test_basin_qasm_register_sizes(self):
+        """p=7 has D=1, so only 1 exponent qubit."""
+        qasm = basin_qasm_emitter(7, 8, 5)
+        # Register: 1 (exp) + 3 (val) + 1 (sign) = 5 total
+        self.assertIn("qreg q[5];", qasm)
+
+    def test_basin_qasm_larger_prime_register(self):
+        """p=103 has D=4, so 4 exponent qubits."""
+        qasm = basin_qasm_emitter(103, 10, 5)
+        # Register: 4 (exp) + 3 (val, from (10+1)//3) + 1 (sign) = 8 total
+        self.assertIn("qreg q[8];", qasm)
+        self.assertIn("Exponent qubits: 4", qasm)
+
+    def test_basin_qasm_has_routing_stages(self):
+        qasm = basin_qasm_emitter(7, 8, 5)
+        self.assertIn("Basin routing stages", qasm)
+        self.assertIn("advance by", qasm)
+
+    def test_basin_qasm_has_reduced_qft(self):
+        qasm = basin_qasm_emitter(7, 8, 5)
+        self.assertIn("Reduced QFT on 1 qubits", qasm)
+
+    def test_basin_qasm_has_neumann_diagonal(self):
+        qasm = basin_qasm_emitter(7, 8, 5)
+        self.assertIn("Neumann phase stage", qasm)
+
+    def test_basin_qasm_fallback_for_non_clean(self):
+        """Non-clean prime should fall back to standard circuit."""
+        qasm = basin_qasm_emitter(13, 8, 5)  # p=13 has ghost cycles
+        self.assertNotIn("Basin-optimised", qasm)
+
+    def test_basin_qasm_small_clean_primes(self):
+        """First 8 clean primes produce valid QASM (fast check)."""
+        for p in KNOWN_CLEAN_PRIMES[:8]:
+            qasm = basin_qasm_emitter(p, 10, 5)
+            self.assertIn("OPENQASM 2.0;", qasm)
+            self.assertIn(f"p={p}", qasm)
+
+    def test_clean_emitter_wrapper(self):
+        """dual_view_qasm_emitter_clean delegates correctly."""
+        # Clean prime: optimisation active
+        qasm = dual_view_qasm_emitter_clean(8, 5, p_clean=7)
+        self.assertIn("Basin-optimised", qasm)
+        # No p_clean: standard circuit
+        qasm = dual_view_qasm_emitter_clean(8, 5, p_clean=None)
+        self.assertNotIn("Basin-optimised", qasm)
+
+    def test_standard_emitter_delegates_to_basin(self):
+        """dual_view_qasm_emitter now delegates to basin for clean primes."""
+        qasm = dual_view_qasm_emitter(8, 5, p_clean=7)
+        self.assertIn("Basin-optimised", qasm)
+        self.assertIn("Exponent qubits: 1", qasm)
 
 
 if __name__ == "__main__":

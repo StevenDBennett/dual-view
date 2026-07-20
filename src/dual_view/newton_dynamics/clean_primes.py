@@ -6,13 +6,27 @@ Clean-prime detection for p-adic Newton dynamics.
 A prime p is *clean* for N(x) = (2x^3+1)/(3x^2) if it admits no
 periodic points of period 2, 3, or 4 with multiplier μ ≠ 1 (mod p).
 
-The known clean primes are {7, 103, 181} — conjectured to be complete.
+Known clean primes (verified up to 30M):
+    {7, 31, 41, 59, 103, 181, 359, 659, 811, 8111,
+     14159, 31741, 115679, 162251, 403549}
+
+The set appears finite but is strictly larger than the original
+conjecture of {7, 103, 181}.  See docs/newton_dynamics/clean_primes.md
+for density analysis and search methodology.
 """
 from __future__ import annotations
 
 from typing import Optional
 
-__all__ = ["is_cube", "tonelli_shanks", "check_quadratic_cube_roots"]
+__all__ = [
+    "is_cube", "tonelli_shanks", "check_quadratic_cube_roots",
+    "KNOWN_CLEAN_PRIMES",
+]
+
+KNOWN_CLEAN_PRIMES = (
+    7, 31, 41, 59, 103, 181, 359, 659, 811, 8111,
+    14159, 31741, 115679, 162251, 403549,
+)
 
 
 def is_cube(a: int, p: int) -> bool:

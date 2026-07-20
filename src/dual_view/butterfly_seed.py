@@ -65,20 +65,21 @@ def analyze_prime(p: int) -> CleanPrimeProfile:
     """
     Classify p by the thermodynamics of its Newton functional graph.
 
-    A prime is "clean" if the Newton functional graph over F_p^* is a
-    rooted forest with exactly 3 trees (the cube roots of unity).
-    Ghost cycles or pole chains indicate non-clean primes.
-    """
-    if p == 3:
-        return CleanPrimeProfile(p, False, (), 0, [], {}, "p=3")
+    A prime is *clean* for N(x) = (2x^3+1)/(3x^2) if F_p^* admits no
+    periodic points of period 2, 3, or 4 with multiplier mu != 1 (mod p).
+    Equivalently, the functional graph has no cycles other than the fixed
+    points at the cube roots of unity. Pole chains (elements that crash
+    to x=0) do not disqualify a prime — they are not periodic points.
 
+    For p ≡ 1 (mod 3) there are 3 cube roots and 3 basin trees.
+    For p ≡ 2 (mod 3) there is 1 cube root and 1 basin tree.
+    """
     roots = tuple(sorted({x for x in range(1, p) if pow(x, 3, p) == 1}))
     nxt = [0] * p
     for x in range(1, p):
         nxt[x] = _newton_fp(x, p)
 
-    # Detect cycles and basin depths via DFS
-    state = [0] * p   # 0=unvisited, 1=visiting, 2=done
+    state = [0] * p
     depths = {}
     cycles = []
     has_pole_chain = False
@@ -90,22 +91,19 @@ def analyze_prime(p: int) -> CleanPrimeProfile:
         cur = s
         while True:
             if cur is None or cur == 0:
-                # hit pole
                 if any(node not in roots for node in path):
                     has_pole_chain = True
                 for node in path:
-                    depths[node] = -1   # crashed to pole
+                    depths[node] = -1
                     state[node] = 2
                 break
             if state[cur] == 1:
                 idx = path.index(cur)
                 cyc = path[idx:]
                 cycles.append(cyc)
-                # Root cycles (fixed points that are cube roots) get depth 0
                 for node in cyc:
                     if node in roots:
                         depths[node] = 0
-                # Non-root nodes in the path leading to the cycle get depths
                 for i, node in enumerate(path[:idx]):
                     if all(r in roots for r in cyc):
                         depths[node] = len(path) - i
@@ -115,7 +113,6 @@ def analyze_prime(p: int) -> CleanPrimeProfile:
                     state[node] = 2
                 break
             if state[cur] == 2:
-                # inherit depth if known
                 known = depths.get(cur, None)
                 for i, node in enumerate(path):
                     if known is not None and known >= 0:
@@ -129,9 +126,8 @@ def analyze_prime(p: int) -> CleanPrimeProfile:
             path.append(cur)
             cur = nxt[cur]
 
-    # classify
     ghost_cycles = [c for c in cycles if any(x not in roots for x in c)]
-    is_clean = (not ghost_cycles and not has_pole_chain and len(roots) == 3)
+    is_clean = len(ghost_cycles) == 0
 
     obstruction = "clean"
     if ghost_cycles and has_pole_chain:
@@ -141,7 +137,6 @@ def analyze_prime(p: int) -> CleanPrimeProfile:
     elif has_pole_chain:
         obstruction = "pole_chain"
 
-    # basin ordering: deepest non-pole leaves first
     basin = [x for x in range(1, p) if depths.get(x, -1) >= 0]
     basin.sort(key=lambda x: depths[x], reverse=True)
 
@@ -347,25 +342,28 @@ def _hensel_bootstrap_exponent(k: int, a: int) -> List[int]:
 
 def dual_view_qasm_emitter(k: int, target_a: int, p_clean: Optional[int] = None) -> str:
     """
-    Generate OpenQASM 2.0 for the full dual-view Newton pipeline:
+    Generate OpenQASM 2.0 for the full dual-view Newton pipeline.
 
+    If p_clean is a clean prime, delegates to the basin-optimised emitter
+    which reduces the exponent register from (k-2) qubits to D = ceil(log2(M))
+    qubits where M is the nilpotency index (S^M = 0).  Circuit depth drops
+    from O(k²) to O(D²).
+
+    Standard circuit (no p_clean):
         |v⟩ (valuation)     — 2 qubits  (v < k for k ≤ 64)
         |α⟩ (sign)          — 1 qubit
         |e⟩ (exponent)      — (k-2) qubits  (register size N = 2^{k-2})
-
-    Circuit:
-        1. State preparation: encode target_a into |e⟩ via classical Hensel
-        2. QFT on |e⟩        — butterfly.qft with position-dependent seeds
-        3. Newton diagonal   — phase shifts conditioned on |v⟩
-        4. Inverse QFT     — collapse to exponent eigenstate
-        5. Valuation guard   — cliff detector c(g) = max(0, tzcnt(g+123)-2)
-                               implemented as a quantum if(v ≥ k) break
-        6. Sign extraction   — measure |α⟩
-
-    If p_clean is provided, the circuit is *vacuum-optimised*: the QFT
-    twiddles collapse to a 3-way multiplexer (the three cube-root basins),
-    and the depth drops from O(k^2) to O(log k).
     """
+    # Vacuum optimisation: delegate to basin emitter for clean primes
+    if p_clean is not None:
+        try:
+            from .butterfly_emitter import basin_qasm_emitter
+            prof = analyze_prime(p_clean)
+            if prof.is_clean:
+                return basin_qasm_emitter(p_clean, k, target_a, _prof=prof)
+        except ImportError:
+            pass  # fall through to standard circuit
+
     n_exp = k - 2
     n_val = max(1, (k + 1) // 3)   # enough qubits to encode v < k
     n_sign = 1
@@ -468,7 +466,8 @@ if __name__ == "__main__":
     print("=" * 60)
 
     # 1. Analyse known clean primes
-    for p in (7, 103, 181):
+    from .newton_dynamics import KNOWN_CLEAN_PRIMES
+    for p in KNOWN_CLEAN_PRIMES:
         prof = analyze_prime(p)
         print(f"\n  p={p}: clean={prof.is_clean}, obstruction={prof.obstruction}, "
               f"nilpotency_index={prof.nilpotency_index}, roots={prof.roots}")

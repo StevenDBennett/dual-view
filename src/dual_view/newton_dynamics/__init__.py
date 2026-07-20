@@ -21,7 +21,7 @@ of period exactly n, and its special values govern multiplier products.
 from .poly import poly_mul, poly_add, poly_scalar_mul, poly_pow, poly_divmod
 from .iterates import mobius, compute_iterates
 from .dynatomic import dynatomic_polynomial
-from .clean_primes import is_cube, tonelli_shanks, check_quadratic_cube_roots
+from .clean_primes import is_cube, tonelli_shanks, check_quadratic_cube_roots, KNOWN_CLEAN_PRIMES
 from .data import (
     COEFFS_PERIOD4,
     COEFFS_PERIOD5,
@@ -35,7 +35,7 @@ __all__ = [
     "poly_mul", "poly_add", "poly_scalar_mul", "poly_pow", "poly_divmod",
     "mobius", "compute_iterates",
     "dynatomic_polynomial",
-    "is_cube", "tonelli_shanks", "check_quadratic_cube_roots",
+    "is_cube", "tonelli_shanks", "check_quadratic_cube_roots", "KNOWN_CLEAN_PRIMES",
     "COEFFS_PERIOD4", "COEFFS_PERIOD5",
     "MULTIPLIERS_PERIOD4", "MULTIPLIERS_PERIOD5",
     "load_period6_coefficients",

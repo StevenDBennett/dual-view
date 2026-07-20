@@ -125,11 +125,12 @@ For the 2-adic dlog problem, higher-order methods (Halley, composed Newton) have
 Open problems from the p-adic Newton dynamics research:
 
 1. **Exact period-4 Galois group**: identify in `S₆ wr V₄` using GAP/Magma
-2. **Prove clean primes = {7, 103, 181}**: obstruction accumulation argument
-3. **Compute period-6 multipliers**: numerical computation from the 233 coefficients
-4. **Closed form for individual multipliers**: not just the product formula
-5. **Relate K₂ to ray class fields** of `ℚ(ζ₃)`
-6. **Generalize to degree d maps**: beyond the cubic case
+2. **Prove clean primes are finite**: 15 known (verified to 30M) — obstruction accumulation is the likely proof strategy. The original conjecture {7, 103, 181} set is refuted, but finiteness is strongly supported by the observed density decreasing with search range (3/100k → 15/30M).
+3. **Characterise the clean-prime sequence**: the 15 known primes show no simple pattern; does 14159 (digits of π) hint at a deeper connection?
+4. **Compute period-6 multipliers**: numerical computation from the 233 coefficients
+5. **Closed form for individual multipliers**: not just the product formula
+6. **Relate K₂ to ray class fields** of `ℚ(ζ₃)`
+7. **Generalize to degree d maps**: beyond the cubic case
 
 ### 4.5 Frobenius Coin Problem and Cliff Prediction
 

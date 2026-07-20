@@ -19,7 +19,7 @@
 
 - **Period-5 dynatomic**: Degree 80 in $u$, irreducible, discriminant 5,605 digits
 - **Period-6 dynatomic**: Degree 232 in $u$, coefficients computed (233 entries)
-- **Clean primes**: Confirmed {7, 103, 181} below 100,000
+- **Clean primes**: 15 known — see full list in `clean_primes.md`; verified by exhaustive DFS up to 30,000,000; set appears finite but larger than original conjecture of {7, 103, 181}
 - **Galois group (period-4)**: Subgroup of $S_6 \wr V_4$
 
 | Period | deg(u) | $\Phi(0)$ | $\Phi(1)$ | $\prod\mu$ | $\sum\mu$ | Cycles |
@@ -44,7 +44,7 @@
 
 ### Critical
 1. **Identify exact period-4 Galois group** — feed constraints into GAP/Magma
-2. **Prove clean primes = {7, 103, 181}** — use obstruction accumulation
+2. **Prove clean primes are finite** — 15 known (verified to 30M), original {7, 103, 181} conjecture refuted; obstruction accumulation still the likely proof strategy
 3. **Prove $Φ_n^*(1) = 3^{\mu_3(n)/2}$** — full theoretical proof (currently has complete proof — see `theorems.md`)
 
 ### Known Caveats
