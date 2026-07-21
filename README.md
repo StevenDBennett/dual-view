@@ -120,7 +120,18 @@ c = proc.mul(DualNumber(3, 16), DualNumber(7, 16))  # 21
 ## Running Tests
 
 ```bash
+# Full suite (504 tests)
 pytest tests/ -v
+
+# Clean prime verification specifically
+pytest tests/test_newton_dynamics.py -v -k "clean"
+pytest tests/test_butterfly_seed.py -v -k "clean or basin"
+
+# Routing simulator
+python research/routing_simulator.py
+
+# Butterfly compiler report
+python research/butterfly_compiler.py
 ```
 
 ## License
