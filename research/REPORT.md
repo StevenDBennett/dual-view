@@ -11,19 +11,13 @@ Verified by exhaustive DFS up to 30,000,000:
 14159, 31741, 115679, 162251, 403549
 ```
 
-Total: 15 primes (excluding p=5 which is trivially clean but excluded by convention).
+Total: 16 primes (including p=5, which was previously excluded by convention; pole chains do not disqualify).
 
 ---
 
 ## Experiment 1: QASM Circuit Size Comparison
 
-**Script**: `exp1_qasm_circuits.py`
-
-Compares standard vs. vacuum-optimised QASM circuit sizes for all 15 clean primes at k=8,12,16.
-
-**Result**: The vacuum emitter currently only annotates the circuit with a `// CLEAN PRIME VACUUM` comment. The vacuum and standard circuits are identical in gate count (vacuum adds exactly 1 line). The actual depth reduction (O(k²) → O(log k) using nilpotent basin structure) is not yet wired into the emitter — it's a placeholder.
-
-**Takeaway**: Implementation gap. The nilpotency indices from `analyze_prime()` are not fed into the butterfly seed structure during QASM generation.
+*(Removed — QASM emitter has been removed from the package.)*
 
 ---
 
@@ -72,7 +66,7 @@ This is structurally guaranteed — the basin ordering is a finite rooted forest
 
 **Script**: `exp4_dynatomic_check.py`
 
-Checks all 15 primes against the original clean-prime definition: no periodic points of periods 2, 3, or 4 with multiplier μ ≠ 1 (mod p). Uses the dynatomic polynomial root checks (with cube-root restriction).
+Checks all 16 primes against the original clean-prime definition: no periodic points of periods 2, 3, or 4 with multiplier μ ≠ 1 (mod p). Uses the dynatomic polynomial root checks (with cube-root restriction).
 
 **Result**: **ALL 15 PASS**
 
@@ -273,7 +267,7 @@ p=181:
 
 | # | Experiment | Status | Key Finding |
 |---|-----------|--------|-------------|
-| 1 | QASM circuits | Placeholder | Vacuum optimisation not wired into emitter |
+| 1 | QASM circuits | Removed | QASM emitter removed from package |
 | 2 | Mersenne cliff n=16 | ✅ Verified | k*=21 matches secondary correction formula |
 | 3 | Spectral thermo | ✅ Verified | All clean primes produce pure nilpotent matrices |
 | 4 | Dynatomic check | ✅ Verified | All 15 satisfy the formal clean-prime definition |
@@ -300,6 +294,6 @@ p=181:
 1. Why does **403549** have such a disproportionately deep vacuum (1223 vs 273 for 31741, the next closest)?
 2. Why does **659** have only 2 basin elements while similar-sized primes have much larger basins?
 3. Is the π prime **14159**'s shallow basin (5 elements) coincidental or significant?
-4. The current QASM emitter's vacuum optimisation isn't implemented — wiring up the nilpotent seed structure from the basin ordering would be the natural next step.
+4. *(QASM emitter removed — nilpotent seed structure exploration is a classical routing problem; see `butterfly_compiler.py`.)*
 5. The 3-root primes share depth-0-5 structure — is this a theorem? (Number of elements at depth d in a 3-root clean prime for small d is determined by p's residue class.)
 6. Can the basin shift operator's nilpotency structure be used to build a classical butterfly-optimised Newton solver?

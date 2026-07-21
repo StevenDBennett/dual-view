@@ -12,7 +12,7 @@ where `v` is the 2-adic valuation, `α` is the sign sector, and `e` is the discr
 
 ## Highlights
 
-### 15 Clean Primes (Verified to 30,000,000)
+### 16 Clean Primes (Verified to 30,000,000)
 
 ```
 {5, 7, 31, 41, 59, 103, 181, 359, 659, 811, 8111, 14159, 31741, 115679, 162251, 403549}
@@ -30,7 +30,7 @@ For every clean prime, ordering elements by basin depth makes the Newton shift o
 
 ### Classical Routing Tables
 
-The 15 clean primes each have a precomputed routing table (classical swap network) of depth `⌈log₂(M)⌉`. The classical routing simulator proves that `⌈log₂(M)⌉` butterfly stages suffice for all elements to converge (e.g., p=403549: 11 stages vs 1223 serial steps). **A true quantum depth reduction using nilpotency is an open problem** — the QASM emitter annotates circuits with routing information but does not yet exploit the basin structure for quantum advantage.
+All 16 clean primes each have a precomputed routing table (classical swap network) of depth `⌈log₂(M)⌉`. The classical routing simulator proves that `⌈log₂(M)⌉` butterfly stages suffice for all elements to converge (e.g., p=403549: 11 stages vs 1223 serial steps). **A true quantum depth reduction using nilpotency is an open problem** — see `research/` for the classical compiler prototype.
 
 ### Discriminant Theorem (Δ = 108(x³-1))
 
@@ -80,17 +80,16 @@ The exponential map `e ↦ 5^e` is a **scaled 2-adic isometry** with scale facto
 | `iwasawa_algebra` | Iwasawa algebra Z₂[[G]], profinite filtered modules |
 | `mersenne` | Mersenne Ghost Theorem, cliff constant proofs |
 | `isometry` | Exponential isometry, operator algebra theorems |
-| `butterfly_seed` | Dual-view Newton projector, clean-prime analysis |
-| `butterfly_emitter` | OpenQASM emission with basin-routing annotations (quantum depth reduction is open) |
-| `bridge` | Three-seed 2-adic weight analysis (depth, map, sign) |
+| `butterfly_seed` | Dual-view Newton projector, clean-prime analysis, butterfly seeds |
 | `training` | PyTorch QuantizedMLP with ghost regularisation |
 
 ## Research
 
 | File | What it proves |
 |------|----------------|
-| `research/routing_simulator.py` | Classical butterfly routing convergence on all 15 primes |
+| `research/routing_simulator.py` | Classical butterfly routing convergence on all 16 primes |
 | `research/butterfly_compiler.py` | Nilpotent shift operator S, Neumann series, routing stages |
+| `research/bridge.py` | Three-seed 2-adic weight analysis (depth histogram, map, sign) |
 | `research/expA-D` | Basin Newton operator, depth spectrum, forest isomorphism, Kronecker clean signals |
 | `research/REPORT.md` | Full 9-experiment results |
 | `research/BUTTERFLY_COMPILER.md` | Compiler prototype documentation |
@@ -120,12 +119,12 @@ c = proc.mul(DualNumber(3, 16), DualNumber(7, 16))  # 21
 ## Running Tests
 
 ```bash
-# Full suite (504 tests)
+# Full suite
 pytest tests/ -v
 
 # Clean prime verification specifically
 pytest tests/test_newton_dynamics.py -v -k "clean"
-pytest tests/test_butterfly_seed.py -v -k "clean or basin"
+pytest tests/test_butterfly_seed.py -v -k "clean"
 
 # Routing simulator
 python research/routing_simulator.py

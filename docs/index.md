@@ -38,8 +38,7 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | `iwasawa.py` | 235 | GL(2) congruence filtration, LDU |
 | `mersenne.py` | 585 | Mersenne Ghost Theorem, bootstrap optimality, cliff constant proofs |
 | `isometry.py` | 257 | Exponential isometry, operator algebra theorems |
-| `butterfly_seed.py` | 502 | Dual-view Newton projector, clean-prime analysis, QASM |
-| `bridge.py` | 326 | Three-seed 2-adic weight analysis (depth histogram, map, sign) |
+| `butterfly_seed.py` | 429 | Dual-view Newton projector, clean-prime analysis, butterfly seeds |
 | `training.py` | 230 | PyTorch QuantizedMLP with ghost regularization |
 | `newton_dynamics/` | 5 modules | p-adic Newton dynamics for N(x) = (2x³+1)/(3x²) |
 | `demo.py` | 223 | Runnable demonstration suite |
@@ -102,10 +101,9 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | `is_cube(a, p)` | `newton_dynamics/` | Cube residue modulo p |
 | `analyze_prime(p)` | `butterfly_seed.py` | Classify prime by Newton functional graph |
 | `DualViewSeed(k, a)` | `butterfly_seed.py` | Position-dependent butterfly seed builder |
-| `dual_view_qasm_emitter(k, a, p)` | `butterfly_seed.py` | OpenQASM 2.0 circuit generator |
-| `SpectralThermodynamics.analyze(S)` | `bridge.py` | Spectral classification of seed matrices |
-| `ButterflyBridge(k)` | `bridge.py` | Three-seed unified weight analysis |
-| `quantize(W, k)` | `bridge.py` | Symmetric min-max quantisation to Z/2^k |
+(QASM emitter removed — no quantum compilation code remains.)
+| `SpectralThermodynamics.analyze(S)` | `research/bridge.py` | Spectral classification of seed matrices |
+| `ButterflyBridge(k)` | `research/bridge.py` | Three-seed unified weight analysis |
 
 ## Open Problems
 

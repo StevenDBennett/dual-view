@@ -15,13 +15,17 @@ When they split: that disagreement IS the finding.
 """
 from __future__ import annotations
 
+import sys
+
+sys.path.insert(0, "src")
+
 from dataclasses import dataclass, field
 from typing import Dict, List, Tuple
 
 import numpy as np
 from numpy.linalg import eigvals
 
-from .core import _mask, _valuation
+from dual_view.core import _mask, _valuation
 
 try:
     from scipy.linalg import circulant

@@ -4,8 +4,9 @@ import sys
 import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../research"))
 
-from dual_view.bridge import (
+from bridge import (
     ButterflyBridge, LayerReport, ModelReport, SpectralThermodynamics,
     quantize, _depths, _geometric_null, seed_S1, seed_S2, seed_S3, depth_char,
 )

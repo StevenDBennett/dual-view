@@ -1,15 +1,16 @@
 """
-Experiment 3: Spectral thermodynamics on all 15 clean primes.
+Experiment 3: Spectral thermodynamics on all 16 clean primes.
 Build the Newton adjacency from the basin ordering and classify each.
 Skip primes whose basin size would make the matrix too large (>10000).
 """
 import sys
 sys.path.insert(0, "src")
+sys.path.insert(0, "research")
 
 import numpy as np
 from dual_view.butterfly_seed import analyze_prime
 from dual_view.newton_dynamics import KNOWN_CLEAN_PRIMES
-from dual_view.bridge import SpectralThermodynamics
+from bridge import SpectralThermodynamics
 
 MAX_MATRIX_SIZE = 5000
 

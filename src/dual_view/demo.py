@@ -259,14 +259,12 @@ def demo_butterfly_seed(quick: bool = False) -> None:
         print("\n=== Butterfly Seed (skipped: --quick) ===")
         return
     print("\n=== Butterfly Seed ===")
-    from .butterfly_seed import DualViewSeed, analyze_prime, dual_view_qasm_emitter
+    from .butterfly_seed import DualViewSeed, analyze_prime
     prof = analyze_prime(7)
     print(f"  p=7: clean={prof.is_clean}, roots={prof.roots}")
     dvs = DualViewSeed(k=8, target_a=17)
     sig = dvs.thermodynamic_signature()
     print(f"  DualViewSeed(k=8, a=17): unitary={sig['is_unitary']}")
-    qasm = dual_view_qasm_emitter(8, 17)
-    print(f"  QASM lines generated: {len(qasm.splitlines())}")
     print("  Done")
 
 

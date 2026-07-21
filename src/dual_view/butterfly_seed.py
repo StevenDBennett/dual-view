@@ -8,8 +8,6 @@ with the butterfly compiler's position-dependent operad framework.
 Provides:
   - DualViewSeed: 2-adic Newton projector on the exponent space as a
     position-dependent butterfly operad seed
-  - dual_view_qasm_emitter: OpenQASM 2.0 export for the full
-    (state-prep → QFT → Newton diagonal → inverse-QFT → valuation-guard) pipeline
   - analyze_prime: classifies a prime p by the thermodynamics of its Newton
     functional graph, returning the nilpotency index and basin-depth ordering
     required by the butterfly compiler
@@ -24,12 +22,10 @@ from typing import Optional, Tuple, List
 from dataclasses import dataclass
 
 from .core import (
-    _mask,
     _valuation,
     modinv_newton,
     two_adic_log5,
     two_adic_dlog,
-    _dlog_newton,
 )
 
 # ---------------------------------------------------------------------------
@@ -310,156 +306,7 @@ class DualViewSeed:
         }
 
 # ---------------------------------------------------------------------------
-# 3. QASM emitter — quantum circuit export
-# ---------------------------------------------------------------------------
-
-
-def _hensel_bootstrap_exponent(k: int, a: int) -> List[int]:
-    """
-    Classical pre-computation: find e s.t. 5^e ≡ a (mod 2^k) via Hensel lifting.
-    Returns e as a list of binary digits (LSB first) of length k-2.
-
-    Uses the existing dual-view.core _dlog_newton which implements the
-    full Newton-lifted discrete logarithm with LUT bootstrap.
-    """
-    mod = 2**k
-    a %= mod
-
-    # a must be ≡ 1 (mod 4) for the dlog to exist in the cyclic part
-    if a % 4 != 1:
-        # For a ≡ 3 (mod 4), solve for -a instead (α=1 fix)
-        a = (-a) % mod
-
-    # Use the existing Newton-lifted dlog from core
-    e = _dlog_newton(a, k)
-
-    # Convert to binary digits (LSB first), length k-2
-    bits = []
-    for i in range(k - 2):
-        bits.append((e >> i) & 1)
-    return bits
-
-
-def dual_view_qasm_emitter(k: int, target_a: int, p_clean: Optional[int] = None) -> str:
-    """
-    Generate OpenQASM 2.0 for the dual-view Newton pipeline.
-
-    If p_clean is a clean prime, delegates to the basin-annotated emitter
-    which uses D = ceil(log2(M)) exponent qubits and documents the classical
-    routing swap network as QASM comments.  This reduces the routing-table
-    size but does NOT change the quantum gate structure — the QFT is identical
-    (just on fewer qubits).  True quantum depth reduction via nilpotency
-    remains an open problem (see research/).
-
-    Standard circuit (no p_clean):
-        |v⟩ (valuation)     — 2 qubits  (v < k for k ≤ 64)
-        |α⟩ (sign)          — 1 qubit
-        |e⟩ (exponent)      — (k-2) qubits  (register size N = 2^{k-2})
-    """
-    # Delegate to basin-annotated emitter for clean primes
-    if p_clean is not None:
-        try:
-            from .butterfly_emitter import basin_qasm_emitter
-            prof = analyze_prime(p_clean)
-            if prof.is_clean:
-                return basin_qasm_emitter(p_clean, k, target_a, _prof=prof)
-        except ImportError:
-            pass  # fall through to standard circuit
-
-    n_exp = k - 2
-    n_val = max(1, (k + 1) // 3)   # enough qubits to encode v < k
-    n_sign = 1
-    n_flag = 1                      # valuation guard flag
-    n_total = n_exp + n_val + n_sign
-
-    lines = [
-        "OPENQASM 2.0;",
-        'include "qelib1.inc";',
-        f"// Dual-View Newton Projector  (k={k}, a={target_a})",
-        f"// Exponent register: {n_exp} qubits",
-        f"// Valuation register: {n_val} qubits",
-        f"// Sign qubit: 1",
-        f"// Flag qubit: 1  (valuation guard)",
-    ]
-    if p_clean:
-        lines.append(f"// Clean prime p={p_clean} — standard circuit (basin annotation unavailable)")
-    lines.append(f"qreg q[{n_total}];")
-    lines.append(f"qreg flag[{n_flag}];")
-    lines.append(f"creg c[{n_total}];")
-    lines.append(f"creg cflag[{n_flag}];")
-    lines.append("")
-
-    # --- 1. State preparation (classical pre-computation) ---
-    lines.append("// --- State preparation ---")
-    e0_bits = _hensel_bootstrap_exponent(k, target_a)
-    for i, bit in enumerate(e0_bits):
-        if bit:
-            lines.append(f"x q[{i}];  // e[{i}] = 1")
-    lines.append("")
-
-    # --- 2. QFT on exponent register ---
-    lines.append("// --- QFT on exponent register ---")
-    for m in range(n_exp):
-        lines.append(f"h q[{m}];")
-        for j in range(m):
-            denom = 1 << (m - j)
-            lines.append(f"cp(pi/{denom}) q[{j}], q[{m}];")
-    lines.append("")
-
-    # --- 3. Newton diagonal layer ---
-    lines.append("// --- Newton diagonal (2-adic phase accumulation) ---")
-    L = two_adic_log5(k)
-    for m in range(n_exp):
-        phase = (target_a * L) % (2**k)
-        angle = 2 * np.pi * phase / (2**k)
-        lines.append(f"p({angle:.10f}) q[{m}];  // Newton phase stage {m}")
-    lines.append("")
-
-    # --- 4. Inverse QFT ---
-    lines.append("// --- Inverse QFT ---")
-    for m in range(n_exp - 1, -1, -1):
-        for j in range(m - 1, -1, -1):
-            denom = 1 << (m - j)
-            lines.append(f"cp(-pi/{denom}) q[{j}], q[{m}];")
-        lines.append(f"h q[{m}];")
-    lines.append("")
-
-    # --- 5. Valuation guard (cliff detector) ---
-    lines.append("// --- Valuation guard ---")
-    val_start = n_exp
-    # compute cliff constant c(g) = max(0, v2(g+123)-2)
-    g_val = 5  # default generator
-    c_cliff = max(0, _valuation(g_val + 123) - 2)
-    threshold = c_cliff
-    lines.append(f"//   Valuation register: q[{val_start}..{val_start + n_val - 1}]")
-    lines.append(f"//   Cliff constant: c(g) = max(0, v2(g+123)-2) = {threshold}")
-    lines.append(f"//   Trigger error correction when v >= {threshold}")
-
-    # In practice, the valuation register is measured and the comparison
-    # is performed classically (quantum if/else via classical feed-forward).
-    # This is the standard approach in OpenQASM 2.0 for non-trivial
-    # comparisons against a classical threshold.
-    lines.append(f"//   Measure valuation register for classical comparison:")
-    for i in range(n_val):
-        lines.append(f"measure q[{val_start + i}] -> c[{val_start + i}];")
-    lines.append(f"//   Classical comparison: if v >= {threshold}, set flag qubit")
-    # Build the classical condition: check each bit of threshold
-    # flag[0] = 1 iff v >= threshold  (using classical XOR cascade)
-    lines.append(f"//   flag = (v >> {n_val-1}) for MSB comparison")
-    lines.append(f"if (c == 0) x flag[0];  // placeholder: set flag if v >= k")
-    lines.append("barrier q, flag;")
-    lines.append("")
-
-    # --- 6. Measurement ---
-    lines.append("// --- Measurement ---")
-    for i in range(n_total):
-        lines.append(f"measure q[{i}] -> c[{i}];")
-    lines.append(f"measure flag[0] -> cflag[0];")
-
-    return "\n".join(lines)
-
-# ---------------------------------------------------------------------------
-# 4. Example usage / self-test
+# 3. Example usage / self-test
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
@@ -483,13 +330,6 @@ if __name__ == "__main__":
     print(f"    L = ln_2(5)/4 mod 2^{k-2} = {dvs.L}")
     print(f"    Solvability: {dvs.solvability_report()['conclusion']}")
     print(f"    Thermodynamic: unitary={dvs.thermodynamic_signature()['is_unitary']}")
-
-    # 3. Emit QASM with clean-prime annotation (p=7)
-    qasm = dual_view_qasm_emitter(k, a, p_clean=7)
-    print(f"\n  Generated QASM lines: {len(qasm.splitlines())}")
-    print("  (first 15 lines)")
-    for line in qasm.splitlines()[:15]:
-        print(f"    {line}")
 
     print("\n" + "=" * 60)
     print("Self-test complete.")

@@ -1,5 +1,5 @@
 """
-Experiment 4: Period-2/3/4 dynatomic verification for all 15 clean primes.
+Experiment 4: Period-2/3/4 dynatomic verification for all 16 clean primes.
 """
 import sys
 sys.path.insert(0, "src")
@@ -42,5 +42,5 @@ for p in KNOWN_CLEAN_PRIMES:
     status = "CLEAN" if clean else "HAS PERIODIC POINTS"
     print(f"{p:>8} {str(p2):>9} {str(p3):>9} {str(pole):>9} {str(p4):>9} {status:>12}")
 
-print(f"\nAll 15 clean primes pass dynatomic check: {all_clean}")
+print(f"\nAll 16 clean primes pass dynatomic check: {all_clean}")
 print("Done.")

@@ -81,4 +81,4 @@ The fast check (periods 2–5) is **not sufficient** for full verification. Know
 
 The $p = 181$ anomaly: period-4 polynomial has 4 linear factors modulo 181 ($u = 45, 47, 123, 179$), but **none are cubes** in $\mathbb{F}_{181}$, so $x^3 = u$ has no solutions. Without the cube-root check, $p = 181$ would be a false *negative*.
 
-All 15 primes in the known list were verified by full functional-graph DFS, not just fast polynomial checks.
+All 16 primes in the known list were verified by full functional-graph DFS, not just fast polynomial checks.

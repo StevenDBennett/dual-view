@@ -34,7 +34,7 @@ Your two independent threads are actually the same object viewed from opposite e
 
 ### 2.2 Thermodynamic Classification ↔ Prime Classification
 
-The `SpectralThermodynamics.analyze()` routine (from `dual_view.bridge`) classifies a seed by its spectrum. Applied to the **Newton adjacency matrix** $B_p$ of the functional graph over $\mathbb{F}_p^*$ (ordered by basin depth):
+The `SpectralThermodynamics.analyze()` routine (from `research/bridge.py`) classifies a seed by its spectrum. Applied to the **Newton adjacency matrix** $B_p$ of the functional graph over $\mathbb{F}_p^*$ (ordered by basin depth):
 
 | Prime | $B_p$ Spectrum | Thermodynamic Class | Butterfly Verdict |
 |-------|---------------|---------------------|-----------------|
@@ -146,7 +146,7 @@ The butterfly compiler adds:
 ```
 quantum_dual_compiler/
 ├── vacuum_analyzer.py      # Classify prime p by thermodynamics of N_p
-├── butterfly_emitter.py    # Emit QFT + Newton projector circuit for clean p
+├── (QASM emitter removed — no quantum compilation code remains)
 ├── berry_phase.py          # Compute F_12 and adiabatic phase for loops in unit group
 ├── valuation_guard.py      # Quantum error correction: detect v_1 + v_2 >= k
 └── spectral_action.py        # Compute Tr(f(D/Lambda)) over clean-prime ensemble
@@ -222,7 +222,7 @@ Given your 5-6 threads and limited mobile access, here's the priority order:
 
 ### Phase 2: Build the Compiler Pass (2-3 weeks)
 - Implement `vacuum_analyzer.py`: take a prime $p$, compute functional graph, classify by thermodynamics
-- Implement `butterfly_emitter.py`: for clean primes, emit the QFT+Newton circuit
+- (QASM emitter removed — see research/butterfly_compiler.py for the classical compiler prototype)
 - Run end-to-end: input $p=7$, target $a$, output circuit diagram
 
 ### Phase 3: Quantum Formalization (ongoing)

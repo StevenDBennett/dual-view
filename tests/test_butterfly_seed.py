@@ -8,15 +8,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
 from dual_view.butterfly_seed import (
     DualViewSeed,
     analyze_prime,
-    dual_view_qasm_emitter,
     CleanPrimeProfile,
-    _hensel_bootstrap_exponent,
     _newton_fp,
-)
-from dual_view.butterfly_emitter import (
-    basin_qasm_emitter,
-    _basin_depth_d,
-    dual_view_qasm_emitter_clean,
 )
 from dual_view.core import _valuation, two_adic_log5, two_adic_dlog
 from dual_view.newton_dynamics import KNOWN_CLEAN_PRIMES
@@ -215,99 +208,11 @@ class TestDualViewSeedThermodynamics(unittest.TestCase):
         self.assertIn("SOLVABLE", report["conclusion"])
 
 
-class TestHenselBootstrap(unittest.TestCase):
-    def test_bootstrap_reconstructs_a(self):
-        """5^e ≡ a (mod 2^k) should hold after bootstrap."""
-        for k in (6, 8, 10, 12, 16):
-            for a_val in (5, 9, 17, 33, 65):
-                if a_val % 4 != 1:
-                    continue
-                bits = _hensel_bootstrap_exponent(k, a_val)
-                e = sum(b << i for i, b in enumerate(bits))
-                reconstructed = pow(5, e, 2**k)
-                self.assertEqual(reconstructed, a_val % (2**k),
-                                 f"Failed for k={k}, a={a_val}")
-
-    def test_bootstrap_length(self):
-        for k in (6, 8, 10, 16):
-            bits = _hensel_bootstrap_exponent(k, 5)
-            self.assertEqual(len(bits), k - 2)
-
-    def test_bootstrap_a1(self):
-        """5^0 = 1, so bootstrap for a=1 should give all zeros."""
-        for k in (6, 8, 10):
-            bits = _hensel_bootstrap_exponent(k, 1)
-            self.assertEqual(bits, [0] * (k - 2))
-
-
-class TestQasmEmitter(unittest.TestCase):
-    def test_qasm_header(self):
-        qasm = dual_view_qasm_emitter(k=8, target_a=5)
-        self.assertIn("OPENQASM 2.0;", qasm)
-        self.assertIn('include "qelib1.inc";', qasm)
-
-    def test_qasm_register_sizes(self):
-        k = 10
-        qasm = dual_view_qasm_emitter(k=k, target_a=5)
-        n_exp = k - 2
-        n_val = max(1, (k + 1) // 3)
-        n_total = n_exp + n_val + 1
-        self.assertIn(f"qreg q[{n_total}];", qasm)
-        self.assertIn(f"creg c[{n_total}];", qasm)
-
-    def test_qasm_clean_prime_annotated(self):
-        """p_clean=7 should use the basin-annotated circuit (D=1)."""
-        qasm = dual_view_qasm_emitter(k=8, target_a=5, p_clean=7)
-        self.assertIn("Basin-annotated Dual-View", qasm)
-        self.assertIn("p=7", qasm)
-        # p=7 has M=2, D=1 — only 1 exponent qubit instead of 6
-        self.assertIn("Exponent qubits: 1", qasm)
-
-    def test_qasm_clean_prime_reduced_register(self):
-        """p=103 should use D=4 exponent qubits instead of k-2=6."""
-        qasm = dual_view_qasm_emitter(k=8, target_a=5, p_clean=103)
-        self.assertIn("Exponent qubits: 4", qasm)
-
-    def test_qasm_no_clean_prime(self):
-        qasm = dual_view_qasm_emitter(k=8, target_a=5, p_clean=None)
-        self.assertNotIn("Basin-optimised", qasm)
-
-    def test_qasm_has_qft_section(self):
-        qasm = dual_view_qasm_emitter(k=8, target_a=5)
-        self.assertIn("// --- QFT on exponent register ---", qasm)
-
-    def test_qasm_has_inverse_qft(self):
-        qasm = dual_view_qasm_emitter(k=8, target_a=5)
-        self.assertIn("// --- Inverse QFT ---", qasm)
-
-    def test_qasm_has_newton_diagonal(self):
-        qasm = dual_view_qasm_emitter(k=8, target_a=5)
-        self.assertIn("// --- Newton diagonal", qasm)
-
-    def test_qasm_has_valuation_guard(self):
-        qasm = dual_view_qasm_emitter(k=8, target_a=5)
-        self.assertIn("// --- Valuation guard", qasm)
-
-    def test_qasm_has_measurement(self):
-        qasm = dual_view_qasm_emitter(k=8, target_a=5)
-        self.assertIn("// --- Measurement ---", qasm)
-
-    def test_qasm_state_prep_has_x_gates(self):
-        """State preparation should emit X gates for non-zero bits."""
-        qasm = dual_view_qasm_emitter(k=8, target_a=5)
-        self.assertIn("x q[", qasm)
-
-    def test_qasm_line_count_scales_with_k(self):
-        qasm1 = dual_view_qasm_emitter(k=8, target_a=5)
-        qasm2 = dual_view_qasm_emitter(k=12, target_a=5)
-        self.assertGreater(len(qasm2.splitlines()), len(qasm1.splitlines()))
-
-
 class TestIntegration(unittest.TestCase):
     """End-to-end integration tests."""
 
-    def test_clean_prime_circuit_generation(self):
-        """Full pipeline: analyze prime → build seed → emit QASM."""
+    def test_clean_prime_seed_pipeline(self):
+        """Full pipeline: analyze prime → build seed."""
         p = 7
         prof = analyze_prime(p)
         self.assertTrue(prof.is_clean)
@@ -317,9 +222,6 @@ class TestIntegration(unittest.TestCase):
         dvs = DualViewSeed(k, a)
         seeds = dvs.build_position_dependent_seeds()
         self.assertEqual(len(seeds), k - 2)
-
-        qasm = dual_view_qasm_emitter(k, a, p_clean=p)
-        self.assertIn("OPENQASM 2.0;", qasm)
 
     def test_seed_phase_uses_actual_dlog(self):
         """The _newton_phase method should use the actual discrete log."""
@@ -370,86 +272,6 @@ class TestEdgeCases(unittest.TestCase):
         self.assertEqual(dvs.N, 2**18)
         seeds = dvs.build_position_dependent_seeds()
         self.assertEqual(len(seeds), 18)
-
-    def test_qasm_large_k(self):
-        """QASM emission with larger k."""
-        k = 20
-        a = pow(5, 123, 2**k)
-        qasm = dual_view_qasm_emitter(k, a)
-        self.assertIn("OPENQASM 2.0;", qasm)
-
-
-class TestBasinEmitter(unittest.TestCase):
-    """Tests for the basin-optimised QASM emitter."""
-
-    def test_basin_depth_d(self):
-        """_basin_depth_d computes ceil(log2(M)) for clean primes."""
-        # p=7:  M=2  -> D=1
-        self.assertEqual(_basin_depth_d(7), 1)
-        # p=103: M=15 -> D=4
-        self.assertEqual(_basin_depth_d(103), 4)
-        # p=403549: M=1223 -> D=11
-        self.assertEqual(_basin_depth_d(403549), 11)
-
-    def test_basin_qasm_header(self):
-        qasm = basin_qasm_emitter(7, 8, 5)
-        self.assertIn("OPENQASM 2.0;", qasm)
-        self.assertIn("Basin-annotated Dual-View", qasm)
-        self.assertIn("p=7", qasm)
-
-    def test_basin_qasm_register_sizes(self):
-        """p=7 has D=1, so only 1 exponent qubit."""
-        qasm = basin_qasm_emitter(7, 8, 5)
-        # Register: 1 (exp) + 3 (val) + 1 (sign) = 5 total
-        self.assertIn("qreg q[5];", qasm)
-
-    def test_basin_qasm_larger_prime_register(self):
-        """p=103 has D=4, so 4 exponent qubits."""
-        qasm = basin_qasm_emitter(103, 10, 5)
-        # Register: 4 (exp) + 3 (val, from (10+1)//3) + 1 (sign) = 8 total
-        self.assertIn("qreg q[8];", qasm)
-        self.assertIn("Exponent qubits: 4", qasm)
-
-    def test_basin_qasm_has_routing_stages(self):
-        qasm = basin_qasm_emitter(7, 8, 5)
-        self.assertIn("Basin routing stages", qasm)
-        self.assertIn("advance by", qasm)
-
-    def test_basin_qasm_has_reduced_qft(self):
-        qasm = basin_qasm_emitter(7, 8, 5)
-        self.assertIn("Reduced QFT on 1 qubits", qasm)
-
-    def test_basin_qasm_has_neumann_diagonal(self):
-        qasm = basin_qasm_emitter(7, 8, 5)
-        self.assertIn("Neumann phase stage", qasm)
-
-    def test_basin_qasm_fallback_for_non_clean(self):
-        """Non-clean prime should fall back to standard circuit."""
-        qasm = basin_qasm_emitter(13, 8, 5)  # p=13 has ghost cycles
-        self.assertNotIn("Basin-annotated", qasm)
-
-    def test_basin_qasm_small_clean_primes(self):
-        """First 8 clean primes produce valid QASM (fast check)."""
-        for p in KNOWN_CLEAN_PRIMES[:8]:
-            qasm = basin_qasm_emitter(p, 10, 5)
-            self.assertIn("OPENQASM 2.0;", qasm)
-            self.assertIn(f"p={p}", qasm)
-
-    def test_clean_emitter_wrapper(self):
-        """dual_view_qasm_emitter_clean delegates correctly."""
-        # Clean prime: annotation active
-        qasm = dual_view_qasm_emitter_clean(8, 5, p_clean=7)
-        self.assertIn("Basin-annotated", qasm)
-        # No p_clean: standard circuit
-        qasm = dual_view_qasm_emitter_clean(8, 5, p_clean=None)
-        self.assertNotIn("Basin-annotated", qasm)
-
-    def test_standard_emitter_delegates_to_basin(self):
-        """dual_view_qasm_emitter delegates to basin for clean primes."""
-        qasm = dual_view_qasm_emitter(8, 5, p_clean=7)
-        self.assertIn("Basin-annotated", qasm)
-        self.assertIn("Exponent qubits: 1", qasm)
-
 
 if __name__ == "__main__":
     unittest.main()
