@@ -397,23 +397,6 @@ A profinite `Z₂`-module with valuation filtration.
 
 > **Note**: `bridge.py` has been moved to `research/bridge.py`. It is no longer part of the dual-view public API. For the three-seed weight analysis framework (SpectralThermodynamics, ButterflyBridge, etc.), see `research/bridge.py`.
 
-## Training Module (`dual_view.training`)
-
-Requires `torch` (optional dependency).
-
-#### `QuantizedMLP(k=8)`
-Two-layer MLP (784→128→10) for MNIST.
-
-**Methods**:
-- `forward(x)` — forward pass
-- `get_weights_numpy()` — quantized weights as numpy
-
-#### `build_loaders(batch_size=64, data_root='./data')`
-MNIST data loaders.
-
-#### `train(model, train_loader, test_loader, epochs=5, lr=0.001, ghost_map=None, ghost_scale=0.01, device=None, use_thermodynamics=False, thermo_k=8) -> Dict`
-Training loop with optional ghost regularisation and thermodynamics tracking. Returns history with loss, acc, grad_norm, ghost_penalty, (optionally cliff_risk, alpha_fraction).
-
 ## Newton Dynamics Module (`dual_view.newton_dynamics`)
 
 p-adic Newton dynamics for the rational map `N(x) = (2x³+1)/(3x²)`.

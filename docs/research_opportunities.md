@@ -28,17 +28,7 @@ The secondary correction `ε(n) = v₂(n) - 1` predicts that at `n = 16` (a powe
 
 **Implementation**: Extend `mersenne_cliff_table(n_max=16)`. The scan range needs `k` from `n+1` to `n+10`.
 
-### 1.2 QAT / STE Training Experiment
-
-Train a quantized MLP on MNIST with:
-- **Control**: Standard STE quantization
-- **Experimental**: Ghost-regularized training using `SeedThermodynamics.analyse()` to bias weight updates toward residues with higher `v₂(e_true)`.
-
-The hypothesis is that weights with higher `v₂(e_true)` have higher quantization cliffs and should be more stable under training dynamics.
-
-**Implementation**: Use `dual_view.training` and `dual_view.thermodynamics`.
-
-### 1.3 Trace-mod-p Bridge
+### 1.2 Trace-mod-p Bridge
 
 The empirical independence of `α(det H)` and `Tr(H) mod p` (T6c) is statistically significant but lacks a theoretical explanation. Two approaches:
 

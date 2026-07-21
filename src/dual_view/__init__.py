@@ -35,7 +35,6 @@ mersenne         — Mersenne Ghost Theorem and bootstrap optimality
 isometry         — Exponential isometry and operator algebra theorems
 newton_dynamics  — p-adic Newton dynamics for N(x) = (2x³+1)/(3x²)
 butterfly_seed   — Dual-view Newton projector as butterfly-compilable seed
-training         — PyTorch quantized MLP with ghost reg. (if torch avail)
 demo             — Runnable demonstration suite
 """
 
@@ -90,7 +89,6 @@ from .mersenne import (
 
 from .isometry import verify_isometry, isometry_pair_test, isometry_summary, verify_operator_algebra
 from .butterfly_seed import DualViewSeed, analyze_prime, CleanPrimeProfile
-from .training import QuantizedMLP
 from . import demo
 
 from .iwasawa_algebra import IwasawaElement, IwasawaAlgebra, ProModule
@@ -125,6 +123,5 @@ __all__ = [
     "verify_isometry", "isometry_pair_test", "isometry_summary", "verify_operator_algebra",
     "DualViewSeed", "analyze_prime", "CleanPrimeProfile",
     "IwasawaElement", "IwasawaAlgebra", "ProModule",
-    "QuantizedMLP",
     "demo",
 ]

@@ -39,7 +39,6 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | `mersenne.py` | 585 | Mersenne Ghost Theorem, bootstrap optimality, cliff constant proofs |
 | `isometry.py` | 257 | Exponential isometry, operator algebra theorems |
 | `butterfly_seed.py` | 429 | Dual-view Newton projector, clean-prime analysis, butterfly seeds |
-| `training.py` | 230 | PyTorch QuantizedMLP with STE quantization |
 | `newton_dynamics/` | 5 modules | p-adic Newton dynamics for N(x) = (2x³+1)/(3x²) |
 | `demo.py` | 223 | Runnable demonstration suite |
 

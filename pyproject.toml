@@ -23,7 +23,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-torch = ["torch>=2.0"]
 scipy = ["scipy>=1.10"]
 dev = [
     "pytest>=7",

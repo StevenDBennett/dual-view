@@ -81,7 +81,6 @@ The exponential map `e ↦ 5^e` is a **scaled 2-adic isometry** with scale facto
 | `mersenne` | Mersenne Ghost Theorem, cliff constant proofs |
 | `isometry` | Exponential isometry, operator algebra theorems |
 | `butterfly_seed` | Dual-view Newton projector, clean-prime analysis, butterfly seeds |
-| `training` | PyTorch QuantizedMLP with ghost regularisation |
 
 ## Research
 
@@ -98,7 +97,6 @@ The exponential map `e ↦ 5^e` is a **scaled 2-adic isometry** with scale facto
 
 ```bash
 pip install dual-view
-pip install dual-view[torch]   # with PyTorch support
 pip install dual-view[dev]     # testing, linting, type-checking
 ```
 
