@@ -91,6 +91,12 @@ from .mersenne import (
 
 from .isometry import verify_isometry, isometry_pair_test, isometry_summary, verify_operator_algebra
 from .butterfly_seed import DualViewSeed, analyze_prime, CleanPrimeProfile
+from .butterfly_emitter import basin_qasm_emitter, dual_view_qasm_emitter_clean
+from .bridge import SpectralThermodynamics as BridgeSpectralThermodynamics
+from .training import QuantizedMLP
+from . import demo
+
+from .iwasawa_algebra import IwasawaElement, IwasawaAlgebra, ProModule
 
 __all__ = [
     "modinv_newton", "two_adic_log5", "two_adic_dlog", "dual_add",
@@ -121,4 +127,9 @@ __all__ = [
     "load_period6_coefficients", "PERIOD6_PREDICTED",
     "verify_isometry", "isometry_pair_test", "isometry_summary", "verify_operator_algebra",
     "DualViewSeed", "analyze_prime", "CleanPrimeProfile",
+    "IwasawaElement", "IwasawaAlgebra", "ProModule",
+    "basin_qasm_emitter", "dual_view_qasm_emitter_clean",
+    "BridgeSpectralThermodynamics",
+    "QuantizedMLP",
+    "demo",
 ]

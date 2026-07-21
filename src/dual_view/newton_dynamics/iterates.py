@@ -12,7 +12,6 @@ with numerators and denominators defined by the recurrence:
 """
 from __future__ import annotations
 
-from math import gcd
 from typing import List, Tuple
 
 from .poly import poly_mul, poly_add, poly_scalar_mul, poly_pow

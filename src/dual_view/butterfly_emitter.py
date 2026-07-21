@@ -255,15 +255,16 @@ def basin_qasm_emitter(p: int, k: int, target: int = 5,
 def dual_view_qasm_emitter_clean(k: int, target_a: int,
                                   p_clean: Optional[int] = None) -> str:
     """
-    Wrapper: delegates to the basin-optimised emitter for clean primes,
+    Wrapper: delegates to the basin-annotated emitter for clean primes,
     falls back to the standard emitter otherwise.
 
-    This is the direct replacement for dual_view_qasm_emitter's placeholder.
+    This is the public entry point.  Import as:
+        from dual_view import dual_view_qasm_emitter_clean
     """
     if p_clean is not None:
         prof = analyze_prime(p_clean)
         if prof.is_clean:
-            return basin_qasm_emitter(p_clean, k, target_a)
+            return basin_qasm_emitter(p_clean, k, target_a, _prof=prof)
     return dual_view_qasm_emitter(k, target_a, p_clean=None)
 
 
