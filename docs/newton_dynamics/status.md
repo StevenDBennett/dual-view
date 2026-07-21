@@ -19,7 +19,7 @@
 
 - **Period-5 dynatomic**: Degree 80 in $u$, irreducible, discriminant 5,605 digits
 - **Period-6 dynatomic**: Degree 232 in $u$, coefficients computed (233 entries)
-- **Clean primes**: 15 known — see full list in `clean_primes.md`; verified by exhaustive DFS up to 30,000,000; set appears finite but larger than original conjecture of {7, 103, 181}
+- **Clean primes**: 16 known (including p=5) — see full list in `clean_primes.md`; verified by exhaustive DFS up to 30,000,000
 - **Galois group (period-4)**: Subgroup of $S_6 \wr V_4$
 
 | Period | deg(u) | $\Phi(0)$ | $\Phi(1)$ | $\prod\mu$ | $\sum\mu$ | Cycles |

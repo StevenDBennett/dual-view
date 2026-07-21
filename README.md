@@ -15,10 +15,10 @@ where `v` is the 2-adic valuation, `α` is the sign sector, and `e` is the discr
 ### 15 Clean Primes (Verified to 30,000,000)
 
 ```
-{7, 31, 41, 59, 103, 181, 359, 659, 811, 8111, 14159, 31741, 115679, 162251, 403549}
+{5, 7, 31, 41, 59, 103, 181, 359, 659, 811, 8111, 14159, 31741, 115679, 162251, 403549}
 ```
 
-A prime `p` is *clean* for `N(x) = (2x^3+1)/(3x^2)` over `F_p` iff the Newton functional graph is a rooted forest with no cycles (ghost attractors). The original conjecture of {7, 103, 181} was refuted by exhaustive DFS search to 30M — 15 primes found, set still appears finite.
+A prime `p` is *clean* for `N(x) = (2x^3+1)/(3x^2)` over `F_p` iff the Newton functional graph is a rooted forest with no cycles (ghost attractors). Exhaustive DFS search to 30M found 16 primes; the set appears finite.
 
 ### Nilpotent Basin Structure (S^M = 0)
 

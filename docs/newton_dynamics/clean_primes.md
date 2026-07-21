@@ -6,25 +6,26 @@ A prime $p$ is **clean** for $N(x) = (2x^3+1)/(3x^2)$ if $\mathbb{F}_p$ admits n
 
 The known clean primes are:
 
-$$\\{7, 31, 41, 59, 103, 181, 359, 659, 811, 8111, 14159, 31741, 115679, 162251, 403549\\}$$
+$$\\{5, 7, 31, 41, 59, 103, 181, 359, 659, 811, 8111, 14159, 31741, 115679, 162251, 403549\\}$$
 
 | # | Prime | Decimal Property | Notes |
 |---|-------|-----------------|-------|
-| 1 | 7 | | Original known |
-| 2 | 31 | | New |
-| 3 | 41 | | New |
-| 4 | 59 | | New |
-| 5 | 103 | | Original known |
-| 6 | 181 | | Original known |
-| 7 | 359 | | New |
-| 8 | 659 | | New |
-| 9 | 811 | | New |
-| 10 | 8111 | Palindrome | New |
-| 11 | **14159** | Digits of $\pi$ | New |
-| 12 | 31741 | | New |
-| 13 | 115679 | | New |
-| 14 | 162251 | | New |
-| 15 | 403549 | | New |
+| 1 | **5** | | Trivially clean (only root is 1, pole chain for 2 elements) |
+| 2 | 7 | | Original known |
+| 3 | 31 | | New |
+| 4 | 41 | | New |
+| 5 | 59 | | New |
+| 6 | 103 | | Original known |
+| 7 | 181 | | Original known |
+| 8 | 359 | | New |
+| 9 | 659 | | New |
+| 10 | 811 | | New |
+| 11 | 8111 | Palindrome | New |
+| 12 | **14159** | Digits of $\pi$ | New |
+| 13 | 31741 | | New |
+| 14 | 115679 | | New |
+| 15 | 162251 | | New |
+| 16 | 403549 | | New |
 
 Of particular note: **14159** appears as the first five decimal digits of $\pi$ ($3.14159\ldots$), suggesting a potential number-theoretic connection between the clean-prime condition and the decimal expansion of $\pi$.
 
@@ -57,7 +58,7 @@ If $K_2$, $K_3$, $K_4$ were linearly disjoint over $\mathbb{Q}$:
 - $[K_2 \cdot K_3 \cdot K_4 : \mathbb{Q}] = 12 \cdot 18 \cdot 24 = 5,\!184$
 - Density bound: $1/5,\!184 \approx 0.0193\%$
 
-Observed density (new search): $15 / 30,\!000,\!000 \approx 0.00005\%$
+Observed density (new search): $16 / 30,\!000,\!000 \approx 0.000053\%$
 
 The observed density is now well **below** the linear-disjointness bound, which is consistent with finiteness (the conditions accumulate to force the density toward zero). The original bound $1/5,\!184$ was an upper bound from periods 2–4 alone; the actual density after period-5+6 conditions is much lower.
 
@@ -66,8 +67,8 @@ The observed density is now well **below** the linear-disjointness bound, which 
 | Metric | Original | Current |
 |--------|----------|---------|
 | Search bound | 100,000 | 30,000,000 |
-| Clean primes found | 3 | 15 |
-| Density | $3 \times 10^{-5}$ | $5 \times 10^{-7}$ |
+| Clean primes found | 3 | 16 |
+| Density | $3 \times 10^{-5}$ | $5.3 \times 10^{-7}$ |
 | Asymptotic trend | — | Decreasing |
 
 The decreasing density with increasing search range supports the finiteness conjecture despite the larger-than-expected set cardinality.

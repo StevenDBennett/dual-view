@@ -75,9 +75,10 @@ At depth 2, the $\Delta$ values are constrained by the field $\mathbb{F}_p(\sqrt
 
 ### Empirical Data
 
-The invariant prefix is observed for all 15 known clean primes:
+The invariant prefix is observed for all known 3-root clean primes:
 
 ```
+p=5:   depth dist: 0:1 1:1          (max depth 1, 1-root)
 p=7:   depth dist: 0:3 1:3          (max depth 1)
 p=31:  depth dist: 0:3 1:2 2:1      (max depth 2)  
 p=103: depth dist: 0:3 1:1 2:5 3:9 4:9 5:9 ... (max depth 14)
@@ -85,7 +86,7 @@ p=181: depth dist: 0:3 1:1 2:3 3:5 4:10 5:12 ... (max depth 16)
 p=811: depth dist: 0:3 1:1 2:3 3:3 4:3 5:5 ... (max depth 43)
 ```
 
-All 3-root primes share `0:3 1:1 2:3 3:5 4:9 5:9~11` at depths 0-5.
+All 3-root primes share `0:3 1:1 2:3 3:5 4:9 5:9~11` at depths 0-5. (p=5 is 1-root and excluded from the 3-root pattern.)
 
 ---
 

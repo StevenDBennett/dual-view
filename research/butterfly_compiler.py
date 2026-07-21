@@ -182,7 +182,7 @@ class ButterflyNewtonCompiler:
 
 if __name__ == "__main__":
     print("=" * 70)
-    print("Butterfly Compiler — All 15 Clean Primes")
+    print("Butterfly Compiler — All 16 Clean Primes")
     print("=" * 70)
 
     print(f"\n{'Prime':>8} {'Roots':>6} {'NRoot':>6} {'M':>6} {'Depth':>6} {'Leaves':>6} {'S^M=0':>8} {'Resolv':>8}")
