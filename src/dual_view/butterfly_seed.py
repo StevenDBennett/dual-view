@@ -342,19 +342,21 @@ def _hensel_bootstrap_exponent(k: int, a: int) -> List[int]:
 
 def dual_view_qasm_emitter(k: int, target_a: int, p_clean: Optional[int] = None) -> str:
     """
-    Generate OpenQASM 2.0 for the full dual-view Newton pipeline.
+    Generate OpenQASM 2.0 for the dual-view Newton pipeline.
 
-    If p_clean is a clean prime, delegates to the basin-optimised emitter
-    which reduces the exponent register from (k-2) qubits to D = ceil(log2(M))
-    qubits where M is the nilpotency index (S^M = 0).  Circuit depth drops
-    from O(k²) to O(D²).
+    If p_clean is a clean prime, delegates to the basin-annotated emitter
+    which uses D = ceil(log2(M)) exponent qubits and documents the classical
+    routing swap network as QASM comments.  This reduces the routing-table
+    size but does NOT change the quantum gate structure — the QFT is identical
+    (just on fewer qubits).  True quantum depth reduction via nilpotency
+    remains an open problem (see research/).
 
     Standard circuit (no p_clean):
         |v⟩ (valuation)     — 2 qubits  (v < k for k ≤ 64)
         |α⟩ (sign)          — 1 qubit
         |e⟩ (exponent)      — (k-2) qubits  (register size N = 2^{k-2})
     """
-    # Vacuum optimisation: delegate to basin emitter for clean primes
+    # Delegate to basin-annotated emitter for clean primes
     if p_clean is not None:
         try:
             from .butterfly_emitter import basin_qasm_emitter

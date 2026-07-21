@@ -255,8 +255,8 @@ class TestQasmEmitter(unittest.TestCase):
         self.assertIn(f"qreg q[{n_total}];", qasm)
         self.assertIn(f"creg c[{n_total}];", qasm)
 
-    def test_qasm_clean_prime_optimised(self):
-        """p_clean=7 should use the basin-optimised circuit (D=1)."""
+    def test_qasm_clean_prime_annotated(self):
+        """p_clean=7 should use the basin-annotated circuit (D=1)."""
         qasm = dual_view_qasm_emitter(k=8, target_a=5, p_clean=7)
         self.assertIn("Basin-optimised Dual-View", qasm)
         self.assertIn("p=7", qasm)

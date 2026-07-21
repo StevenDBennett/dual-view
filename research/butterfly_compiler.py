@@ -1,13 +1,20 @@
 """
 Butterfly Compiler Prototype
 ============================
+Classical routing-table compiler for clean primes.
+
 Takes a clean prime p, builds the nilpotent shift operator S from
-the basin forest, and emits a classical butterfly routing circuit
-of depth ceil(log2(M)) where S^M = 0.
+the basin forest, and emits classical routing tables (swap networks)
+of depth ceil(log2(M)).
 
 The resolvent (I - S)^{-1} = I + S + S^2 + ... + S^{M-1}
-is exact — no approximation. Each butterfly stage routes elements
-one step closer to their root along precomputed Newton trajectories.
+justifies termination — it proves that M steps suffice — but the
+actual mechanism is precomputed path lookup, not series evaluation.
+Each butterfly stage applies N^{2^s} to advance elements by 2^s steps
+along their precomputed Newton trajectory.
+
+These are classical routing tables, not quantum circuits.
+For a quantum depth reduction, see the open problem in research/.
 """
 import sys
 sys.path.insert(0, "src")

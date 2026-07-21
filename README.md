@@ -28,9 +28,9 @@ For every clean prime, ordering elements by basin depth makes the Newton shift o
 (I - S)^{-1} = I + S + S^2 + ... + S^{M-1}
 ```
 
-### Butterfly Routing Compiler
+### Classical Routing Tables
 
-The Newton iteration `x_{n+1} = N(x_n)` parallelises to depth `⌈log₂(M)⌉` via a butterfly routing network. Each stage applies N `2^s` times, converging in `⌈log₂(M)⌉` stages instead of M serial steps. At p=403549 (M=1223): 11 butterfly stages vs 1223 serial Newton steps — a **111× speedup**.
+The 15 clean primes each have a precomputed routing table (classical swap network) of depth `⌈log₂(M)⌉`. The classical routing simulator proves that `⌈log₂(M)⌉` butterfly stages suffice for all elements to converge (e.g., p=403549: 11 stages vs 1223 serial steps). **A true quantum depth reduction using nilpotency is an open problem** — the QASM emitter annotates circuits with routing information but does not yet exploit the basin structure for quantum advantage.
 
 ### Discriminant Theorem (Δ = 108(x³-1))
 
@@ -81,7 +81,7 @@ The exponential map `e ↦ 5^e` is a **scaled 2-adic isometry** with scale facto
 | `mersenne` | Mersenne Ghost Theorem, cliff constant proofs |
 | `isometry` | Exponential isometry, operator algebra theorems |
 | `butterfly_seed` | Dual-view Newton projector, clean-prime analysis |
-| `butterfly_emitter` | Basin-optimised OpenQASM emission (nilpotent depth reduction) |
+| `butterfly_emitter` | OpenQASM emission with basin-routing annotations (quantum depth reduction is open) |
 | `bridge` | Three-seed 2-adic weight analysis (depth, map, sign) |
 | `training` | PyTorch QuantizedMLP with ghost regularisation |
 

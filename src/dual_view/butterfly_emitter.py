@@ -1,16 +1,13 @@
 """
-butterfly_emitter.py — Nilpotent-optimised QASM emitter for clean primes
-========================================================================
+butterfly_emitter.py — QASM emitter with basin-routing annotations
+===================================================================
 
-Replaces the vacuum placeholder in butterfly_seed.py with a proper depth-reduced
-circuit that exploits the nilpotent basin structure.
+Emits OpenQASM 2.0 circuits annotated with classical basin routing
+information for clean primes.  Uses D = ceil(log2(M)) exponent qubits
+to reduce routing-table size, but the QFT structure is unchanged.
 
-For a clean prime p with nilpotency index M (S^M = 0):
-
-    Standard circuit:  k-2 exponent qubits, O(k²) QFT gates
-    Optimised circuit: D = ceil(log2(M)) exponent qubits, O(D²) QFT gates
-
-For p=403549, M=1223, D=11.  At k=32, that's 11² = 121 vs 30² = 900 QFT gate pairs.
+A true quantum depth reduction exploiting nilpotency (3-way multiplexer,
+swap-routing on qubits) remains an open problem — see research/.
 """
 
 from __future__ import annotations
@@ -118,11 +115,16 @@ def _basin_swap_network(prof: CleanPrimeProfile, D: int) -> list[dict]:
 def basin_qasm_emitter(p: int, k: int, target: int = 5,
                        _prof: Optional[CleanPrimeProfile] = None) -> str:
     """
-    Generate OpenQASM 2.0 with basin-optimised depth for a clean prime.
+    Generate OpenQASM 2.0 annotated with basin routing information.
 
     The circuit uses D = ceil(log2(M)) exponent qubits and a D-stage
-    QFT instead of the full (k-2)-stage QFT.  Routing swaps are
-    documented as QASM comments for verification.
+    QFT instead of the full (k-2)-stage QFT — this reduces the classical
+    routing-table size but does NOT change the quantum gate count
+    (the QFT structure is identical, just smaller).
+
+    The basin routing swap network is documented as QASM comments.
+    A true quantum depth reduction using nilpotency (3-way multiplexer,
+    actual swap-routing on qubits) remains an open problem.
 
     Falls back to the standard emitter if p is not clean.
     """
