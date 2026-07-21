@@ -382,7 +382,7 @@ def dual_view_qasm_emitter(k: int, target_a: int, p_clean: Optional[int] = None)
         f"// Flag qubit: 1  (valuation guard)",
     ]
     if p_clean:
-        lines.append(f"// CLEAN PRIME VACUUM  p={p_clean}  — depth-optimised")
+        lines.append(f"// Clean prime p={p_clean} — standard circuit (basin annotation unavailable)")
     lines.append(f"qreg q[{n_total}];")
     lines.append(f"qreg flag[{n_flag}];")
     lines.append(f"creg c[{n_total}];")
@@ -484,7 +484,7 @@ if __name__ == "__main__":
     print(f"    Solvability: {dvs.solvability_report()['conclusion']}")
     print(f"    Thermodynamic: unitary={dvs.thermodynamic_signature()['is_unitary']}")
 
-    # 3. Emit QASM for clean-prime vacuum (p=7)
+    # 3. Emit QASM with clean-prime annotation (p=7)
     qasm = dual_view_qasm_emitter(k, a, p_clean=7)
     print(f"\n  Generated QASM lines: {len(qasm.splitlines())}")
     print("  (first 15 lines)")

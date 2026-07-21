@@ -258,7 +258,7 @@ class TestQasmEmitter(unittest.TestCase):
     def test_qasm_clean_prime_annotated(self):
         """p_clean=7 should use the basin-annotated circuit (D=1)."""
         qasm = dual_view_qasm_emitter(k=8, target_a=5, p_clean=7)
-        self.assertIn("Basin-optimised Dual-View", qasm)
+        self.assertIn("Basin-annotated Dual-View", qasm)
         self.assertIn("p=7", qasm)
         # p=7 has M=2, D=1 — only 1 exponent qubit instead of 6
         self.assertIn("Exponent qubits: 1", qasm)
@@ -394,7 +394,7 @@ class TestBasinEmitter(unittest.TestCase):
     def test_basin_qasm_header(self):
         qasm = basin_qasm_emitter(7, 8, 5)
         self.assertIn("OPENQASM 2.0;", qasm)
-        self.assertIn("Basin-optimised Dual-View", qasm)
+        self.assertIn("Basin-annotated Dual-View", qasm)
         self.assertIn("p=7", qasm)
 
     def test_basin_qasm_register_sizes(self):
@@ -426,7 +426,7 @@ class TestBasinEmitter(unittest.TestCase):
     def test_basin_qasm_fallback_for_non_clean(self):
         """Non-clean prime should fall back to standard circuit."""
         qasm = basin_qasm_emitter(13, 8, 5)  # p=13 has ghost cycles
-        self.assertNotIn("Basin-optimised", qasm)
+        self.assertNotIn("Basin-annotated", qasm)
 
     def test_basin_qasm_small_clean_primes(self):
         """First 8 clean primes produce valid QASM (fast check)."""
@@ -437,17 +437,17 @@ class TestBasinEmitter(unittest.TestCase):
 
     def test_clean_emitter_wrapper(self):
         """dual_view_qasm_emitter_clean delegates correctly."""
-        # Clean prime: optimisation active
+        # Clean prime: annotation active
         qasm = dual_view_qasm_emitter_clean(8, 5, p_clean=7)
-        self.assertIn("Basin-optimised", qasm)
+        self.assertIn("Basin-annotated", qasm)
         # No p_clean: standard circuit
         qasm = dual_view_qasm_emitter_clean(8, 5, p_clean=None)
-        self.assertNotIn("Basin-optimised", qasm)
+        self.assertNotIn("Basin-annotated", qasm)
 
     def test_standard_emitter_delegates_to_basin(self):
-        """dual_view_qasm_emitter now delegates to basin for clean primes."""
+        """dual_view_qasm_emitter delegates to basin for clean primes."""
         qasm = dual_view_qasm_emitter(8, 5, p_clean=7)
-        self.assertIn("Basin-optimised", qasm)
+        self.assertIn("Basin-annotated", qasm)
         self.assertIn("Exponent qubits: 1", qasm)
 
 
