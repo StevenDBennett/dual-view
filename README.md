@@ -32,10 +32,6 @@ For every clean prime, ordering elements by basin depth makes the Newton shift o
 
 The Newton iteration `x_{n+1} = N(x_n)` parallelises to depth `⌈log₂(M)⌉` via a butterfly routing network. Each stage applies N `2^s` times, converging in `⌈log₂(M)⌉` stages instead of M serial steps. At p=403549 (M=1223): 11 butterfly stages vs 1223 serial Newton steps — a **111× speedup**.
 
-### Basin-Optimised QASM Circuit
-
-For clean primes, the quantum circuit uses `D = ⌈log₂(M)⌉` exponent qubits instead of the standard `k-2`, dropping circuit depth from `O(k²)` to `O(D²)`. At k=32, p=403549: D² = 121 vs k² = 1024 controlled-phase gates — **8.5× reduction**.
-
 ### Discriminant Theorem (Δ = 108(x³-1))
 
 The identical early-depth structure shared by all 3-root clean primes (depths 0-5) is proven: the Newton preimage cubic discriminant `Δ = 108(x³-1)` vanishes at the roots, and the small-depth x-values are constrained to a fixed set of algebraic expressions, independent of p.
@@ -120,16 +116,6 @@ proc = TwoAdicProcessor(16)
 c = proc.mul(DualNumber(3, 16), DualNumber(7, 16))  # 21
 ```
 
-```python
-from dual_view import analyze_prime
-from dual_view.butterfly_emitter import basin_qasm_emitter
-
-prof = analyze_prime(103)
-print(f"Clean: {prof.is_clean}, M={prof.nilpotency_index}")  # Clean: True, M=15
-
-qasm = basin_qasm_emitter(103, k=16, target=5)
-print(qasm[:500])  # Basin-optimised circuit (4 exponent qubits vs 14)
-```
 
 ## Running Tests
 
