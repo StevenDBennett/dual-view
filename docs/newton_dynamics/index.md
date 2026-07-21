@@ -61,7 +61,7 @@ sqrt = tonelli_shanks(5, 11)  # 4² ≡ 5 (mod 11)
 
 ## Clean Primes
 
-**{7, 103, 181}** — verified below 100,000. Conjectured to be complete.
+**16 known** — {5, 7, 31, 41, 59, 103, 181, 359, 659, 811, 8111, 14159, 31741, 115679, 162251, 403549}. Verified by exhaustive DFS up to 30,000,000. Conjectured finite.
 
 ## Documents
 

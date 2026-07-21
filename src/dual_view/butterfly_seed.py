@@ -315,7 +315,10 @@ if __name__ == "__main__":
     print("=" * 60)
 
     # 1. Analyse known clean primes
-    from .newton_dynamics import KNOWN_CLEAN_PRIMES
+    try:
+        from .newton_dynamics import KNOWN_CLEAN_PRIMES
+    except ImportError:
+        from dual_view.newton_dynamics import KNOWN_CLEAN_PRIMES
     for p in KNOWN_CLEAN_PRIMES:
         prof = analyze_prime(p)
         print(f"\n  p={p}: clean={prof.is_clean}, obstruction={prof.obstruction}, "

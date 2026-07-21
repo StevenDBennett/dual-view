@@ -81,7 +81,7 @@ Prime    Roots  NonRoot      M  Depth  S^M=0  Resolv
 403549       3   403533   1223     11     OK     OK    (3-root, depth 11)
 ```
 
-**All 15 pass both verifications.** Nilpotency and resolvent exactness are confirmed for every known clean prime.
+**All 16 pass both verifications.** Nilpotency and resolvent exactness are confirmed for every known clean prime.
 
 ---
 

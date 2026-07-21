@@ -44,7 +44,7 @@
 
 ### Critical
 1. **Identify exact period-4 Galois group** — feed constraints into GAP/Magma
-2. **Prove clean primes are finite** — 15 known (verified to 30M), original {7, 103, 181} conjecture refuted; obstruction accumulation still the likely proof strategy
+2. **Prove clean primes are finite** — 16 known (verified to 30M), original {7, 103, 181} conjecture refuted; obstruction accumulation still the likely proof strategy
 3. **Prove $Φ_n^*(1) = 3^{\mu_3(n)/2}$** — full theoretical proof (currently has complete proof — see `theorems.md`)
 
 ### Known Caveats

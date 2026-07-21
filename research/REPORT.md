@@ -202,7 +202,7 @@ Patterns:
 - **3-root primes** always start with depth signature `0:3 1:1 2:3 3:5 4:9 ...` — nearly identical early structure
 - **1-root primes** start with `0:1 1:1 2:1` or `0:1 1:1 2:3` — more varied
 - Depth distributions are unimodal (rise to a peak then decay)
-- Nilpotency index = max_depth (the deepest leaf in the forest) — NOT max_depth + 1, since the shift on non-roots has depth starting at 1
+- Nilpotency index = max_depth + 1 (e.g. p=103: max depth 14, nilpotency index 15). The extra +1 is because deepest non-root elements at depth `max_depth` need one more shift to reach a root, giving S^(max_depth+1) = 0.
 
 ---
 
@@ -212,7 +212,7 @@ Patterns:
 
 Checks whether any two clean primes have isomorphic basin forests (same depth distribution).
 
-**Result**: **ALL 15 DEPTH SIGNATURES ARE UNIQUE** — no two clean primes have the same forest structure.
+**Result**: **ALL 16 DEPTH SIGNATURES ARE UNIQUE** — no two clean primes have the same forest structure.
 
 ```
 Prime  Nroots  MaxDep  Nodes  DepthSig
@@ -270,7 +270,7 @@ p=181:
 | 1 | QASM circuits | Removed | QASM emitter removed from package |
 | 2 | Mersenne cliff n=16 | ✅ Verified | k*=21 matches secondary correction formula |
 | 3 | Spectral thermo | ✅ Verified | All clean primes produce pure nilpotent matrices |
-| 4 | Dynatomic check | ✅ Verified | All 15 satisfy the formal clean-prime definition |
+| 4 | Dynatomic check | ✅ Verified | All 16 satisfy the formal clean-prime definition |
 | 5 | Nilpotency analysis | ✅ Complete | 3 structural classes; moderate p-nilpotency correlation |
 | A | Basin Newton operator | ✅ Verified | Basin shift is nilpotent for all — S^n = 0 confirmed |
 | B | Basin depth spectrum | ✅ Complete | 3-root primes share early structure; each has unique depth dist |
@@ -281,7 +281,7 @@ p=181:
 
 1. **Nilpotency is universal** — every clean prime's basin shift satisfies S^k = 0 for k = nilpotency_index. This is the algebraic structure the butterfly compiler exploits for depth-O(log k) compilation.
 
-2. **Each prime is unique** — no two clean primes have isomorphic basin forests. A butterfly compiler would need 15 distinct seed configurations.
+2. **Each prime is unique** — no two clean primes have isomorphic basin forests. A butterfly compiler would need 16 distinct seed configurations.
 
 3. **3-root primes** (7, 31, 103, 181, 811, 31741, 403549) share a common early-depth signature — the first 6 depth levels are structurally identical. This suggests a universal 3-root butterfly template with prime-specific fine-tuning at deeper levels.
 

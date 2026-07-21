@@ -29,6 +29,8 @@ $$\\{5, 7, 31, 41, 59, 103, 181, 359, 659, 811, 8111, 14159, 31741, 115679, 1622
 
 Of particular note: **14159** appears as the first five decimal digits of $\pi$ ($3.14159\ldots$), suggesting a potential number-theoretic connection between the clean-prime condition and the decimal expansion of $\pi$.
 
+> **Note on pole chains**: Of the 16 clean primes, only **7, 103, 181** have functional graphs where every element of $\mathbb{F}_p^*$ converges to a root. The other 13 have "pole chains" — elements that eventually map to the pole $x = 0$ (where the denominator $3x^2 \equiv 0$). These elements are not periodic points and do not form cycles, so they do not disqualify cleanliness. The obstruction classification describes this: `analyze_prime(p)` returns `obstruction="clean"` for pole-free primes and `pole_chain` for the rest, with `is_clean=True` for both.
+
 ### Previous Conjecture
 
 The original conjecture (based on verification below 100,000) was that the clean primes were exactly **{7, 103, 181}** and the set was complete. Exhaustive search to **30,000,000** has disproved completeness — 12 additional clean primes exist — while preserving the finiteness thesis.
@@ -42,7 +44,7 @@ For each prime $p \equiv 1 \pmod{3}$, verified by full functional-graph analysis
 3. Check multipliers $\mu = N'(x)$ for each cycle
 4. A prime is clean iff every cycle has multiplier $\mu \equiv 1 \pmod{p}$ (equivalently, the functional graph is a rooted forest with the three cube roots of unity as the only fixed points)
 
-## Finiteness Argument
+## Density Observations (Finiteness Conjecture)
 
 For each period $n$, cleanliness requires no period-$n$ points with $\mu \not\equiv 1 \pmod{p}$:
 

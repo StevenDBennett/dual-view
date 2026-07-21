@@ -2,7 +2,7 @@
 
 ## T1: Early-Depth Structure for 3-Root Clean Primes
 
-**Theorem**: For any clean prime $p \equiv 1 \pmod 3$, the following depth-0 and depth-1 structure is proven. Depths 2-5 are invariant across all 15 known clean primes but lack a general proof.
+**Theorem**: For any clean prime $p \equiv 1 \pmod 3$, the following depth-0 and depth-1 structure is proven. Depths 2-5 are invariant across all 16 known clean primes but lack a general proof.
 
 **Proof**:
 
@@ -63,7 +63,7 @@ For the three depth-1 elements $x_1, x_2, x_3$ (one per root), the discriminant 
 
 ### Depth 2 and Beyond
 
-For depths 2 through 5, the pattern is **empirically observed** across all 15 known clean primes (see table below), but a general proof is not yet complete. The discriminant analysis at depth 1 constrains the discriminant values:
+For depths 2 through 5, the pattern is **empirically observed** across all 16 known clean primes (see table below), but a general proof is not yet complete. The discriminant analysis at depth 1 constrains the discriminant values:
 
 $$ \Delta = -108(1 + 2^{-3}) \pmod p $$
 
@@ -92,15 +92,11 @@ All 3-root primes share `0:3 1:1 2:3 3:5 4:9 5:9~11` at depths 0-5. (p=5 is 1-ro
 
 ## T2: Nilpotency of the Basin Shift Operator
 
-**Theorem**: For any clean prime $p$, the shift operator $S$ defined by the basin forest satisfies $S^M = 0$ where $M$ is the nilpotency index (max basin depth).
+**Theorem**: For any clean prime $p$, the shift operator $S$ defined by the basin forest satisfies $S^M = 0$ where $M$ is the nilpotency index (max basin depth + 1).
 
 **Proof**:
 
-Order the $n$ non-root basin elements by depth descending (deepest first). For each element $y$, let $x = N(y)$ be its parent. By construction, $x$ is at depth $\text{depth}(y) - 1$, hence $x$ appears strictly after $y$ in the ordering.
-
-Define $S$ as the $n \times n$ matrix with $S_{xy} = 1$ if $x$ is the parent of $y$, and $0$ otherwise. In the chosen ordering, every non-zero entry lies strictly above the diagonal, so $S$ is strictly upper-triangular.
-
-A strictly upper-triangular $n \times n$ matrix is nilpotent with index at most $n$. Specifically, $(S^k)_{xy} = 1$ iff there is a directed path of length $k$ from $y$ to $x$ in the basin forest. Since the longest path from a leaf to a root has length at most $M$ (the max depth), $(S^M)_{xy} = 0$ for all $x, y$.
+Order the $n$ non-root basin elements by depth descending (deepest first). For each element $y$, let $x = N(y)$ be its parent. By construction, $\text{depth}(x) = \text{depth}(y) - 1$, so $S_{xy} = 1$ only when $\text{depth}(x) < \text{depth}(y)$. Within each depth level the order is arbitrary, so non-zero entries may appear below the diagonal for peers of different depths. However, $S$ is **block strictly upper-triangular** with respect to the depth grading: each power $S^k$ shifts elements $k$ steps toward their root. Since the longest path from a leaf to a root has length at most $M - 1$, we have $(S^M)_{xy} = 0$ for all $x, y$.
 
 ### Corollary: Exact Neumann Series (Termination Criterion)
 
@@ -126,6 +122,6 @@ $$ x \leftarrow N^{2^s}(x) $$
 
 After $\lceil \log_2 M \rceil$ stages, all elements reach their root. This is binary exponentiation on the Newton map: each stage doubles the effective step count.
 
-**Verification**: The classical `research/routing_simulator.py` confirms convergence in exactly $\lceil \log_2 M \rceil$ stages for all 15 known clean primes.
+**Verification**: The classical `research/routing_simulator.py` confirms convergence in exactly $\lceil \log_2 M \rceil$ stages for all 16 known clean primes.
 
 **Quantum caveat**: This is a classical routing circuit (swap networks on precomputed paths). A *quantum* depth reduction using nilpotency is an open problem — see `research/`.

@@ -2,6 +2,8 @@
 
 **Synthesis Document** — Pulling together the 2-adic Newton dynamics, the Universal Butterfly Compiler, and the Quantum Dual-View framework into a single research program.
 
+> **⚠️ Caveat**: This document is a *research roadmap*, not an implementation report. The `quantum_dual_compiler` module described in Sections 5 and 7 does not yet exist. The Berry phase formulas (Section 6) are speculative. Only the classical butterfly compiler (`research/butterfly_compiler.py`) and routing simulator (`research/routing_simulator.py`) are implemented.
+
 ---
 
 ## 1. The Core Insight
@@ -40,7 +42,7 @@ The `SpectralThermodynamics.analyze()` routine (from `research/bridge.py`) class
 |-------|---------------|---------------------|-----------------|
 | **7, 103, 181** | $\{0, 0, \dots, 0, 1, 1, 1\}$ | **Nilpotent + 3 fixed points** | Compiles to 3-output multiplexer |
 | Ghost-only (e.g., 13) | Roots of unity on unit circle | **Conservative/Unitary component** | Does NOT compile as collapse; requires iterative orbit tracing |
-| Pole-only (e.g., 31) | $\{0\}$ on nilpotent blocks, no cycles | **Nilpotent** (but with 0 as absorbing state) | Partial compile — pole branches are dead code |
+| Pole-only (e.g., 13) | $\{0\}$ on nilpotent blocks, no cycles | **Nilpotent** (but with 0 as absorbing state) | Partial compile — pole branches are dead code |
 | Mixed (e.g., 43, 61) | Both unitary and nilpotent spectra | **Mixed phase** | Does NOT compile cleanly |
 
 **Key observation:** Clean primes are the *only* primes where the Newton functional graph is a rooted forest (actually 3 trees). Everywhere else, the presence of cycles introduces rotational (unitary) components that prevent nilpotent collapse.

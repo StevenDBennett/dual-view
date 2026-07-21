@@ -10,6 +10,7 @@ from dual_view.newton_dynamics import (
     poly_mul, poly_add, poly_scalar_mul, poly_pow, poly_divmod,
     mobius, compute_iterates, dynatomic_polynomial,
     is_cube, tonelli_shanks, check_quadratic_cube_roots,
+    KNOWN_CLEAN_PRIMES,
     COEFFS_PERIOD4, COEFFS_PERIOD5,
     MULTIPLIERS_PERIOD4, MULTIPLIERS_PERIOD5,
     load_period6_coefficients, PERIOD6_PREDICTED,
@@ -365,39 +366,26 @@ class TestTheorem4_MultiplierIdentity(unittest.TestCase):
 
 
 class TestCleanPrimesVerified(unittest.TestCase):
-    """Verify the clean prime set {7, 103, 181}."""
+    """Verify all 16 known clean primes pass the period-2 dynatomic check."""
 
-    def test_7_is_clean(self):
-        """p=7: p≡1 mod 3, no period-2/3/4 points in F_7."""
-        p = 7
-        # Period-2 polynomial: 20u² + 5u + 2 mod 7 → 6u² + 5u + 2
-        # Check if any root u is a cube in F_7
-        has_period2 = False
-        for u in range(p):
-            if (20 * u * u + 5 * u + 2) % p == 0 and is_cube(u, p):
-                has_period2 = True
-                break
-        self.assertFalse(has_period2)
+    def test_known_clean_primes_all_pass_period2(self):
+        """Every known clean prime has no period-2 cube roots."""
+        for p in KNOWN_CLEAN_PRIMES:
+            has_period2 = False
+            for u in range(p):
+                if (20 * u * u + 5 * u + 2) % p == 0 and is_cube(u, p):
+                    has_period2 = True
+                    break
+            self.assertFalse(has_period2, f"p={p} has period-2 cube roots (should be clean)")
 
-    def test_103_is_clean(self):
-        """p=103: verified clean against period-2 polynomial."""
-        p = 103
-        has_period2 = False
-        for u in range(p):
-            if (20 * u * u + 5 * u + 2) % p == 0 and is_cube(u, p):
-                has_period2 = True
-                break
-        self.assertFalse(has_period2)
+    def test_known_clean_primes_count(self):
+        self.assertEqual(len(KNOWN_CLEAN_PRIMES), 16)
 
-    def test_181_is_clean(self):
-        """p=181: verified clean against period-2 polynomial."""
-        p = 181
-        has_period2 = False
-        for u in range(p):
-            if (20 * u * u + 5 * u + 2) % p == 0 and is_cube(u, p):
-                has_period2 = True
-                break
-        self.assertFalse(has_period2)
+    def test_known_clean_primes_include_5(self):
+        self.assertIn(5, KNOWN_CLEAN_PRIMES)
+
+    def test_known_clean_primes_include_181(self):
+        self.assertIn(181, KNOWN_CLEAN_PRIMES)
 
     def test_non_clean_prime_has_points(self):
         """p=79 (≡1 mod 3): has period-2 cube roots, NOT clean."""
