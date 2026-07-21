@@ -1,14 +1,17 @@
 """
 training.py
 -----------
-Ghost-regularised PyTorch quantized training on MNIST.
+Quantized training on MNIST with straight-through estimator (STE).
 
-Provides a QuantizedMLP with straight-through estimator (STE)
-quantization and optional ghost regularization via GhostMap
-or thermodynamics diagnostics via SeedThermodynamics.
+Provides a QuantizedMLP with STE quantization and optional
+thermodynamic stability diagnostics via SeedThermodynamics.
 
 PyTorch is an optional dependency — the module degrades gracefully
 if torch is not available.
+
+Note: The ghost regularization via GhostMap is deprecated (see
+regularization.py).  Thermodynamic diagnostics from
+SeedThermodynamics provide the genuinely graded stability measure.
 """
 from __future__ import annotations
 
@@ -110,12 +113,25 @@ if _TORCH_AVAILABLE:
         """
         Training loop with optional ghost regularization.
 
+        .. deprecated::
+            The ghost_map parameter is deprecated.  After the α=1 fix,
+            GhostMap ratios are uniform and ghost_penalty returns zero
+            gradient.  Use use_thermodynamics=True instead.
+
         When use_thermodynamics=True, per-layer cliff_risk and
         alpha_fraction are tracked via SeedThermodynamics.
 
         Returns history dict with loss, accuracy, grad_norm,
         update_norm, ghost_penalty, cliff_risk, alpha_fraction.
         """
+        import warnings as _warnings
+        if ghost_map is not None:
+            _warnings.warn(
+                "ghost_map is deprecated: GhostMap ratios are now uniform "
+                "after the α=1 fix. Use use_thermodynamics=True instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
         if device is None:
             device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 

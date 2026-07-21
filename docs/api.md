@@ -272,8 +272,6 @@ Clean primes are primes where the functional graph is a rooted forest with 1 or 
 - `thermodynamic_signature()` — dict with spectral_radius, is_unitary, etc.
 - `solvability_report()` — Lie algebra solvability analysis (metabelian, depth 2)
 
-(QASM emitter removed — no quantum compilation code remains in the package.)
-
 ## Butterfly Module (`dual_view.butterfly`)
 
 #### `KroneckerCliffScorer(factors, k_range, scale_mode='round', ensure_odd=True)`

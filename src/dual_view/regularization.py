@@ -3,6 +3,16 @@ regularization.py
 -----------------
 Ghost-aware regularisation for quantized neural-network training.
 
+.. deprecated::
+    The GhostMap convergence-ratio signal collapsed to uniform 1.0 after
+    the α=1 sector fix (see bug_history.md).  The v₂(e_true) scores
+    provided here are still useful as a graded stability diagnostic, but
+    ``ghost_penalty`` and ``local_ratio_gradient`` return zero gradient
+    for odd weights and should not be used for training.
+
+    Use ``thermodynamics.SeedThermodynamics`` instead for genuine
+    weight-stability diagnostics.
+
 The GhostMap pre-computes the 2-adic exponent stability score v₂(e_true)
 for every odd residue modulo 2^k and provides queries to find stable
 alternatives and compute surrogate gradients for backpropagation.
@@ -17,6 +27,7 @@ residues — acceptable up to k=16 (32768 entries).
 """
 from __future__ import annotations
 
+import warnings
 from typing import Dict, List, Optional, Tuple
 import numpy as np
 
@@ -44,6 +55,14 @@ class GhostMap:
     """
 
     def __init__(self, k: int, g: int = 5) -> None:
+        warnings.warn(
+            "GhostMap is deprecated after the α=1 fix: convergence ratios "
+            "are now uniform (1.0 for all odd weights). Use "
+            "thermodynamics.SeedThermodynamics for graded v₂(e_true) "
+            "stability diagnostics.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         if k < 3:
             raise ValueError("k must be ≥ 3")
         if k > 16:
@@ -118,9 +137,19 @@ def local_ratio_gradient(
     """
     Compute local improvement candidates for a weight.
 
+    .. deprecated::
+        This function is deprecated.  After the α=1 fix, GhostMap ratios
+        are uniform and this returns no useful gradient.
+
     Returns list of (delta, score) for delta in {-2, -1, 1, 2}
     that improve the stability score.
     """
+    warnings.warn(
+        "local_ratio_gradient is deprecated: GhostMap ratios are now "
+        "uniform after the α=1 fix. Use SeedThermodynamics instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     current = ghost_map.ratio(weight_int)
     results: List[Tuple[int, float]] = []
     for delta in (-2, -1, 1, 2):
@@ -138,6 +167,12 @@ def ghost_penalty(
 ) -> Tuple[float, np.ndarray]:
     """
     Ghost regularisation penalty and surrogate gradient.
+
+    .. deprecated::
+        After the α=1 fix, this function returns zero gradient for all
+        odd weights and is not useful for training.  Use
+        ``thermodynamics.SeedThermodynamics`` for genuine stability
+        diagnostics.
 
     The penalty is P = mean(1 - score(w)) over the weight array,
     where score is the v₂(e_true)-based stability from GhostMap.
@@ -157,6 +192,12 @@ def ghost_penalty(
     -------
     (penalty, gradient) where gradient has the same shape as weights.
     """
+    warnings.warn(
+        "ghost_penalty is deprecated: after the α=1 fix, this returns "
+        "zero gradient for odd weights. Use SeedThermodynamics instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     flat = weights.ravel()
     penalties = np.array([1.0 - ghost_map.ratio(int(w)) for w in flat])
     penalty = float(np.mean(penalties))

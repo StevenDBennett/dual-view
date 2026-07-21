@@ -20,7 +20,7 @@ operators        — Symbolic operator algebra (shift, difference)
 gauge            — Gauge invariants for weighted cyclic operators
 basin            — Newton basin analysis and ghost detection
 thermodynamics   — Graded weight stability diagnostics
-regularization   — Ghost-aware regularisation for NN training
+regularization   — GhostMap stability scores (deprecated for training; use thermodynamics)
 crt              — CRT extension to composite moduli
 nonabelian       — GL(2) gauge theory for matrix-valued weights
 scaling          — Float-to-int quantization scaling

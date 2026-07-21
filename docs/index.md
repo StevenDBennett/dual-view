@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**dual-view** is a unified mathematical framework for 2-adic number systems, p-adic Newton dynamics, noncommutative spectral geometry, and quantum butterfly compilation. The core insight is that every odd integer modulo `2^k` decomposes uniquely as:
+**dual-view** is a unified mathematical framework for 2-adic number systems, p-adic Newton dynamics, noncommutative spectral geometry, and classical butterfly compilation. The core insight is that every odd integer modulo `2^k` decomposes uniquely as:
 
 ```
 n = 2^v · (-1)^α · 5^e   (mod 2^k)
@@ -25,7 +25,7 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | `operators.py` | 215 | OperatorContext, SpectralTriple, NewtonProjector (O(N) per call — pedagogical for k ≥ 9) |
 | `basin.py` | 346 | BasinExplorer, LayerGhostDiagnosticV2, GhostHunt |
 | `thermodynamics.py` | 285 | SeedThermodynamics — graded 2-adic stability diagnostics |
-| `regularization.py` | 150 | GhostMap, ghost_penalty, local_ratio_gradient |
+| `regularization.py` | 150 | GhostMap, ghost_penalty, local_ratio_gradient (deprecated — use thermodynamics) |
 | `gauge.py` | 120 | Gauge invariants for weighted cyclic operators |
 | `crt.py` | 205 | CRT extension to Z/(2^k·p)Z |
 | `nonabelian.py` | 214 | GL(2) gauge theory with phase alignment |
@@ -39,7 +39,7 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | `mersenne.py` | 585 | Mersenne Ghost Theorem, bootstrap optimality, cliff constant proofs |
 | `isometry.py` | 257 | Exponential isometry, operator algebra theorems |
 | `butterfly_seed.py` | 429 | Dual-view Newton projector, clean-prime analysis, butterfly seeds |
-| `training.py` | 230 | PyTorch QuantizedMLP with ghost regularization |
+| `training.py` | 230 | PyTorch QuantizedMLP with STE quantization |
 | `newton_dynamics/` | 5 modules | p-adic Newton dynamics for N(x) = (2x³+1)/(3x²) |
 | `demo.py` | 223 | Runnable demonstration suite |
 
@@ -55,7 +55,7 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | T2 | Trajectory separation: `n*(s) = ceil(log₂(s)) - 1` | `separation.py` | Proven, zero variance |
 | T3 | Basin dichotomy: α=0 globally stable | `basin.py` | Proven |
 | T4 | Ghost formula: `e* = dlog(a+2, k)` for α=1 | `basin.py` | Proven |
-| T5 | Mersenne cliff: `k* = n+2` for `w = 2^n - 1` | `mersenne.py` | Verified n=3..11 |
+| T5 | Mersenne cliff: `k* = n+2` for `w = 2^n - 1` | `mersenne.py` | Verified n=3..16, secondary correction ε(n) observed unproven |
 | T6a | Exponential map isometry: `v₂(5^e-1) = v₂(e)+2` | `isometry.py` | Proven |
 | T6b | Operator algebra: `avg² = N·avg`, `D·avg = avg·D = 0` | `isometry.py` | Proven |
 | T6d | Mahler basis: `D∘T = id` on `ker(ε)`, `T∘D = id` on `n≥2` | `mahler.py` | Proven |
@@ -82,8 +82,8 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | `OperatorContext(k, g)` | `operators.py` | I, S, diff, avg, M(h) |
 | `BasinExplorer(k, g, a)` | `basin.py` | Newton basin portrait |
 | `SeedThermodynamics(k)` | `thermodynamics.py` | Weight stability analysis |
-| `GhostMap(k)` | `regularization.py` | Precomputed convergence ratios |
-| `ghost_penalty(W, gm)` | `regularization.py` | Penalty + surrogate gradient |
+| `GhostMap(k)` | `regularization.py` | Precomputed stability scores (deprecated) |
+| `ghost_penalty(W, gm)` | `regularization.py` | Penalty + surrogate gradient (deprecated) |
 | `scale_weights(W, scale)` | `scaling.py` | Float-to-int scaling |
 | `cliff_matrix(st, shape)` | `visualise.py` | Reshape cliff scores |
 | `show_dual_bits(n, k, label)` | `visualise.py` | Bit pattern annotated with (v, α, e) roles |
@@ -101,7 +101,6 @@ This dual-view coordinate system reveals **quantization cliffs**: specific bit-p
 | `is_cube(a, p)` | `newton_dynamics/` | Cube residue modulo p |
 | `analyze_prime(p)` | `butterfly_seed.py` | Classify prime by Newton functional graph |
 | `DualViewSeed(k, a)` | `butterfly_seed.py` | Position-dependent butterfly seed builder |
-(QASM emitter removed — no quantum compilation code remains.)
 | `SpectralThermodynamics.analyze(S)` | `research/bridge.py` | Spectral classification of seed matrices |
 | `ButterflyBridge(k)` | `research/bridge.py` | Three-seed unified weight analysis |
 

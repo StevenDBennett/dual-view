@@ -7,17 +7,17 @@ Date: 2026-07-20
 Verified by exhaustive DFS up to 30,000,000:
 
 ```
-7, 31, 41, 59, 103, 181, 359, 659, 811, 8111,
+5, 7, 31, 41, 59, 103, 181, 359, 659, 811, 8111,
 14159, 31741, 115679, 162251, 403549
 ```
 
-Total: 16 primes (including p=5, which was previously excluded by convention; pole chains do not disqualify).
+Total: 16 primes (p=5 is included — pole chains do not disqualify a prime from cleanliness).
 
 ---
 
 ## Experiment 1: QASM Circuit Size Comparison
 
-*(Removed — QASM emitter has been removed from the package.)*
+*(Removed — see `research/butterfly_compiler.py` for the classical compiler prototype.)*
 
 ---
 
@@ -68,24 +68,26 @@ This is structurally guaranteed — the basin ordering is a finite rooted forest
 
 Checks all 16 primes against the original clean-prime definition: no periodic points of periods 2, 3, or 4 with multiplier μ ≠ 1 (mod p). Uses the dynatomic polynomial root checks (with cube-root restriction).
 
-**Result**: **ALL 15 PASS**
+**Result**: **ALL 16 PASS**
 
 ```
 Prime   Period2  Period3  Pole   Period4  Status
-    7    False   False   False   False   CLEAN
-   31    False   False    True   False   CLEAN
-   41    False   False   False   False   CLEAN
-  103    False   False   False   False   CLEAN
-  181    False   False   False   False   CLEAN
-  359    False   False   False   False   CLEAN
-  659    False   False   False   False   CLEAN
-  811    False   False    True   False   CLEAN
- 8111    False   False   False   False   CLEAN
-14159    False   False   False   False   CLEAN
-31741    False   False    True   False   CLEAN
-115679   False   False   False   False   CLEAN
-162251   False   False   False   False   CLEAN
-403549   False   False    True   False   CLEAN
+     5    False    True   False   False   CLEAN
+     7    False   False   False   False   CLEAN
+    31    False   False    True   False   CLEAN
+    41    False   False   False   False   CLEAN
+    59    False   False   False   False   CLEAN
+   103    False   False   False   False   CLEAN
+   181    False   False   False   False   CLEAN
+   359    False   False   False   False   CLEAN
+   659    False   False   False   False   CLEAN
+   811    False   False    True   False   CLEAN
+  8111    False   False   False   False   CLEAN
+ 14159    False   False   False   False   CLEAN
+ 31741    False   False    True   False   CLEAN
+115679    False   False   False   False   CLEAN
+162251    False   False   False   False   CLEAN
+403549    False   False    True   False   CLEAN
 ```
 
 Note: p=31, 811, 31741, 403549 have `u=(p-1)/2` as a cube modulo p (the "pole condition"), but this does not imply the existence of actual periodic points — these primes are genuinely clean.
@@ -267,14 +269,14 @@ p=181:
 
 | # | Experiment | Status | Key Finding |
 |---|-----------|--------|-------------|
-| 1 | QASM circuits | Removed | QASM emitter removed from package |
+| 1 | QASM circuits | Removed | Classical butterfly compiler in `butterfly_compiler.py` |
 | 2 | Mersenne cliff n=16 | ✅ Verified | k*=21 matches secondary correction formula |
 | 3 | Spectral thermo | ✅ Verified | All clean primes produce pure nilpotent matrices |
 | 4 | Dynatomic check | ✅ Verified | All 16 satisfy the formal clean-prime definition |
 | 5 | Nilpotency analysis | ✅ Complete | 3 structural classes; moderate p-nilpotency correlation |
 | A | Basin Newton operator | ✅ Verified | Basin shift is nilpotent for all — S^n = 0 confirmed |
 | B | Basin depth spectrum | ✅ Complete | 3-root primes share early structure; each has unique depth dist |
-| C | Forest isomorphism | ✅ Complete | All 15 forests are unique — each gives a distinct butterfly circuit |
+| C | Forest isomorphism | ✅ Complete | All 16 forests are unique — each gives a distinct butterfly circuit |
 | D | Kronecker cliff scoring | ✅ Complete | Clean-structured factors have 0% ghosts — inherently stable |
 
 ## Butterfly-Specific Findings
@@ -294,6 +296,6 @@ p=181:
 1. Why does **403549** have such a disproportionately deep vacuum (1223 vs 273 for 31741, the next closest)?
 2. Why does **659** have only 2 basin elements while similar-sized primes have much larger basins?
 3. Is the π prime **14159**'s shallow basin (5 elements) coincidental or significant?
-4. *(QASM emitter removed — nilpotent seed structure exploration is a classical routing problem; see `butterfly_compiler.py`.)*
+4. Can the nilpotent seed structure be exploited for classical butterfly-optimised Newton solving? (See `butterfly_compiler.py`.)
 5. The 3-root primes share depth-0-5 structure — is this a theorem? (Number of elements at depth d in a 3-root clean prime for small d is determined by p's residue class.)
 6. Can the basin shift operator's nilpotency structure be used to build a classical butterfly-optimised Newton solver?

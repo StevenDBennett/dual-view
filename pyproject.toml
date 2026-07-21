@@ -5,18 +5,17 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "dual-view"
 version = "1.0.0"
-description = "dual-view: a unified framework for 2-adic number systems, p-adic Newton dynamics, spectral geometry, gauge theory, and quantum compilation"
+description = "dual-view: a unified framework for 2-adic number systems, p-adic Newton dynamics, spectral geometry, gauge theory, and classical butterfly compilation"
 readme = "README.md"
 license = {text = "MIT"}
-authors = []
-keywords = ["2-adic", "p-adic", "number-theory", "newton-dynamics", "spectral-geometry", "noncommutative-geometry", "quantum-compilation", "butterfly-compiler", "quantization"]
+authors = [{name = "Steven Bennett"}]
+keywords = ["2-adic", "p-adic", "number-theory", "newton-dynamics", "spectral-geometry", "noncommutative-geometry", "butterfly-compiler", "quantization"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "License :: OSI Approved :: MIT License",
     "Topic :: Scientific/Engineering :: Mathematics",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 requires-python = ">=3.11"
 dependencies = [

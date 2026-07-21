@@ -1,6 +1,6 @@
 # dual-view
 
-**A unified mathematical framework spanning 2-adic number theory, p-adic Newton dynamics, noncommutative spectral geometry, and quantum butterfly compilation.**
+**A unified mathematical framework spanning 2-adic number theory, p-adic Newton dynamics, noncommutative spectral geometry, and classical butterfly compilation.**
 
 Every odd integer modulo `2^k` decomposes uniquely as a **dual-view coordinate triple**:
 
@@ -30,7 +30,7 @@ For every clean prime, ordering elements by basin depth makes the Newton shift o
 
 ### Classical Routing Tables
 
-All 16 clean primes each have a precomputed routing table (classical swap network) of depth `⌈log₂(M)⌉`. The classical routing simulator shows that `⌈log₂(M)⌉` butterfly stages suffice for all known clean primes (e.g., p=403549: 11 stages vs 1223 serial steps). The binary-exponentiation mechanism is mathematically sound for any rooted forest, so the depth bound is believed to hold for all clean primes. **A true quantum depth reduction using nilpotency is an open problem** — see `research/` for the classical compiler prototype.
+All 16 clean primes each have a precomputed routing table (classical swap network) of depth `⌈log₂(M)⌉`. The classical routing simulator shows that `⌈log₂(M)⌉` butterfly stages suffice for all known clean primes (e.g., p=403549: 11 stages vs 1223 serial steps). The binary-exponentiation mechanism is mathematically sound for any rooted forest, so the depth bound is believed to hold for all clean primes. **A true depth reduction using nilpotency beyond the classical `⌈log₂(M)⌉` bound is an open problem** — see `research/` for the classical compiler prototype.
 
 ### Discriminant Theorem (Δ = 108(x³-1))
 
@@ -65,7 +65,7 @@ The exponential map `e ↦ 5^e` is a **scaled 2-adic isometry** with scale facto
 | `operators` | Symbolic operator algebra (shift, difference, average) |
 | `basin` | Newton basin analysis, ghost detection |
 | `thermodynamics` | Graded `v₂(e_true)` weight stability diagnostic |
-| `regularization` | Ghost-aware regularisation for NN training |
+| `regularization` | GhostMap stability scores (deprecated — use `thermodynamics`) |
 | `gauge` | Gauge invariants for weighted cyclic operators |
 | `crt` | CRT extension to composite moduli |
 | `nonabelian` | GL(2) gauge theory, holonomy invariants |
