@@ -7,7 +7,7 @@ Let `w = 2^n - 1` be a Mersenne number with `n ≥ 3`. Under the 2-adic dual-vie
 1. **Sector**: `α = 1` for all `k ≥ n+1` (ghost sector)
 2. **Exponent**: `e_true = 2^(n-2)` for `n+1 ≤ k ≤ n+2` (stable window)
 3. **Valuation**: `v₂(e_true) = n - 2`
-4. **Cliff**: The quantization cliff occurs at `k* = n + 2` (with secondary correction `ε(n) = v₂(n) - 1` at powers of 2)
+4. **Cliff**: The quantization cliff occurs at `k* = n + 2` (with secondary correction `ε(n) = v₂(n) - 1` at powers of 2; this correction is observed for n=4,8 but unproven — see `research_opportunities.md`)
 
 ## Core Identity
 

@@ -281,7 +281,7 @@ p=181:
 
 1. **Nilpotency is universal** — every clean prime's basin shift satisfies S^k = 0 for k = nilpotency_index. This is the algebraic structure the butterfly compiler exploits for depth-O(log k) compilation.
 
-2. **Each prime is unique** — no two clean primes have isomorphic basin forests. A butterfly compiler would need 16 distinct seed configurations.
+2. **Among the 16 known primes, each is unique** — no two have isomorphic basin forests. A butterfly compiler would need 16 distinct seed configurations. Whether this uniqueness extends to all clean primes (if any more exist) is unknown.
 
 3. **3-root primes** (7, 31, 103, 181, 811, 31741, 403549) share a common early-depth signature — the first 6 depth levels are structurally identical. This suggests a universal 3-root butterfly template with prime-specific fine-tuning at deeper levels.
 

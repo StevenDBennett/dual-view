@@ -16,7 +16,7 @@ Your two independent threads are actually the same object viewed from opposite e
 | **Butterfly Compiler** | The seed matrix $S$ and its Kronecker powers $S^{\otimes n}$ | *Does a linear/dynamical system admit a fast hierarchical transform?* |
 | **Quantum Dual-View** | The spectral triple $(A, H, D)$ on the exponent space | *What does the fast transform look like as a quantum circuit?* |
 
-**Thesis:** The dual-view's exponent space $\mathbb{Z}/2^{k-2}\mathbb{Z}$ is the *canonical domain* on which the butterfly compiler operates. The Newton projector is a *non-uniform* butterfly (position-dependent seeds) that collapses to a uniform QFT butterfly in the clean-prime vacuum sector.
+**Conjecture:** The dual-view's exponent space $\mathbb{Z}/2^{k-2}\mathbb{Z}$ is the *canonical domain* on which the butterfly compiler operates. The Newton projector is a *non-uniform* butterfly (position-dependent seeds) that, in the clean-prime vacuum sector, may collapse to a uniform QFT butterfly. This collapse would enable polynomial-depth quantum circuit compilation, but no quantum compiler exists yet — see the caveat above.
 
 ---
 
@@ -240,7 +240,7 @@ Given your 5-6 threads and limited mobile access, here's the priority order:
 
 ## 8. Summary: The Single Sentence
 
-> The dual-view's exponent space is the canonical domain of the butterfly compiler; clean primes are the nilpotent vacuum sectors where the Newton projector collapses to a polynomial-depth quantum circuit; and the spectral geometry of the 2-adic ring is the Hamiltonian that governs this evolution.
+> The dual-view's exponent space is the canonical domain of the butterfly compiler; clean primes are the nilpotent vacuum sectors where (if the central conjecture holds) the Newton projector collapses to a polynomial-depth quantum circuit; and the spectral geometry of the 2-adic ring is the Hamiltonian that governs this evolution.
 
 ---
 

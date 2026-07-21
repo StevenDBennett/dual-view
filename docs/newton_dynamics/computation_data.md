@@ -40,8 +40,8 @@ $$\mu_3(n) = \sum_{d|n} \mu(n/d) \cdot 3^d$$
 - **Discriminant**: 506 digits, **not a square**
 - **Leading coefficient**: $2^{34} \cdot 13 = 223,\!338,\!299,\!392$
 - **Constant term**: $2^{12} = 4,\!096$
-- **Galois group**: Subgroup of $S_6 \wr V_4$ (wreath product, order 2,949,120), $[K_4:\mathbb{Q}] = 24$
-- **Linear disjointness**: The period-4 polynomial is irreducible over $\mathbb{Q}(\zeta_3)$, $\mathbb{Q}(\sqrt{5})$, $\mathbb{Q}(\sqrt{-15})$, $\mathbb{Q}(\zeta_3, \sqrt{5})$ (the period-2 base field), and $\mathbb{Q}(\zeta_3, 19^{1/3})$ (the period-3 base field) — implying $K_4$ is linearly disjoint from $K_2$ and $K_3$ over $\mathbb{Q}(\zeta_3)$
+- **Galois group (tentative)**: Subgroup of $S_6 \wr V_4$ (wreath product, order 2,949,120) — identification still in progress; see `status.md`, $[K_4:\mathbb{Q}] = 24$
+- **Linear disjointness (computational evidence)**: The period-4 polynomial is irreducible over $\mathbb{Q}(\zeta_3)$, $\mathbb{Q}(\sqrt{5})$, $\mathbb{Q}(\sqrt{-15})$, $\mathbb{Q}(\zeta_3, \sqrt{5})$ (the period-2 base field), and $\mathbb{Q}(\zeta_3, 19^{1/3})$ (the period-3 base field) — suggesting $K_4$ is linearly disjoint from $K_2$ and $K_3$ over $\mathbb{Q}(\zeta_3)$
 
 ### Multipliers
 

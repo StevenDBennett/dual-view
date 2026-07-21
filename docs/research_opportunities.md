@@ -95,7 +95,7 @@ This holds exactly for all `n` where `v_p(x_n - x*) < k`. Prove this by inductio
 
 **Old prediction**: The bootstrap residual `e_boot - e_true` is approximately normal.
 
-**Corrected finding**: The bootstrap residual is **uniformly distributed** over `Z/(2^(k-2))` for random `a`. This follows from the uniformity of the first Newton correction (chi-square verified).
+**Corrected finding (empirical)**: The bootstrap residual is consistent with a **uniform distribution** over `Z/(2^(k-2))` for random `a` (chi-square test does not reject uniformity; no proof exists).
 
 ### 3.2 Ghost Density vs. Training
 

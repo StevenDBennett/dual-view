@@ -127,7 +127,7 @@ The proof relies on the core identity:
 
 which is verified for `n = 3, ..., 11` by the code.
 
-**Secondary correction**: At `n = 2^m` (powers of 2), there is a secondary correction `ε(n) = v₂(n) - 1` that modifies the cliff formula to `k* = n + 2 + ε(n)`.
+**Secondary correction (observed, unproven)**: At `n = 2^m` (powers of 2), there is a secondary correction `ε(n) = v₂(n) - 1` that modifies the cliff formula to `k* = n + 2 + ε(n)`. This has been verified computationally for n=4,8 but lacks a proof — see `research_opportunities.md`.
 
 ### T6a: Exponential Map Isometry
 

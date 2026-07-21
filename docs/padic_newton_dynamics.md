@@ -115,7 +115,7 @@ speedup. With gmpy2, k = 100,000+ bits becomes feasible.
 
 The p-adic Newton landscape is not a "basin portrait" in the complex-analytic sense. It is a discrete, exact, information-theoretic structure with six fundamental properties:
 
-1. **Deterministic** — Every quantity is exact. There are no probability distributions, only theorems. The convergence ratio std = 0.000000 across all primes, targets, and seeds.
+1. **Deterministic** — Every quantity is exact. The convergence ratios are backed by theorems, not statistics. The std = 0.000000 across all primes, targets, and seeds tested.
 
 2. **Discrete** — The state space is partitioned by algebraic invariants: $\alpha \in \{0,1\}$ for 2-adic, residue classes mod $p$ for odd primes. Ghost density is binary (a single sign bit), not graded.
 
@@ -123,7 +123,7 @@ The p-adic Newton landscape is not a "basin portrait" in the complex-analytic se
 
 4. **Phase-transitional** — There is a crossover from linear (Hensel bootstrap) to exponential (Newton) precision growth. The optimal transition point is $k/2$, significantly larger than the $\sqrt{k}$ heuristic.
 
-5. **Universal** — The landscape shape is independent of prime, target, and seed. Only method order $m$ matters. The 2-adic and $p$-adic Newton landscapes have identical shape when normalized by method order.
+5. **Empirically universal** — The landscape shape appears independent of prime, target, and seed across all tested examples (p = 5, 7, 11, 13 for p-adic; all k for 2-adic). Only method order $m$ matters. The 2-adic and $p$-adic Newton landscapes have identical shape when normalized by method order.
 
 6. **Ultrametric** — The strong triangle inequality collapses all geometric complexity. There are no "edge cases" because the metric has no interior. Equivalently, the Julia set of a linearisable map is trivial in Berkovich space.
 

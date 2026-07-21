@@ -252,7 +252,7 @@ Bridges the 2-adic Newton dynamics with the butterfly compiler's position-depend
 #### `analyze_prime(p: int) -> CleanPrimeProfile`
 Classify prime `p` by the thermodynamics of its Newton functional graph over `F_p^*`. Returns `CleanPrimeProfile` with fields: `is_clean`, `roots` (cube roots of 1), `nilpotency_index`, `basin_ordering`, `tree_depths`, `obstruction` ("clean", "ghost_cycle", "pole_chain", "mixed").
 
-Clean primes (known: 7, 103, 181) have functional graphs that are rooted forests with exactly 3 trees.
+Clean primes are primes where the functional graph is a rooted forest with 1 or 3 trees (the cube roots of unity). As of exhaustive search to 30M, 16 clean primes are known: {5, 7, 31, 41, 59, 103, 181, 359, 659, 811, 8111, 14159, 31741, 115679, 162251, 403549}. Primes with 3 roots (p ≡ 1 mod 3) have 3 trees; primes with 1 root (p ≡ 2 mod 3) have 1 tree.
 
 #### `CleanPrimeProfile` (dataclass)
 - `p: int` — the prime

@@ -8,7 +8,7 @@ Every odd integer modulo `2^k` decomposes uniquely as a **dual-view coordinate t
 n = 2^v · (-1)^α · 5^e   (mod 2^k)
 ```
 
-where `v` is the 2-adic valuation, `α` is the sign sector, and `e` is the discrete logarithm base 5. This decomposition reveals **quantization cliffs** — bit-precisions where weights become numerically unstable under Newton iteration. The Mersenne Ghost Theorem proves that Mersenne numbers `2^n - 1` are maximally fragile, with cliff at `k* = n + 2`.
+where `v` is the 2-adic valuation, `α` is the sign sector, and `e` is the discrete logarithm base 5. This decomposition reveals **quantization cliffs** — bit-precisions where weights become numerically unstable under Newton iteration. The Mersenne Ghost Theorem proves that Mersenne numbers `2^n - 1` are maximally fragile, with cliff at `k* = n + 2` (with a secondary correction `ε(n) = v₂(n) - 1` at powers of 2 that is observed but unproven — see `research_opportunities.md`).
 
 ## Highlights
 
@@ -30,11 +30,11 @@ For every clean prime, ordering elements by basin depth makes the Newton shift o
 
 ### Classical Routing Tables
 
-All 16 clean primes each have a precomputed routing table (classical swap network) of depth `⌈log₂(M)⌉`. The classical routing simulator proves that `⌈log₂(M)⌉` butterfly stages suffice for all elements to converge (e.g., p=403549: 11 stages vs 1223 serial steps). **A true quantum depth reduction using nilpotency is an open problem** — see `research/` for the classical compiler prototype.
+All 16 clean primes each have a precomputed routing table (classical swap network) of depth `⌈log₂(M)⌉`. The classical routing simulator shows that `⌈log₂(M)⌉` butterfly stages suffice for all known clean primes (e.g., p=403549: 11 stages vs 1223 serial steps). The binary-exponentiation mechanism is mathematically sound for any rooted forest, so the depth bound is believed to hold for all clean primes. **A true quantum depth reduction using nilpotency is an open problem** — see `research/` for the classical compiler prototype.
 
 ### Discriminant Theorem (Δ = 108(x³-1))
 
-The identical early-depth structure shared by all 3-root clean primes (depths 0-5) is proven: the Newton preimage cubic discriminant `Δ = 108(x³-1)` vanishes at the roots, and the small-depth x-values are constrained to a fixed set of algebraic expressions, independent of p.
+The identical early-depth structure shared by all 3-root clean primes (depths 0-1) is proven via the Newton preimage cubic discriminant `Δ = 108(x³-1)`. Depths 2-5 are empirically observed across all 16 known clean primes but lack a general proof — see `docs/newton_dynamics/clean_prime_theorems.md`.
 
 ## Mathematical Foundation
 
