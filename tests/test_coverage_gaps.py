@@ -1,9 +1,5 @@
 """Additional tests to improve coverage on previously untested functions."""
 import unittest
-import sys
-import os
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
 
 import numpy as np
 

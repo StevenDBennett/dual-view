@@ -1,9 +1,5 @@
 """Tests for dual_view.iwasawa_algebra — IwasawaElement, IwasawaAlgebra, ProModule."""
 import unittest
-import sys
-import os
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
 
 from dual_view.iwasawa_algebra import IwasawaElement, IwasawaAlgebra, ProModule
 

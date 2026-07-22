@@ -1,9 +1,5 @@
 """Tests for dual_view.exponent and dual_view.operators."""
 import unittest
-import sys
-import os
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
 
 from dual_view.exponent import ExponentSpace
 from dual_view.operators import OperatorContext, SpectralTriple, NewtonProjector

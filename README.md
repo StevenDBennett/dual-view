@@ -129,6 +129,9 @@ python research/routing_simulator.py
 
 # Butterfly compiler report
 python research/butterfly_compiler.py
+
+# Research bridge tests
+python -m pytest research/test_bridge.py -v
 ```
 
 ## License

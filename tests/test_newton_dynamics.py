@@ -1,10 +1,6 @@
 """Tests for dual_view.newton_dynamics — polynomial arithmetic, iterates, dynatomic."""
 import unittest
-import sys
-import os
 import math
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
 
 from dual_view.newton_dynamics import (
     poly_mul, poly_add, poly_scalar_mul, poly_pow, poly_divmod,

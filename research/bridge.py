@@ -16,8 +16,11 @@ When they split: that disagreement IS the finding.
 from __future__ import annotations
 
 import sys
+import os
 
-sys.path.insert(0, "src")
+_src = os.path.join(os.path.dirname(__file__), "..", "src")
+if _src not in sys.path:
+    sys.path.insert(0, os.path.abspath(_src))
 
 from dataclasses import dataclass, field
 from typing import Dict, List, Tuple

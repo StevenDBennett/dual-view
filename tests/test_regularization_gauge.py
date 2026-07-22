@@ -1,9 +1,5 @@
 """Tests for dual_view.regularization and dual_view.gauge."""
 import unittest
-import sys
-import os
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
 
 from dual_view.regularization import GhostMap, local_ratio_gradient, ghost_penalty
 from dual_view.gauge import (

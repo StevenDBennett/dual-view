@@ -1,9 +1,5 @@
 """Tests for dual_view.core — DualNumber, modinv, dlog, TwoAdicProcessor."""
 import unittest
-import sys
-import os
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
 
 from dual_view.core import (
     _mask, _valuation, modinv_newton, two_adic_log5,

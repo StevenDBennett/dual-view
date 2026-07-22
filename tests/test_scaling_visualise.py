@@ -1,10 +1,6 @@
 """Tests for dual_view.scaling and dual_view.visualise."""
 import unittest
-import sys
-import os
 import io
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
 
 from dual_view.scaling import scale_weights, auto_scale, common_scales
 from dual_view.visualise import (

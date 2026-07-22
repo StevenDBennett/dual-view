@@ -1,10 +1,14 @@
-"""Tests for dual_view.bridge."""
+"""Tests for research.bridge."""
 import unittest
 import sys
 import os
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../research"))
+_test_root = os.path.dirname(__file__)
+_src = os.path.join(_test_root, "..", "src")
+_research = _test_root
+for p in (_src, _research):
+    if p not in sys.path:
+        sys.path.insert(0, os.path.abspath(p))
 
 from bridge import (
     ButterflyBridge, LayerReport, ModelReport, SpectralThermodynamics,

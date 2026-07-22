@@ -1,11 +1,7 @@
 """Tests for dual_view.basin and dual_view.thermodynamics."""
 import unittest
-import sys
-import os
 import io
 import contextlib
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
 
 from dual_view.basin import BasinExplorer, precision_sweep, LayerGhostDiagnosticV2, GhostHunt
 from dual_view.thermodynamics import SeedThermodynamics

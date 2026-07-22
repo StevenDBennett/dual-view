@@ -1,9 +1,5 @@
 """Tests for dual_view.butterfly_seed — Dual-View Newton projector as butterfly seed."""
 import unittest
-import sys
-import os
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
 
 from dual_view.butterfly_seed import (
     DualViewSeed,
